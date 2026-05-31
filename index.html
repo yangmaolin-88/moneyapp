@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="小杨专属记账">
+<meta name="theme-color" content="#16a34a">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/icon-192.svg">
+<title>小杨专属记账</title>
+<style>
+/* ══════════════════════════════════════════
+   小杨专属记账 v6.0 — 截屏智能识别 + 快捷记账
+══════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --green:#16a34a; --green-d:#15803d; --green-light:#dcfce7; --green-mid:#86efac;
+  --red:#dc2626; --red-light:#fee2e2;
+  --orange:#f59e0b; --orange-light:#fef3c7;
+  --blue:#3b82f6; --blue-light:#eff6ff;
+  --purple:#8b5cf6; --purple-light:#ede9fe;
+  --amber:#d97706; --amber-light:#fef3c7;
+  --gray50:#f9fafb; --gray100:#f3f4f6; --gray200:#e5e7eb;
+  --gray300:#d1d5db; --gray400:#9ca3af; --gray600:#4b5563; --gray800:#1f2937;
+  --st: env(safe-area-inset-top);
+  --sb: env(safe-area-inset-bottom);
+}
+html,body { height:100%; background:var(--gray100); font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif; color:var(--gray800); -webkit-tap-highlight-color:transparent; user-select:none; }
+
+/* ── 全局动画基础 ── */
+@keyframes ripple { to { transform:scale(2.5); opacity:0; } }
+@keyframes pop { 0%{transform:scale(1)} 50%{transform:scale(.92)} 100%{transform:scale(1)} }
+@keyframes popIn { 0%{transform:scale(.85);opacity:0} 60%{transform:scale(1.04)} 100%{transform:scale(1);opacity:1} }
+@keyframes slideUpSmooth { 0%{transform:translateY(100%);opacity:.5} 100%{transform:translateY(0);opacity:1} }
+@keyframes fadeScaleIn { 0%{transform:scale(.9);opacity:0} 100%{transform:scale(1);opacity:1} }
+@keyframes tabPulse { 0%{transform:scale(1)} 50%{transform:scale(1.12)} 100%{transform:scale(1)} }
+@keyframes catSelect { 0%{transform:scale(1)} 40%{transform:scale(.88)} 100%{transform:scale(1)} }
+@keyframes numPress { 0%{transform:scale(1)} 50%{transform:scale(.88)} 100%{transform:scale(1)} }
+@keyframes confirmBounce { 0%{transform:scale(1)} 30%{transform:scale(.85)} 60%{transform:scale(1.08)} 100%{transform:scale(1)} }
+@keyframes toastSlide { 0%{transform:translateX(-50%) translateY(20px);opacity:0} 100%{transform:translateX(-50%) translateY(0);opacity:1} }
+
+/* ── App Shell ── */
+#app { display:flex; flex-direction:column; height:100%; max-width:430px; margin:0 auto; background:#fff; box-shadow:0 0 40px rgba(0,0,0,.1); overflow:hidden; }
+
+/* ── Header ── */
+.header { background:linear-gradient(135deg,#16a34a,#15803d); padding:calc(var(--st) + 14px) 20px 0; color:#fff; flex-shrink:0; }
+.header-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+.header-title { font-size:19px; font-weight:800; letter-spacing:.3px; }
+.month-nav { display:flex; align-items:center; gap:10px; font-size:14px; font-weight:600; }
+.month-btn { background:rgba(255,255,255,.22); border:none; color:#fff; width:30px; height:30px; border-radius:50%; font-size:17px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:background .2s,transform .15s; }
+.month-btn:active { background:rgba(255,255,255,.4); transform:scale(.85); }
+
+/* Account switch in header */
+.account-switch { display:flex; gap:4px; margin-bottom:10px; }
+.account-btn { flex:1; padding:7px 0; border:none; border-radius:9px; font-size:12px; font-weight:700; cursor:pointer; font-family:inherit; background:rgba(255,255,255,.15); color:rgba(255,255,255,.7); text-align:center; transition:all .25s cubic-bezier(.4,0,.2,1); }
+.account-btn.active { background:rgba(255,255,255,.92); color:var(--green); transform:scale(1.03); }
+
+/* Summary cards - 2x2 grid */
+.summary-cards { display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:5px; padding-bottom:12px; }
+.s-card { background:rgba(255,255,255,.17); border-radius:10px; padding:8px 4px; text-align:center; }
+.s-card-label { font-size:8px; opacity:.82; margin-bottom:2px; }
+.s-card-value { font-size:13px; font-weight:800; }
+.s-card-value.income { color:#bbf7d0; }
+.s-card-value.expense { color:#fca5a5; }
+.s-card-value.debt { color:#fde68a; }
+
+/* Budget Bar */
+.budget-bar-wrap { margin:0 -20px; padding:0 20px 12px; }
+.budget-bar-label { display:flex; justify-content:space-between; font-size:10px; opacity:.82; margin-bottom:5px; }
+.budget-bar-bg { height:6px; background:rgba(255,255,255,.25); border-radius:3px; overflow:hidden; }
+.budget-bar-fill { height:100%; border-radius:3px; transition:width .6s cubic-bezier(.4,0,.2,1); background:#bbf7d0; }
+.budget-bar-fill.warn { background:#fcd34d; }
+.budget-bar-fill.over { background:#fca5a5; }
+
+/* ── Tabs ── */
+.tabs { display:flex; background:#fff; border-bottom:1px solid var(--gray200); flex-shrink:0; }
+.tab { flex:1; padding:10px 0; text-align:center; font-size:12px; color:var(--gray400); cursor:pointer; border-bottom:2px solid transparent; transition:all .3s cubic-bezier(.4,0,.2,1); font-weight:600; position:relative; }
+.tab.active { color:var(--green); border-bottom-color:var(--green); animation:tabPulse .3s ease; }
+
+/* ── Content ── */
+.content { flex:1; overflow-y:auto; -webkit-overflow-scrolling:touch; }
+.content::-webkit-scrollbar { display:none; }
+
+/* ── Record List ── */
+.record-list { padding:0 0 100px; }
+.date-header { display:flex; justify-content:space-between; align-items:center; padding:9px 16px 5px; background:var(--gray50); font-size:11px; color:var(--gray400); position:sticky; top:0; z-index:2; border-bottom:1px solid var(--gray200); }
+.record-item { display:flex; align-items:center; padding:12px 16px; background:#fff; border-bottom:1px solid var(--gray100); cursor:pointer; transition:background .15s,transform .12s; }
+.record-item:active { background:var(--gray50); transform:scale(.98); }
+.record-icon { width:38px; height:38px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0; margin-right:10px; }
+.record-icon.expense { background:var(--red-light); }
+.record-icon.income { background:var(--green-light); }
+.record-icon.debt { background:var(--amber-light); }
+.record-info { flex:1; min-width:0; }
+.record-cat { font-size:13px; font-weight:600; margin-bottom:1px; }
+.record-note { font-size:11px; color:var(--gray400); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.record-amount { font-size:15px; font-weight:800; flex-shrink:0; }
+.record-amount.expense { color:var(--red); }
+.record-amount.income { color:var(--green); }
+.record-amount.debt { color:var(--amber); }
+.record-badge { font-size:9px; padding:2px 5px; border-radius:6px; margin-left:5px; font-weight:700; }
+.record-badge.returned { background:var(--green-light); color:var(--green); }
+.record-badge.partial { background:var(--orange-light); color:var(--orange); }
+.record-badge.account-tag { background:var(--blue-light); color:var(--blue); font-size:8px; }
+.empty-state { text-align:center; padding:70px 20px; color:var(--gray400); }
+.empty-icon { font-size:56px; margin-bottom:12px; }
+.empty-text { font-size:14px; line-height:1.6; }
+
+/* ── FAB ── */
+.fab { position:fixed; bottom:calc(var(--sb) + 78px); left:50%; transform:translateX(-50%); width:56px; height:56px; background:linear-gradient(135deg,#16a34a,#15803d); border:none; border-radius:50%; color:#fff; font-size:28px; cursor:pointer; box-shadow:0 6px 22px rgba(22,163,74,.42); display:flex; align-items:center; justify-content:center; z-index:100; transition:transform .2s cubic-bezier(.4,0,.2,1),box-shadow .2s; }
+.fab:active { transform:translateX(-50%) scale(.85); box-shadow:0 2px 10px rgba(22,163,74,.3); }
+
+/* ── Bottom Nav ── */
+.bottom-nav { display:flex; background:#fff; border-top:1px solid var(--gray200); padding-bottom:var(--sb); flex-shrink:0; }
+.nav-btn { flex:1; padding:8px 0; display:flex; flex-direction:column; align-items:center; gap:2px; border:none; background:transparent; cursor:pointer; font-size:9px; color:var(--gray400); font-family:inherit; transition:color .25s,transform .15s; }
+.nav-btn.active { color:var(--green); }
+.nav-btn:active { transform:scale(.88); }
+.nav-btn.active .icon { animation:tabPulse .35s ease; }
+.nav-btn .icon { font-size:20px; transition:transform .2s; }
+
+/* ── Overlay & Sheet ── */
+.overlay { position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:200; display:none; align-items:flex-end; justify-content:center; }
+.overlay.open { display:flex; animation:fadeIn .25s ease; }
+@keyframes fadeIn { from{opacity:0} to{opacity:1} }
+.sheet { width:100%; max-width:430px; background:#fff; border-radius:22px 22px 0 0; padding:0 0 calc(var(--sb) + 8px); animation:slideUpSmooth .35s cubic-bezier(.32,.72,.24,1.02); max-height:92vh; overflow-y:auto; }
+.sheet::-webkit-scrollbar { display:none; }
+@keyframes slideUpSmooth { 0%{transform:translateY(100%);opacity:.5} 100%{transform:translateY(0);opacity:1} }
+.sheet-handle { width:38px; height:4px; background:var(--gray200); border-radius:2px; margin:11px auto 0; }
+.sheet-title { text-align:center; font-size:16px; font-weight:800; padding:10px 20px 0; }
+
+/* Account toggle in add sheet */
+.account-toggle { display:flex; background:var(--gray100); border-radius:11px; margin:8px 16px 6px; padding:3px; }
+.account-toggle-btn { flex:1; padding:7px 4px; border:none; background:transparent; border-radius:9px; font-size:13px; font-weight:700; cursor:pointer; color:var(--gray400); font-family:inherit; transition:all .25s cubic-bezier(.4,0,.2,1); }
+.account-toggle-btn.active { background:#fff; color:var(--green); box-shadow:0 2px 8px rgba(0,0,0,.09); transform:scale(1.02); }
+
+/* Type toggle (4 buttons) */
+.type-toggle { display:flex; background:var(--gray100); border-radius:11px; margin:0 16px 10px; padding:3px; }
+.type-btn { flex:1; padding:6px 2px; border:none; background:transparent; border-radius:9px; font-size:12px; font-weight:700; cursor:pointer; color:var(--gray400); font-family:inherit; transition:all .25s cubic-bezier(.4,0,.2,1); }
+.type-btn:active { transform:scale(.9); }
+.type-btn.active.expense { background:#fff; color:var(--red); box-shadow:0 2px 8px rgba(0,0,0,.09); }
+.type-btn.active.income  { background:#fff; color:var(--green); box-shadow:0 2px 8px rgba(0,0,0,.09); }
+.type-btn.active.debt    { background:#fff; color:var(--amber); box-shadow:0 2px 8px rgba(0,0,0,.09); }
+
+/* Amount display */
+.amount-display { padding:4px 20px 2px; }
+.amount-label { font-size:11px; color:var(--gray400); margin-bottom:3px; }
+.amount-row { display:flex; align-items:baseline; gap:5px; border-bottom:2px solid var(--green); padding-bottom:5px; }
+.amount-prefix { font-size:22px; font-weight:800; color:var(--green); }
+.amount-value { font-size:34px; font-weight:800; color:var(--gray800); min-width:60px; }
+.amount-hint { font-size:10px; color:var(--gray400); margin-top:3px; }
+
+/* Smart input */
+.smart-input-area { margin:6px 16px; }
+.smart-label { font-size:11px; color:var(--gray400); margin-bottom:5px; }
+.smart-input { width:100%; padding:9px 13px; border:1.5px solid var(--gray200); border-radius:11px; font-size:13px; outline:none; resize:none; font-family:inherit; }
+.smart-input:focus { border-color:var(--green); }
+.parse-result { display:none; margin-top:5px; background:var(--green-light); border-radius:8px; padding:7px 11px; font-size:12px; color:var(--green); }
+.parse-result.show { display:flex; align-items:center; justify-content:space-between; animation:popIn .3s cubic-bezier(.32,.72,.24,1.02); }
+.apply-btn { background:var(--green); color:#fff; border:none; border-radius:7px; padding:4px 10px; font-size:11px; cursor:pointer; white-space:nowrap; transition:all .15s; }
+.apply-btn:active { background:var(--green-d); transform:scale(.9); }
+
+/* Category grid */
+.cat-section { padding:6px 16px; }
+.cat-label { font-size:11px; color:var(--gray400); margin-bottom:6px; }
+.cat-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:5px; }
+.cat-item { display:flex; flex-direction:column; align-items:center; gap:2px; padding:6px 2px; border:1.5px solid var(--gray200); border-radius:11px; cursor:pointer; font-size:9px; color:var(--gray600); transition:all .2s cubic-bezier(.4,0,.2,1); }
+.cat-item .ci { font-size:18px; transition:transform .2s; }
+.cat-item:active { transform:scale(.88); }
+.cat-item.selected { border-color:var(--green); background:var(--green-light); color:var(--green); animation:catSelect .3s ease; }
+.cat-item.selected.debt-sel { border-color:var(--amber); background:var(--amber-light); color:var(--amber); animation:catSelect .3s ease; }
+
+/* Note & date */
+.note-row { display:flex; gap:7px; padding:6px 16px 8px; }
+.note-input { flex:1; padding:9px 12px; border:1.5px solid var(--gray200); border-radius:11px; font-size:13px; outline:none; font-family:inherit; }
+.note-input:focus { border-color:var(--green); }
+.date-input { padding:9px 8px; border:1.5px solid var(--gray200); border-radius:11px; font-size:12px; outline:none; color:var(--gray600); }
+.date-input:focus { border-color:var(--green); }
+
+/* Debtor input */
+.debtor-input-area { padding:0 16px 6px; }
+.debtor-input { width:100%; padding:9px 12px; border:1.5px solid var(--amber); border-radius:11px; font-size:13px; outline:none; font-family:inherit; background:var(--amber-light); }
+.debtor-input:focus { border-color:var(--amber); box-shadow:0 0 0 2px rgba(217,119,6,.2); }
+.debtor-label { font-size:11px; color:var(--amber); margin-bottom:4px; font-weight:600; }
+
+/* Numpad */
+.numpad { display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:var(--gray200); border-top:1px solid var(--gray200); }
+.np-btn { background:#fff; border:none; padding:14px 6px; font-size:18px; cursor:pointer; font-family:inherit; color:var(--gray800); transition:background .1s,transform .1s; position:relative; overflow:hidden; }
+.np-btn:active { background:var(--gray100); animation:numPress .15s ease; }
+.np-btn.action { background:var(--gray50); color:var(--gray600); font-size:13px; }
+.np-btn.action:active { background:var(--gray200); }
+.np-btn.confirm { background:var(--green); color:#fff; font-size:14px; font-weight:800; transition:background .15s,transform .15s; }
+.np-btn.confirm:active { background:var(--green-d); animation:confirmBounce .25s ease; }
+
+/* ══ Debt View ══ */
+.debt-view { padding:14px 14px 100px; }
+.debt-summary { background:linear-gradient(135deg,var(--amber),#b45309); border-radius:14px; padding:16px; margin-bottom:12px; color:#fff; }
+.debt-summary-title { font-size:12px; opacity:.85; margin-bottom:5px; }
+.debt-summary-amount { font-size:28px; font-weight:800; margin-bottom:8px; }
+.debt-summary-sub { font-size:11px; opacity:.8; }
+.debt-person-card { background:#fff; border-radius:14px; padding:14px; margin-bottom:10px; box-shadow:0 2px 8px rgba(0,0,0,.05); }
+.debt-person-top { display:flex; align-items:center; gap:10px; margin-bottom:8px; }
+.debt-person-avatar { width:38px; height:38px; border-radius:50%; background:var(--amber-light); display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0; }
+.debt-person-info { flex:1; }
+.debt-person-name { font-size:14px; font-weight:700; }
+.debt-person-total { font-size:12px; color:var(--amber); font-weight:600; }
+.debt-person-remain { font-size:11px; color:var(--gray400); }
+.debt-item { display:flex; align-items:center; padding:8px 0; border-top:1px solid var(--gray100); }
+.debt-item-date { font-size:11px; color:var(--gray400); width:60px; flex-shrink:0; }
+.debt-item-info { flex:1; font-size:12px; color:var(--gray600); }
+.debt-item-amount { font-size:13px; font-weight:700; color:var(--amber); flex-shrink:0; }
+.debt-item-actions { display:flex; gap:6px; margin-left:6px; }
+.debt-repay-btn { padding:4px 10px; border:1.5px solid var(--green); border-radius:8px; background:#fff; color:var(--green); font-size:11px; cursor:pointer; font-family:inherit; font-weight:600; transition:all .2s; }
+.debt-repay-btn:active { background:var(--green-light); transform:scale(.9); }
+.debt-item-badge { font-size:9px; padding:2px 5px; border-radius:6px; font-weight:700; }
+.debt-item-badge.returned { background:var(--green-light); color:var(--green); }
+.debt-item-badge.partial { background:var(--orange-light); color:var(--orange); }
+
+
+/* ══ Stats View ══ */
+.stats-view { padding:14px 14px 100px; }
+.stats-period { display:flex; justify-content:center; gap:7px; margin-bottom:14px; }
+.period-btn { padding:5px 14px; border:1.5px solid var(--gray200); border-radius:18px; background:#fff; font-size:12px; color:var(--gray600); cursor:pointer; font-family:inherit; transition:all .25s cubic-bezier(.4,0,.2,1); }
+.period-btn:active { transform:scale(.9); }
+.period-btn.active { background:var(--green); border-color:var(--green); color:#fff; }
+.chart-card { background:#fff; border-radius:14px; padding:14px; box-shadow:0 2px 10px rgba(0,0,0,.06); margin-bottom:14px; }
+.chart-title { font-size:13px; font-weight:800; color:var(--gray800); margin-bottom:10px; }
+canvas { width:100% !important; display:block; }
+.cat-breakdown { margin-top:10px; }
+.cat-row { display:flex; align-items:center; gap:7px; padding:5px 0; border-bottom:1px solid var(--gray100); font-size:12px; }
+.cat-row:last-child { border-bottom:none; }
+.cat-dot { width:9px; height:9px; border-radius:50%; flex-shrink:0; }
+.cat-name { flex:1; color:var(--gray600); }
+.cat-pct { color:var(--gray400); font-size:11px; }
+.cat-amt { font-weight:800; }
+
+/* ══ Budget View ══ */
+.budget-view { padding:14px 14px 100px; }
+.budget-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
+.budget-month-total { font-size:13px; color:var(--gray600); }
+.budget-set-all { font-size:12px; color:var(--green); cursor:pointer; padding:4px 10px; border:1px solid var(--green); border-radius:14px; background:#fff; font-family:inherit; transition:all .2s; }
+.budget-set-all:active { background:var(--green-light); transform:scale(.9); }
+.budget-overall { background:linear-gradient(135deg,var(--green),var(--green-d)); border-radius:14px; padding:16px; margin-bottom:14px; color:#fff; }
+.budget-overall-title { font-size:11px; opacity:.85; margin-bottom:6px; }
+.budget-overall-nums { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:8px; }
+.budget-overall-spent { font-size:26px; font-weight:800; }
+.budget-overall-limit { font-size:13px; opacity:.85; }
+.budget-overall-bar-bg { height:8px; background:rgba(255,255,255,.3); border-radius:4px; overflow:hidden; }
+.budget-overall-bar-fill { height:100%; border-radius:4px; background:#fff; transition:width .6s cubic-bezier(.4,0,.2,1); }
+.budget-overall-bar-fill.warn { background:#fcd34d; }
+.budget-overall-bar-fill.over { background:#fca5a5; }
+.budget-overall-hint { font-size:10px; opacity:.8; margin-top:5px; }
+.budget-cat-list { }
+.budget-cat-item { background:#fff; border-radius:14px; padding:13px 14px; margin-bottom:10px; box-shadow:0 2px 8px rgba(0,0,0,.05); }
+.budget-cat-top { display:flex; align-items:center; gap:10px; margin-bottom:8px; }
+.budget-cat-icon { font-size:22px; width:38px; height:38px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:var(--gray100); flex-shrink:0; }
+.budget-cat-info { flex:1; }
+.budget-cat-name { font-size:13px; font-weight:700; margin-bottom:1px; }
+.budget-cat-sub { font-size:11px; color:var(--gray400); }
+.budget-cat-edit { display:flex; align-items:center; gap:4px; }
+.budget-cat-input { width:80px; padding:5px 8px; border:1.5px solid var(--gray200); border-radius:8px; font-size:13px; text-align:right; outline:none; font-family:inherit; }
+.budget-cat-input:focus { border-color:var(--green); }
+.budget-bar-bg2 { height:5px; background:var(--gray100); border-radius:3px; overflow:hidden; }
+.budget-bar-fill2 { height:100%; border-radius:3px; background:var(--green); transition:width .6s cubic-bezier(.4,0,.2,1); }
+.budget-bar-fill2.warn { background:var(--orange); }
+.budget-bar-fill2.over { background:var(--red); }
+.budget-no-limit { font-size:11px; color:var(--gray400); font-style:italic; }
+
+/* ══ Settings View ══ */
+.settings-view { padding:14px 14px 100px; }
+.settings-section { margin-bottom:18px; }
+.settings-section-title { font-size:11px; color:var(--gray400); font-weight:700; letter-spacing:.8px; text-transform:uppercase; margin-bottom:7px; padding-left:3px; }
+.settings-card { background:#fff; border-radius:14px; overflow:hidden; box-shadow:0 2px 8px rgba(0,0,0,.05); }
+.settings-item { display:flex; align-items:center; padding:13px 14px; border-bottom:1px solid var(--gray100); cursor:pointer; transition:background .15s,transform .12s; }
+.settings-item:last-child { border-bottom:none; }
+.settings-item:active { background:var(--gray50); transform:scale(.98); }
+.settings-icon { width:34px; height:34px; border-radius:9px; display:flex; align-items:center; justify-content:center; font-size:17px; margin-right:11px; flex-shrink:0; }
+.settings-label { flex:1; font-size:14px; font-weight:600; }
+.settings-desc { font-size:11px; color:var(--gray400); }
+.settings-arrow { color:var(--gray400); font-size:15px; }
+
+/* ── Detail Modal ── */
+.record-detail-modal { position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:300; display:none; align-items:center; justify-content:center; padding:20px; }
+.record-detail-modal.open { display:flex; animation:fadeIn .2s; }
+.detail-card { background:#fff; border-radius:18px; padding:22px; width:100%; max-width:310px; animation:fadeScaleIn .25s cubic-bezier(.32,.72,.24,1.02); }
+.detail-amount { text-align:center; font-size:38px; font-weight:800; margin:6px 0 3px; }
+.detail-cat { text-align:center; font-size:13px; color:var(--gray400); margin-bottom:14px; }
+.detail-row { display:flex; justify-content:space-between; padding:7px 0; border-bottom:1px solid var(--gray100); font-size:13px; }
+.detail-row:last-of-type { border-bottom:none; }
+.detail-key { color:var(--gray400); }
+.detail-actions { display:flex; gap:9px; margin-top:14px; }
+.btn-cancel { flex:1; padding:11px; border:1.5px solid var(--gray200); border-radius:11px; background:#fff; font-size:14px; cursor:pointer; color:var(--gray600); font-family:inherit; transition:all .15s; }
+.btn-cancel:active { background:var(--gray50); transform:scale(.95); }
+.btn-delete { flex:1; padding:11px; border:none; border-radius:11px; background:var(--red); font-size:14px; cursor:pointer; color:#fff; font-weight:700; font-family:inherit; transition:all .15s; }
+.btn-delete:active { background:#b91c1c; transform:scale(.95); }
+.btn-repay { flex:1; padding:11px; border:none; border-radius:11px; background:var(--green); font-size:14px; cursor:pointer; color:#fff; font-weight:700; font-family:inherit; transition:all .15s; }
+.btn-repay:active { background:var(--green-d); transform:scale(.95); }
+
+/* ── Repay Modal ── */
+.repay-modal { position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:400; display:none; align-items:center; justify-content:center; padding:20px; }
+.repay-modal.open { display:flex; animation:fadeIn .2s; }
+.repay-card { background:#fff; border-radius:18px; padding:22px; width:100%; max-width:310px; animation:fadeScaleIn .25s cubic-bezier(.32,.72,.24,1.02); }
+.repay-title { text-align:center; font-size:16px; font-weight:800; margin-bottom:14px; }
+.repay-info { font-size:13px; color:var(--gray600); margin-bottom:12px; text-align:center; }
+.repay-input-wrap { display:flex; align-items:center; gap:6px; margin-bottom:14px; }
+.repay-input-wrap span { font-size:20px; font-weight:800; color:var(--green); }
+.repay-input { flex:1; padding:10px 12px; border:2px solid var(--green); border-radius:11px; font-size:18px; outline:none; font-family:inherit; text-align:right; font-weight:700; }
+.repay-date-wrap { margin-bottom:14px; }
+.repay-date-label { font-size:11px; color:var(--gray400); margin-bottom:5px; }
+.repay-date-input { width:100%; padding:9px 12px; border:1.5px solid var(--gray200); border-radius:11px; font-size:13px; outline:none; }
+.repay-actions { display:flex; gap:9px; }
+
+/* ── Toast ── */
+.toast { position:fixed; bottom:calc(var(--sb) + 88px); left:50%; transform:translateX(-50%); background:rgba(0,0,0,.78); color:#fff; padding:9px 18px; border-radius:18px; font-size:13px; z-index:500; opacity:0; transition:opacity .3s,transform .3s cubic-bezier(.4,0,.2,1); pointer-events:none; white-space:nowrap; }
+.toast.show { opacity:1; animation:toastSlide .35s cubic-bezier(.32,.72,.24,1.02); }
+
+/* ── Budget Alert ── */
+.budget-alert { background:#fef3c7; border-left:3px solid var(--orange); padding:9px 14px; margin:8px 14px 0; border-radius:8px; font-size:12px; color:#92400e; display:none; }
+.budget-alert.show { display:block; animation:popIn .35s ease; }
+
+/* ══ Screenshot OCR ══ */
+.ocr-area { margin:6px 16px; border:1.5px dashed var(--green); border-radius:12px; padding:12px; text-align:center; transition:all .25s cubic-bezier(.4,0,.2,1); background:var(--green-light); cursor:pointer; }
+.ocr-area:active { transform:scale(.97); background:#bbf7d0; }
+.ocr-area-icon { font-size:28px; margin-bottom:4px; }
+.ocr-area-text { font-size:12px; color:var(--green-d); font-weight:600; }
+.ocr-area-hint { font-size:10px; color:var(--gray400); margin-top:3px; }
+.ocr-result { margin:6px 16px; background:#fff; border-radius:12px; box-shadow:0 2px 12px rgba(0,0,0,.08); overflow:hidden; animation:popIn .3s ease; }
+.ocr-result-header { display:flex; align-items:center; justify-content:space-between; padding:10px 14px; background:var(--green-light); border-bottom:1px solid var(--gray100); }
+.ocr-result-title { font-size:13px; font-weight:700; color:var(--green-d); }
+.ocr-result-close { background:none; border:none; font-size:18px; color:var(--gray400); cursor:pointer; padding:2px 6px; }
+.ocr-result-body { padding:12px 14px; }
+.ocr-row { display:flex; align-items:center; gap:8px; margin-bottom:8px; }
+.ocr-row:last-child { margin-bottom:0; }
+.ocr-label { font-size:11px; color:var(--gray400); width:50px; flex-shrink:0; }
+.ocr-value { flex:1; font-size:14px; font-weight:700; color:var(--gray800); }
+.ocr-input { flex:1; padding:6px 10px; border:1.5px solid var(--gray200); border-radius:8px; font-size:13px; outline:none; font-family:inherit; }
+.ocr-input:focus { border-color:var(--green); }
+.ocr-preview { margin:6px 16px; border-radius:10px; overflow:hidden; max-height:80px; }
+.ocr-preview img { width:100%; height:80px; object-fit:cover; opacity:.7; }
+.ocr-apply-btn { width:100%; padding:10px; border:none; border-radius:10px; background:var(--green); color:#fff; font-size:14px; font-weight:700; cursor:pointer; font-family:inherit; margin-top:8px; transition:all .15s; }
+.ocr-apply-btn:active { background:var(--green-d); transform:scale(.96); }
+
+/* Quick-add mode (from share/url scheme) */
+.quick-badge { position:fixed; top:calc(var(--st) + 10px); left:50%; transform:translateX(-50%); background:var(--green); color:#fff; padding:5px 14px; border-radius:18px; font-size:11px; font-weight:700; z-index:150; animation:toastSlide .35s cubic-bezier(.32,.72,.24,1.02); white-space:nowrap; }
+
+/* Standalone mode optimizations */
+@media (display-mode: standalone) {
+  .header { padding-top:calc(var(--st) + 10px); }
+  .pwa-only { display:block !important; }
+}
+.pwa-only { display:none; }
+
+/* Quick add floating button (alternative FAB position for faster access) */
+.quick-fab { position:fixed; bottom:calc(var(--sb) + 140px); right:16px; width:44px; height:44px; background:linear-gradient(135deg,#3b82f6,#2563eb); border:none; border-radius:50%; color:#fff; font-size:20px; cursor:pointer; box-shadow:0 4px 14px rgba(59,130,246,.4); display:flex; align-items:center; justify-content:center; z-index:99; transition:transform .2s cubic-bezier(.4,0,.2,1),box-shadow .2s; }
+.quick-fab:active { transform:scale(.85); box-shadow:0 2px 8px rgba(59,130,246,.3); }
+</style>
+</head>
+<body>
+<div id="app">
+  <!-- ── Header ── -->
+  <div class="header">
+    <div class="header-top">
+      <div class="header-title">🌿 小杨专属记账</div>
+      <div class="month-nav">
+        <button class="month-btn" id="prevMonth">‹</button>
+        <span id="monthLabel"></span>
+        <button class="month-btn" id="nextMonth">›</button>
+      </div>
+    </div>
+    <!-- Account Switch -->
+    <div class="account-switch">
+      <button class="account-btn active" data-account="all">全部</button>
+      <button class="account-btn" data-account="personal">👤 个人</button>
+      <button class="account-btn" data-account="company">🏢 公司</button>
+    </div>
+    <div class="summary-cards">
+      <div class="s-card">
+        <div class="s-card-label">收入</div>
+        <div class="s-card-value income" id="totalIncome">¥0</div>
+      </div>
+      <div class="s-card">
+        <div class="s-card-label">支出</div>
+        <div class="s-card-value expense" id="totalExpense">¥0</div>
+      </div>
+      <div class="s-card">
+        <div class="s-card-label">结余</div>
+        <div class="s-card-value" id="totalBalance">¥0</div>
+      </div>
+      <div class="s-card">
+        <div class="s-card-label">待收回</div>
+        <div class="s-card-value debt" id="totalDebt">¥0</div>
+      </div>
+    </div>
+    <div class="budget-bar-wrap" id="headerBudgetWrap" style="display:none">
+      <div class="budget-bar-label">
+        <span>本月预算进度</span>
+        <span id="headerBudgetText"></span>
+      </div>
+      <div class="budget-bar-bg">
+        <div class="budget-bar-fill" id="headerBudgetFill" style="width:0%"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Tabs ── -->
+  <div class="tabs">
+    <div class="tab active" data-tab="list">明细</div>
+    <div class="tab" data-tab="stats">统计</div>
+    <div class="tab" data-tab="debt">借还</div>
+    <div class="tab" data-tab="budget">预算</div>
+    <div class="tab" data-tab="settings">设置</div>
+  </div>
+
+  <!-- ── Content ── -->
+  <div class="content">
+    <div class="budget-alert" id="budgetAlert"></div>
+
+    <!-- List View -->
+    <div id="listView" class="record-list"></div>
+
+    <!-- Stats View -->
+    <div id="statsView" class="stats-view" style="display:none">
+      <div class="stats-period">
+        <button class="period-btn active" data-period="month">本月</button>
+        <button class="period-btn" data-period="last">上月</button>
+        <button class="period-btn" data-period="year">全年</button>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">📊 收支趋势（近7天）</div>
+        <canvas id="trendChart" height="160"></canvas>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">🍩 本月支出分布</div>
+        <canvas id="pieChart" height="200"></canvas>
+        <div class="cat-breakdown" id="catBreakdown"></div>
+      </div>
+    </div>
+
+    <!-- Debt View -->
+    <div id="debtView" class="debt-view" style="display:none">
+      <div class="debt-summary">
+        <div class="debt-summary-title">别人欠我总计</div>
+        <div class="debt-summary-amount" id="debtTotalAmount">¥0</div>
+        <div class="debt-summary-sub" id="debtTotalSub">暂无借贷记录</div>
+      </div>
+      <div id="debtPersonList"></div>
+    </div>
+
+    <!-- Budget View -->
+    <div id="budgetView" class="budget-view" style="display:none">
+      <div class="budget-header">
+        <div class="budget-month-total" id="budgetMonthLabel"></div>
+        <button class="budget-set-all" id="budgetSaveBtn">保存预算</button>
+      </div>
+      <div class="budget-overall" id="budgetOverallCard">
+        <div class="budget-overall-title">本月总预算</div>
+        <div class="budget-overall-nums">
+          <div>
+            <span class="budget-overall-spent" id="boSpent">¥0</span>
+          </div>
+          <div class="budget-overall-limit" id="boLimit">/ 未设置</div>
+        </div>
+        <div class="budget-overall-bar-bg">
+          <div class="budget-overall-bar-fill" id="boFill" style="width:0%"></div>
+        </div>
+        <div class="budget-overall-hint" id="boHint"></div>
+      </div>
+      <div class="budget-cat-list" id="budgetCatList"></div>
+    </div>
+
+    <!-- Settings View -->
+    <div id="settingsView" class="settings-view" style="display:none">
+      <div class="settings-section">
+        <div class="settings-section-title">数据管理</div>
+        <div class="settings-card">
+          <div class="settings-item" id="exportBtn">
+            <div class="settings-icon" style="background:#e0f2fe">📤</div>
+            <div>
+              <div class="settings-label">导出数据</div>
+              <div class="settings-desc">备份为 JSON 文件</div>
+            </div>
+            <div class="settings-arrow">›</div>
+          </div>
+          <div class="settings-item" id="importBtn">
+            <div class="settings-icon" style="background:#fef9c3">📥</div>
+            <div>
+              <div class="settings-label">导入数据</div>
+              <div class="settings-desc">从 JSON 文件恢复</div>
+            </div>
+            <div class="settings-arrow">›</div>
+          </div>
+          <div class="settings-item" id="clearBtn">
+            <div class="settings-icon" style="background:#fee2e2">🗑️</div>
+            <div>
+              <div class="settings-label">清除所有数据</div>
+              <div class="settings-desc">不可恢复，请谨慎操作</div>
+            </div>
+            <div class="settings-arrow">›</div>
+          </div>
+        </div>
+      </div>
+      <div class="settings-section">
+        <div class="settings-section-title">关于</div>
+        <div class="settings-card">
+          <div class="settings-item">
+            <div class="settings-icon" style="background:#dcfce7">🌿</div>
+            <div>
+              <div class="settings-label">小杨专属记账</div>
+              <div class="settings-desc">v6.0 · 截屏识别 · 快捷记账 · 数据存本地</div>
+            </div>
+          </div>
+          <div class="settings-item" id="installPwa">
+            <div class="settings-icon" style="background:#ede9fe">📱</div>
+            <div>
+              <div class="settings-label">添加到主屏幕</div>
+              <div class="settings-desc">Safari → 分享 → 添加到主屏幕</div>
+            </div>
+            <div class="settings-arrow">›</div>
+          </div>
+          <div class="settings-item" id="quickAddTip">
+            <div class="settings-icon" style="background:#dcfce7">⚡</div>
+            <div>
+              <div class="settings-label">快捷记账</div>
+              <div class="settings-desc">付款后截图→分享到本App→自动识别</div>
+            </div>
+            <div class="settings-arrow">›</div>
+          </div>
+        </div>
+      </div>
+      <div style="text-align:center;color:var(--gray400);font-size:11px;margin-top:18px;padding-bottom:18px;line-height:1.8">
+        共记录 <span id="totalRecords">0</span> 条账单<br>
+        所有数据仅存于本机，完全私密
+      </div>
+    </div>
+  </div>
+
+  <!-- FAB -->
+  <button class="fab" id="fabBtn">+</button>
+  <!-- Quick screenshot FAB -->
+  <button class="quick-fab" id="quickFab" title="截屏识别">📸</button>
+
+  <!-- Bottom Nav -->
+  <div class="bottom-nav">
+    <button class="nav-btn active" data-nav="list"><span class="icon">📋</span>明细</button>
+    <button class="nav-btn" data-nav="stats"><span class="icon">📊</span>统计</button>
+    <button class="nav-btn" data-nav="debt"><span class="icon">🤝</span>借还</button>
+    <button class="nav-btn" data-nav="budget"><span class="icon">🎯</span>预算</button>
+    <button class="nav-btn" data-nav="settings"><span class="icon">⚙️</span>设置</button>
+  </div>
+</div>
+
+<!-- ── Add Record Sheet ── -->
+<div class="overlay" id="addOverlay">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">记一笔</div>
+    <!-- Account toggle -->
+    <div class="account-toggle">
+      <button class="account-toggle-btn active" data-account="personal">👤 个人账户</button>
+      <button class="account-toggle-btn" data-account="company">🏢 公司账户</button>
+    </div>
+    <!-- Type toggle (3 buttons, company only has income/expense) -->
+    <div class="type-toggle" id="typeToggle">
+      <button class="type-btn active expense" data-type="expense">支出</button>
+      <button class="type-btn income" data-type="income">收入</button>
+      <button class="type-btn debt" data-type="debt" id="debtTypeBtn">别人欠我</button>
+    </div>
+    <div class="amount-display">
+      <div class="amount-label">金额（元）</div>
+      <div class="amount-row">
+        <span class="amount-prefix">¥</span>
+        <span class="amount-value" id="amountDisplay">0</span>
+      </div>
+      <div class="amount-hint">💡 下方粘贴账单文字可自动识别金额</div>
+    </div>
+    <!-- Debtor name input (for debt type) -->
+    <div class="debtor-input-area" id="debtorArea" style="display:none">
+      <div class="debtor-label">👤 欠款人姓名</div>
+      <input class="debtor-input" id="debtorInput" type="text" placeholder="输入欠你钱的人的名字" maxlength="20">
+    </div>
+    <div class="smart-input-area">
+      <div class="smart-label">🔍 智能识别（粘贴账单/短信/截图文字）</div>
+      <textarea class="smart-input" id="smartInput" rows="2" placeholder="例：微信收款 ¥38.50 / 超市消费 支出100元"></textarea>
+      <div class="parse-result" id="parseResult">
+        <span>识别到金额：<strong id="parsedAmt"></strong></span>
+        <button class="apply-btn" id="applyParsed">一键应用</button>
+      </div>
+    </div>
+    <!-- Screenshot OCR area -->
+    <div class="ocr-area" id="ocrArea">
+      <div class="ocr-area-icon">📸</div>
+      <div class="ocr-area-text">点击选截图 / 拍照识别</div>
+      <div class="ocr-area-hint">支持微信/支付宝付款截图，自动识别金额和商户</div>
+    </div>
+    <div class="ocr-preview" id="ocrPreview" style="display:none"></div>
+    <div class="ocr-result" id="ocrResult" style="display:none">
+      <div class="ocr-result-header">
+        <span class="ocr-result-title">🔍 截图识别结果</span>
+        <button class="ocr-result-close" id="ocrClose">✕</button>
+      </div>
+      <div class="ocr-result-body">
+        <div class="ocr-row">
+          <span class="ocr-label">金额</span>
+          <span class="ocr-value" id="ocrAmount">--</span>
+        </div>
+        <div class="ocr-row">
+          <span class="ocr-label">商户</span>
+          <input class="ocr-input" id="ocrMerchant" placeholder="识别商户名" maxlength="30">
+        </div>
+        <div class="ocr-row">
+          <span class="ocr-label">类型</span>
+          <select class="ocr-input" id="ocrType" style="padding:6px 8px">
+            <option value="expense">支出</option>
+            <option value="income">收入</option>
+          </select>
+        </div>
+        <button class="ocr-apply-btn" id="ocrApplyBtn">✅ 一键记账</button>
+      </div>
+    </div>
+    <input type="file" id="ocrFileInput" accept="image/*" capture="environment" style="display:none">
+    <div class="cat-section" id="catSection">
+      <div class="cat-label">分类</div>
+      <div class="cat-grid" id="catGrid"></div>
+    </div>
+    <div class="note-row">
+      <input class="note-input" id="noteInput" type="text" placeholder="备注（可选）" maxlength="50">
+      <input class="date-input" id="dateInput" type="date">
+    </div>
+    <div class="numpad">
+      <button class="np-btn" data-k="7">7</button>
+      <button class="np-btn" data-k="8">8</button>
+      <button class="np-btn" data-k="9">9</button>
+      <button class="np-btn action" data-k="del">⌫</button>
+      <button class="np-btn" data-k="4">4</button>
+      <button class="np-btn" data-k="5">5</button>
+      <button class="np-btn" data-k="6">6</button>
+      <button class="np-btn action" data-k=".">.</button>
+      <button class="np-btn" data-k="1">1</button>
+      <button class="np-btn" data-k="2">2</button>
+      <button class="np-btn" data-k="3">3</button>
+      <button class="np-btn action" data-k="clear">清空</button>
+      <button class="np-btn" data-k="0" style="grid-column:span 2">0</button>
+      <button class="np-btn" data-k="00">00</button>
+      <button class="np-btn confirm" data-k="ok">完成 ✓</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Record Detail Modal ── -->
+<div class="record-detail-modal" id="detailModal">
+  <div class="detail-card">
+    <div id="detailIcon" style="text-align:center;font-size:38px;margin-bottom:3px"></div>
+    <div class="detail-amount" id="detailAmount"></div>
+    <div class="detail-cat" id="detailCat"></div>
+    <div class="detail-row"><span class="detail-key">日期</span><span id="detailDate"></span></div>
+    <div class="detail-row"><span class="detail-key">类型</span><span id="detailType"></span></div>
+    <div class="detail-row"><span class="detail-key">账户</span><span id="detailAccount"></span></div>
+    <div class="detail-row" id="detailNoteRow"><span class="detail-key">备注</span><span id="detailNote"></span></div>
+    <div class="detail-row" id="detailDebtorRow" style="display:none"><span class="detail-key">欠款人</span><span id="detailDebtor"></span></div>
+    <div class="detail-row" id="detailRepayRow" style="display:none"><span class="detail-key">已还</span><span id="detailRepay"></span></div>
+    <div class="detail-actions">
+      <button class="btn-cancel" id="detailClose">关闭</button>
+      <button class="btn-repay" id="detailRepayBtn" style="display:none">💰 记还款</button>
+      <button class="btn-delete" id="detailDelete">🗑 删除</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Repay Modal ── -->
+<div class="repay-modal" id="repayModal">
+  <div class="repay-card">
+    <div class="repay-title">💰 记录还款</div>
+    <div class="repay-info" id="repayInfo"></div>
+    <div class="repay-input-wrap">
+      <span>¥</span>
+      <input class="repay-input" id="repayAmountInput" type="number" inputmode="decimal" step="0.01" min="0.01" placeholder="还款金额">
+    </div>
+    <div class="repay-date-wrap">
+      <div class="repay-date-label">还款日期</div>
+      <input class="repay-date-input" id="repayDateInput" type="date">
+    </div>
+    <div class="repay-actions">
+      <button class="btn-cancel" id="repayCancel">取消</button>
+      <button class="btn-repay" id="repayConfirm">确认还款 ✓</button>
+    </div>
+  </div>
+</div>
+
+<input type="file" id="importFile" accept=".json" style="display:none">
+<div class="toast" id="toast"></div>
+<script src="app.js"></script>
+</body>
+</html>
