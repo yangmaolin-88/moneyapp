@@ -1,22 +1,118 @@
 /* ============================================================
-   小杨专属记账 app.js v6.0
+   小杨专属记账 app.js v7.0
    功能：收支记录 · 智能金额识别 · 截屏OCR识别 · 快捷记账
          统计图表 · 预算管理 · 借贷管理
          个人/公司双账户（公司仅收支，简单明了）
-   数据全部存于 localStorage，零网络依赖，自用专属
+         双存储持久化（localStorage + IndexedDB）
+         增强导出（JSON/CSV/月报/按月/按范围）
+         数据安全（自动备份 · 完整性检查 · 自动恢复）
    ============================================================ */
 
 // ─────────────────────────────────────────────
-// 1. 持久化
+// 1. 双存储持久化（localStorage + IndexedDB）
 // ─────────────────────────────────────────────
 const LS_RECORDS  = 'xh_records';
 const LS_BUDGETS  = 'xh_budgets';
+const LS_BACKUP   = 'xh_backup';   // auto-backup snapshot
+const IDB_NAME    = 'XiaoYangDB';
+const IDB_VERSION = 1;
 
 let records = JSON.parse(localStorage.getItem(LS_RECORDS) || '[]');
 let budgets = JSON.parse(localStorage.getItem(LS_BUDGETS) || '{}');
 
-const saveRecords = () => localStorage.setItem(LS_RECORDS, JSON.stringify(records));
-const saveBudgets = () => localStorage.setItem(LS_BUDGETS, JSON.stringify(budgets));
+// Initialize IndexedDB
+function openIDB() {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(IDB_NAME, IDB_VERSION);
+    req.onupgradeneeded = (e) => {
+      const db = e.target.result;
+      if (!db.objectStoreNames.contains('records')) {
+        db.createObjectStore('records', { keyPath: 'id' });
+      }
+      if (!db.objectStoreNames.contains('budgets')) {
+        db.createObjectStore('budgets', { keyPath: 'key' });
+      }
+      if (!db.objectStoreNames.contains('backups')) {
+        db.createObjectStore('backups', { keyPath: 'timestamp' });
+      }
+    };
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+// Save records to BOTH localStorage and IndexedDB
+async function saveRecords() {
+  localStorage.setItem(LS_RECORDS, JSON.stringify(records));
+  // Auto-backup to localStorage
+  localStorage.setItem(LS_BACKUP, JSON.stringify({ records, budgets, ts: Date.now() }));
+  // Save to IndexedDB
+  try {
+    const db = await openIDB();
+    const tx = db.transaction('records', 'readwrite');
+    const store = tx.objectStore('records');
+    await store.clear();
+    for (const r of records) store.put(r);
+  } catch(e) { console.warn('IDB save failed:', e); }
+}
+
+async function saveBudgets() {
+  localStorage.setItem(LS_BUDGETS, JSON.stringify(budgets));
+  localStorage.setItem(LS_BACKUP, JSON.stringify({ records, budgets, ts: Date.now() }));
+  try {
+    const db = await openIDB();
+    const tx = db.transaction('budgets', 'readwrite');
+    const store = tx.objectStore('budgets');
+    await store.clear();
+    store.put({ key: 'main', data: budgets });
+  } catch(e) { console.warn('IDB save failed:', e); }
+}
+
+// Data integrity check
+function checkDataIntegrity() {
+  const issues = [];
+  records.forEach(r => {
+    if (!r.id) issues.push(`Record missing ID`);
+    if (!r.type || !['expense','income','debt'].includes(r.type)) issues.push(`Invalid type: ${r.type}`);
+    if (!r.amount || r.amount <= 0) issues.push(`Invalid amount: ${r.amount}`);
+    if (!r.date || !/^\d{4}-\d{2}-\d{2}$/.test(r.date)) issues.push(`Invalid date: ${r.date}`);
+    if (r.type === 'debt' && !r.debtor) issues.push(`Debt missing debtor`);
+  });
+  return issues;
+}
+
+// Auto-recovery from backup
+function attemptRecovery() {
+  try {
+    const backup = JSON.parse(localStorage.getItem(LS_BACKUP) || '{}');
+    if (backup.records && backup.records.length > 0) {
+      const currentLen = records.length;
+      const backupLen = backup.records.length;
+      if (backupLen > currentLen) {
+        records = backup.records;
+        budgets = backup.budgets || {};
+        localStorage.setItem(LS_RECORDS, JSON.stringify(records));
+        localStorage.setItem(LS_BUDGETS, JSON.stringify(budgets));
+        return { recovered: true, from: currentLen, to: backupLen };
+      }
+    }
+  } catch(e) {}
+  return { recovered: false };
+}
+
+// Manual backup to IndexedDB
+async function createManualBackup() {
+  try {
+    const db = await openIDB();
+    const tx = db.transaction('backups', 'readwrite');
+    tx.objectStore('backups').put({
+      timestamp: Date.now(),
+      records: [...records],
+      budgets: {...budgets}
+    });
+    return true;
+  } catch(e) { return false; }
+}
 
 // ─────────────────────────────────────────────
 // 2. 分类配置
@@ -363,6 +459,7 @@ let amountStr      = '0';
 let currentPeriod  = 'month';
 let detailId       = null;
 let viewAccount    = 'all';       // all / personal / company (header filter)
+let deleteConfirmPending = false; // for v7.0 double-click delete confirmation
 
 // ─────────────────────────────────────────────
 // 6. 获取当前筛选的记录
@@ -530,12 +627,13 @@ function renderList() {
 }
 
 // ─────────────────────────────────────────────
-// 10. 详情 Modal
+// 10. 详情 Modal（v7.0: 双击确认删除）
 // ─────────────────────────────────────────────
 function showDetail(id) {
   const r = records.find(x=>x.id===id);
   if (!r) return;
   detailId = id;
+  deleteConfirmPending = false;
   const cats = CATS[r.type] || CATS.expense;
   const cat  = cats.find(c=>c.key===r.cat) || {icon:'📦',label:'其他'};
   let sign, typeLabel;
@@ -576,15 +674,43 @@ function showDetail(id) {
     repayBtn.style.display = 'none';
   }
 
+  // Reset delete button state
+  const delBtn = document.getElementById('detailDelete');
+  delBtn.textContent = '删除';
+  delBtn.style.background = '';
+  delBtn.style.color = '';
+
   document.getElementById('detailModal').classList.add('open');
 }
 
 document.getElementById('detailClose').addEventListener('click', () => {
   document.getElementById('detailModal').classList.remove('open');
+  deleteConfirmPending = false;
 });
 
+// v7.0: 双击确认删除 —— 第一次点击变为红色"确认删除?"，第二次点击才真正删除
 document.getElementById('detailDelete').addEventListener('click', () => {
-  if (!confirm('确定删除这条记录？')) return;
+  if (!deleteConfirmPending) {
+    // First click: change to confirmation state
+    deleteConfirmPending = true;
+    const delBtn = document.getElementById('detailDelete');
+    delBtn.textContent = '确认删除?';
+    delBtn.style.background = '#dc2626';
+    delBtn.style.color = '#fff';
+    // Auto-reset after 3 seconds if no second click
+    setTimeout(() => {
+      if (deleteConfirmPending && document.getElementById('detailModal').classList.contains('open')) {
+        deleteConfirmPending = false;
+        delBtn.textContent = '删除';
+        delBtn.style.background = '';
+        delBtn.style.color = '';
+      }
+    }, 3000);
+    return;
+  }
+
+  // Second click: actually delete
+  deleteConfirmPending = false;
   records = records.filter(r=>r.id!==detailId);
   saveRecords();
   document.getElementById('detailModal').classList.remove('open');
@@ -1149,7 +1275,10 @@ function switchView(name) {
   if (name==='stats')    { setTimeout(renderStats, 50); }
   if (name==='debt')     { renderDebtView(); }
   if (name==='budget')   renderBudget();
-  if (name==='settings') document.getElementById('totalRecords').textContent=records.length;
+  if (name==='settings') {
+    document.getElementById('totalRecords').textContent=records.length;
+    updateAutoBackupStatus();
+  }
 }
 
 document.querySelectorAll('.tab,.nav-btn').forEach(el=>{
@@ -1178,35 +1307,211 @@ document.getElementById('nextMonth').addEventListener('click',()=>{
 });
 
 // ─────────────────────────────────────────────
-// 17. 设置功能
+// 17. 增强导出功能（v7.0）
 // ─────────────────────────────────────────────
-document.getElementById('exportBtn').addEventListener('click',()=>{
-  const data = JSON.stringify({ records, budgets }, null, 2);
+
+// Download helper
+function downloadFile(content, filename, type) {
+  const blob = new Blob([content], { type: type + ';charset=utf-8' });
   const a = Object.assign(document.createElement('a'), {
-    href: URL.createObjectURL(new Blob([data],{type:'application/json'})),
-    download: `xiaoyang_${today()}.json`
+    href: URL.createObjectURL(blob),
+    download: filename
   });
   a.click();
+  URL.revokeObjectURL(a.href);
   showToast('✅ 导出成功');
+}
+
+// CSV generation with BOM for Excel compatibility
+function generateCSV(recs) {
+  const BOM = '\uFEFF';
+  const headers = ['日期','类型','分类','金额','备注','账户','欠款人','还款状态'];
+  const rows = recs.map(r => {
+    const cats = CATS[r.type] || CATS.expense;
+    const cat = cats.find(c=>c.key===r.cat) || {label:'其他'};
+    const typeMap = {expense:'支出',income:'收入',debt:'别人欠我'};
+    const accMap = {personal:'个人',company:'公司'};
+    let repayStatus = '';
+    if (r.type === 'debt') {
+      const remain = getDebtRemain(r);
+      repayStatus = remain <= 0 ? '已还清' : (r.repays||[]).length > 0 ? `部分还(剩¥${remain.toFixed(2)})` : `未还(¥${remain.toFixed(2)})`;
+    }
+    return [r.date, typeMap[r.type]||r.type, cat.label, r.amount.toFixed(2), r.note||'', accMap[r.account||'personal']||'个人', r.debtor||'', repayStatus].map(v => `"${String(v).replace(/"/g,'""')}"`).join(',');
+  });
+  return BOM + [headers.join(','), ...rows].join('\n');
+}
+
+// Export all data as JSON
+function exportAllJSON() {
+  const data = JSON.stringify({ records, budgets, exportDate: new Date().toISOString(), version: '7.0' }, null, 2);
+  downloadFile(data, `xiaoyang_all_${today()}.json`, 'application/json');
+}
+
+// Export all data as CSV
+function exportAllCSV() {
+  const csv = generateCSV(records);
+  downloadFile(csv, `xiaoyang_all_${today()}.csv`, 'text/csv');
+}
+
+// Export by month
+function exportMonthJSON(yearMonth) {
+  const monthRecords = records.filter(r => r.date.startsWith(yearMonth));
+  const data = JSON.stringify({ records: monthRecords, month: yearMonth, exportDate: new Date().toISOString() }, null, 2);
+  downloadFile(data, `xiaoyang_${yearMonth}.json`, 'application/json');
+}
+
+function exportMonthCSV(yearMonth) {
+  const monthRecords = records.filter(r => r.date.startsWith(yearMonth));
+  const csv = generateCSV(monthRecords);
+  downloadFile(csv, `xiaoyang_${yearMonth}.csv`, 'text/csv');
+}
+
+// Export by date range
+function exportRangeJSON(startDate, endDate) {
+  const rangeRecords = records.filter(r => r.date >= startDate && r.date <= endDate);
+  const data = JSON.stringify({ records: rangeRecords, range: `${startDate}~${endDate}`, exportDate: new Date().toISOString() }, null, 2);
+  downloadFile(data, `xiaoyang_${startDate}_${endDate}.json`, 'application/json');
+}
+
+function exportRangeCSV(startDate, endDate) {
+  const rangeRecords = records.filter(r => r.date >= startDate && r.date <= endDate);
+  const csv = generateCSV(rangeRecords);
+  downloadFile(csv, `xiaoyang_${startDate}_${endDate}.csv`, 'text/csv');
+}
+
+// Generate monthly report
+function exportMonthReport(yearMonth) {
+  const monthRecords = records.filter(r => r.date.startsWith(yearMonth));
+  const income = monthRecords.filter(r=>r.type==='income').reduce((a,b)=>a+b.amount, 0);
+  const expense = monthRecords.filter(r=>r.type==='expense').reduce((a,b)=>a+b.amount, 0);
+  // Category breakdown
+  const catBreakdown = {};
+  monthRecords.filter(r=>r.type==='expense').forEach(r => {
+    const cat = (CATS.expense.find(c=>c.key===r.cat)||{label:'其他'}).label;
+    catBreakdown[cat] = (catBreakdown[cat]||0) + r.amount;
+  });
+  const debt = monthRecords.filter(r=>r.type==='debt');
+  const debtTotal = debt.reduce((a,b)=>a+b.amount,0);
+  const debtRepaid = debt.reduce((a,b)=>a+(b.repays||[]).reduce((s,p)=>s+p.amount,0),0);
+
+  const report = `${yearMonth} 月度记账报告\n${'='.repeat(30)}\n\n📊 收支概览\n  收入：¥${income.toFixed(2)}\n  支出：¥${expense.toFixed(2)}\n  结余：¥${(income-expense).toFixed(2)}\n\n🍕 支出分类明细\n${Object.entries(catBreakdown).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`  ${k}：¥${v.toFixed(2)} (${expense>0?(v/expense*100).toFixed(1):'0.0'}%)`).join('\n')}\n\n🤝 借贷情况\n  借出总额：¥${debtTotal.toFixed(2)}\n  已收回：¥${debtRepaid.toFixed(2)}\n  待收回：¥${(debtTotal-debtRepaid).toFixed(2)}\n\n📋 共 ${monthRecords.length} 条记录\n报告生成时间：${new Date().toLocaleString('zh-CN')}`;
+
+  downloadFile(report, `xiaoyang_report_${yearMonth}.txt`, 'text/plain');
+}
+
+// ─────────────────────────────────────────────
+// 17.5 导出 Modal 逻辑
+// ─────────────────────────────────────────────
+let exportFormat = 'json';  // json / csv
+let exportRange  = 'all';   // all / month / custom
+
+// Open export modal from settings export button
+document.getElementById('exportBtn').addEventListener('click', () => {
+  // Reset modal state
+  exportFormat = 'json';
+  exportRange = 'all';
+  document.getElementById('exportFormatToggle').querySelectorAll('button').forEach(b => b.classList.toggle('active', b.dataset.fmt==='json'));
+  document.getElementById('exportRangeToggle').querySelectorAll('button').forEach(b => b.classList.toggle('active', b.dataset.range==='all'));
+  document.getElementById('exportMonthPicker').style.display = 'none';
+  document.getElementById('exportDateRange').style.display = 'none';
+  // Set default month picker value
+  document.getElementById('exportMonthPicker').value = fmtYM(new Date()) ;
+  // Set default date range
+  document.getElementById('exportStartDate').value = today().slice(0,8) + '01';
+  document.getElementById('exportEndDate').value = today();
+  document.getElementById('exportModal').classList.add('open');
 });
 
-document.getElementById('importBtn').addEventListener('click',()=>{
+// Close export modal
+document.getElementById('exportModal').addEventListener('click', e => {
+  if (e.target === e.currentTarget) {
+    document.getElementById('exportModal').classList.remove('open');
+  }
+});
+
+// Format toggle
+document.getElementById('exportFormatToggle').addEventListener('click', e => {
+  const btn = e.target.closest('button');
+  if (!btn || !btn.dataset.fmt) return;
+  exportFormat = btn.dataset.fmt;
+  document.getElementById('exportFormatToggle').querySelectorAll('button').forEach(b => b.classList.toggle('active', b.dataset.fmt===exportFormat));
+});
+
+// Range toggle
+document.getElementById('exportRangeToggle').addEventListener('click', e => {
+  const btn = e.target.closest('button');
+  if (!btn || !btn.dataset.range) return;
+  exportRange = btn.dataset.range;
+  document.getElementById('exportRangeToggle').querySelectorAll('button').forEach(b => b.classList.toggle('active', b.dataset.range===exportRange));
+  document.getElementById('exportMonthPicker').style.display = exportRange === 'month' ? '' : 'none';
+  document.getElementById('exportDateRange').style.display = exportRange === 'custom' ? '' : 'none';
+});
+
+// Export execute button
+document.getElementById('exportExecBtn').addEventListener('click', () => {
+  if (exportRange === 'all') {
+    if (exportFormat === 'json') exportAllJSON();
+    else exportAllCSV();
+  } else if (exportRange === 'month') {
+    const ym = document.getElementById('exportMonthPicker').value;
+    if (!ym) { showToast('请选择月份'); return; }
+    if (exportFormat === 'json') exportMonthJSON(ym);
+    else exportMonthCSV(ym);
+  } else if (exportRange === 'custom') {
+    const start = document.getElementById('exportStartDate').value;
+    const end = document.getElementById('exportEndDate').value;
+    if (!start || !end) { showToast('请选择日期范围'); return; }
+    if (start > end) { showToast('开始日期不能晚于结束日期'); return; }
+    if (exportFormat === 'json') exportRangeJSON(start, end);
+    else exportRangeCSV(start, end);
+  }
+  document.getElementById('exportModal').classList.remove('open');
+});
+
+// Quick export buttons
+document.getElementById('exportQuickJson').addEventListener('click', () => {
+  exportAllJSON();
+  document.getElementById('exportModal').classList.remove('open');
+});
+
+document.getElementById('exportQuickCsv').addEventListener('click', () => {
+  exportAllCSV();
+  document.getElementById('exportModal').classList.remove('open');
+});
+
+document.getElementById('exportQuickReport').addEventListener('click', () => {
+  const ym = fmtYM(new Date());
+  exportMonthReport(ym);
+  document.getElementById('exportModal').classList.remove('open');
+});
+
+// ─────────────────────────────────────────────
+// 18. 设置功能（v7.0 增强：导入验证 · 数据安全）
+// ─────────────────────────────────────────────
+
+// Import with validation and confirmation
+document.getElementById('importBtn').addEventListener('click', () => {
   document.getElementById('importFile').click();
 });
-document.getElementById('importFile').addEventListener('change', e=>{
-  const file=e.target.files[0]; if (!file) return;
-  const reader=new FileReader();
-  reader.onload=ev=>{
+
+document.getElementById('importFile').addEventListener('change', e => {
+  const file = e.target.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
     try {
-      const data=JSON.parse(ev.target.result);
+      const data = JSON.parse(ev.target.result);
+      let importRecords, importBudgets;
+
       if (data.records && Array.isArray(data.records)) {
-        records=data.records;
-        if (data.budgets) budgets=data.budgets;
+        importRecords = data.records;
+        importBudgets = data.budgets || {};
       } else if (Array.isArray(data)) {
-        records=data;
+        importRecords = data;
+        importBudgets = budgets;
       } else throw new Error();
+
       // Ensure compatibility
-      records.forEach(r => {
+      importRecords.forEach(r => {
         if (!r.account) r.account = 'personal';
         if (r.type === 'debt' && !r.repays) r.repays = [];
         // Migrate old company-lend records to simple expense/income
@@ -1217,16 +1522,37 @@ document.getElementById('importFile').addEventListener('change', e=>{
           delete r.repays;
         }
       });
+
+      // Validate imported data integrity
+      let validCount = 0, invalidCount = 0;
+      importRecords.forEach(r => {
+        if (r.id && r.type && ['expense','income','debt'].includes(r.type) && r.amount > 0 && r.date) {
+          validCount++;
+        } else {
+          invalidCount++;
+        }
+      });
+
+      // Show confirmation
+      const msg = `即将导入 ${validCount} 条有效记录${invalidCount > 0 ? `（${invalidCount} 条数据异常将被跳过）` : ''}\n当前已有 ${records.length} 条记录\n将覆盖现有数据，是否继续？`;
+      if (!confirm(msg)) { e.target.value=''; return; }
+
+      // Filter out invalid records
+      records = importRecords.filter(r =>
+        r.id && r.type && ['expense','income','debt'].includes(r.type) && r.amount > 0 && r.date
+      );
+      budgets = importBudgets;
+
       saveRecords(); saveBudgets();
       updateHeader(); renderList();
       showToast(`✅ 导入成功，共 ${records.length} 条`);
     } catch { showToast('⚠️ 文件格式不对'); }
   };
   reader.readAsText(file);
-  e.target.value='';
+  e.target.value = '';
 });
 
-document.getElementById('clearBtn').addEventListener('click',()=>{
+document.getElementById('clearBtn').addEventListener('click', () => {
   if (!confirm('确定清除所有数据？此操作不可恢复！')) return;
   records=[]; budgets={};
   saveRecords(); saveBudgets();
@@ -1234,7 +1560,7 @@ document.getElementById('clearBtn').addEventListener('click',()=>{
   showToast('已清除');
 });
 
-document.getElementById('installPwa').addEventListener('click',()=>{
+document.getElementById('installPwa').addEventListener('click', () => {
   if (window._deferredPrompt) {
     window._deferredPrompt.prompt();
     window._deferredPrompt.userChoice.then(()=>{ window._deferredPrompt=null; });
@@ -1243,34 +1569,93 @@ document.getElementById('installPwa').addEventListener('click',()=>{
   }
 });
 
-document.getElementById('quickAddTip').addEventListener('click',()=>{
+document.getElementById('quickAddTip').addEventListener('click', () => {
   showToast('付款后截图→分享菜单→选「小杨专属记账」→自动识别', 4000);
 });
 
-window.addEventListener('beforeinstallprompt', e=>{ e.preventDefault(); window._deferredPrompt=e; });
+window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); window._deferredPrompt=e; });
 
 // ─────────────────────────────────────────────
-// 18. Toast
+// 18.5 设置页 - 数据安全按钮（v7.0）
 // ─────────────────────────────────────────────
-let _toastT=null;
-function showToast(msg) {
-  const el=document.getElementById('toast');
-  el.textContent=msg; el.classList.add('show');
-  clearTimeout(_toastT);
-  _toastT=setTimeout(()=>el.classList.remove('show'), 2500);
+
+// 手动备份
+document.getElementById('manualBackupBtn').addEventListener('click', async () => {
+  const ok = await createManualBackup();
+  if (ok) {
+    localStorage.setItem(LS_BACKUP, JSON.stringify({ records, budgets, ts: Date.now() }));
+    updateAutoBackupStatus();
+    showToast('✅ 备份成功');
+  } else {
+    showToast('⚠️ 备份失败');
+  }
+});
+
+// 数据恢复
+document.getElementById('dataRecoveryBtn').addEventListener('click', () => {
+  const result = attemptRecovery();
+  if (result.recovered) {
+    updateHeader(); renderList();
+    showToast(`✅ 已从备份恢复 ${result.from} → ${result.to} 条记录`);
+  } else {
+    showToast('当前数据已是最新，无需恢复');
+  }
+});
+
+// 完整性检查
+document.getElementById('integrityCheckBtn').addEventListener('click', () => {
+  const issues = checkDataIntegrity();
+  if (issues.length === 0) {
+    showToast(`✅ 数据完整性检查通过，共 ${records.length} 条记录`);
+  } else {
+    const uniqueIssues = [...new Set(issues)];
+    showToast(`⚠️ 发现 ${issues.length} 个问题：${uniqueIssues.slice(0,3).join('、')}${uniqueIssues.length > 3 ? '...' : ''}`);
+  }
+});
+
+// 更新自动备份状态显示
+function updateAutoBackupStatus() {
+  const statusEl = document.getElementById('autoBackupStatus');
+  const countEl = document.getElementById('backupCount');
+  try {
+    const backup = JSON.parse(localStorage.getItem(LS_BACKUP) || '{}');
+    if (backup.ts) {
+      const d = new Date(backup.ts);
+      statusEl.textContent = `上次备份：${d.toLocaleString('zh-CN')}`;
+    } else {
+      statusEl.textContent = '暂无备份';
+    }
+    if (countEl) {
+      countEl.textContent = backup.records ? `${backup.records.length} 条记录` : '';
+    }
+  } catch(e) {
+    statusEl.textContent = '暂无备份';
+    if (countEl) countEl.textContent = '';
+  }
 }
 
 // ─────────────────────────────────────────────
-// 19. PWA Service Worker
+// 19. Toast
+// ─────────────────────────────────────────────
+let _toastT = null;
+function showToast(msg, duration) {
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.classList.add('show');
+  clearTimeout(_toastT);
+  _toastT = setTimeout(() => el.classList.remove('show'), duration || 2500);
+}
+
+// ─────────────────────────────────────────────
+// 20. PWA Service Worker
 // ─────────────────────────────────────────────
 if ('serviceWorker' in navigator) {
-  window.addEventListener('load', ()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+  window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(() => {}));
 }
 
 // ─────────────────────────────────────────────
-// 20. 初始化
+// 21. 初始化（v7.0：自动备份定时器）
 // ─────────────────────────────────────────────
-document.addEventListener('DOMContentLoaded', async ()=>{
+document.addEventListener('DOMContentLoaded', async () => {
   // Ensure compatibility with old records
   let needSave = false;
   records.forEach(r => {
@@ -1291,6 +1676,15 @@ document.addEventListener('DOMContentLoaded', async ()=>{
   renderCatGrid();
   updateHeader();
   renderList();
+
+  // v7.0: Auto-backup every 5 minutes
+  setInterval(async () => {
+    await createManualBackup();
+    localStorage.setItem(LS_BACKUP, JSON.stringify({ records, budgets, ts: Date.now() }));
+  }, 300000);
+
+  // v7.0: Initial backup on load
+  localStorage.setItem(LS_BACKUP, JSON.stringify({ records, budgets, ts: Date.now() }));
 
   // 处理 Web Share Target（从其他 App 分享进入）
   const shared = await handleShareTarget();
