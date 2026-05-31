@@ -1,4 +1,4 @@
-const CACHE_NAME = 'xiaoyang-v12.0';
+const CACHE_NAME = 'xiaoyang-v14.2';
 const ASSETS = [
   './',
   './index.html',

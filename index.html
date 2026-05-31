@@ -36,7 +36,8 @@ button,.nav-item,.record-item,.cat-item,.quick-template,.settings-item,.fab,.sum
 /* iOS: prevent callout on long-press */
 img,a,button{-webkit-touch-callout:none}
 
-#app{width:100%;max-width:480px;margin:0 auto;height:100%;height:100dvh;display:flex;flex-direction:column;background:#fff;position:relative;overflow:hidden;overscroll-behavior:none}
+#app{width:100%;max-width:480px;margin:0 auto;height:100%;height:100dvh;display:flex;flex-direction:column;background:#fff;position:relative;overflow:hidden;overscroll-behavior:none;transition:background .4s}
+#app.company-mode{background:#faf8ff}
 
 /* Header */
 .header{background:linear-gradient(135deg,var(--green),var(--green-d));padding:calc(var(--st) + 12px) 20px 16px;color:#fff;position:relative;z-index:10;flex-shrink:0;overflow:hidden}
@@ -46,18 +47,23 @@ img,a,button{-webkit-touch-callout:none}
 .header h1{font-size:18px;font-weight:700;position:relative;z-index:1;display:flex;align-items:center;gap:6px}
 .header .sub{font-size:12px;opacity:.85;margin-top:2px;position:relative;z-index:1}
 
-/* Account switch tabs */
-.account-tabs{display:flex;gap:0;margin:8px 16px 0;background:rgba(255,255,255,.18);border-radius:10px;padding:3px;position:relative;z-index:1}
-.account-tabs .acc-tab{flex:1;padding:7px 0;border-radius:8px;border:none;background:transparent;color:rgba(255,255,255,.7);font-size:13px;font-weight:600;cursor:pointer;transition:all .25s;text-align:center}
-.account-tabs .acc-tab.active{background:#fff;color:var(--green);box-shadow:0 1px 4px rgba(0,0,0,.12)}
-.account-tabs .acc-tab.active[data-account="company"]{background:#fff;color:var(--purple)}
-.account-tabs .acc-tab:active{transform:scale(.96)}
+/* Account switch tabs — dual system entry */
+.account-tabs{display:flex;gap:6px;margin:10px 16px 0;background:rgba(255,255,255,.12);border-radius:12px;padding:4px;position:relative;z-index:1}
+.account-tabs .acc-tab{flex:1;padding:9px 0;border-radius:10px;border:none;background:transparent;color:rgba(255,255,255,.6);font-size:14px;font-weight:700;cursor:pointer;transition:all .3s;text-align:center;letter-spacing:.5px}
+.account-tabs .acc-tab.active{background:#fff;color:var(--green);box-shadow:0 2px 8px rgba(0,0,0,.15);transform:scale(1.02)}
+.account-tabs .acc-tab.active[data-account="company"]{background:#fff;color:var(--purple);box-shadow:0 2px 8px rgba(0,0,0,.15);transform:scale(1.02)}
+.account-tabs .acc-tab:active{transform:scale(.95)}
 
-/* Account toggle in add sheet */
-.account-switch{display:flex;gap:0;margin-bottom:16px;background:var(--gray100);border-radius:12px;padding:3px}
-.account-switch .as-btn{flex:1;padding:9px 0;border-radius:10px;border:none;background:transparent;color:var(--gray400);font-size:14px;font-weight:600;cursor:pointer;transition:all .25s;text-align:center;display:flex;align-items:center;justify-content:center;gap:4px}
-.account-switch .as-btn.active-personal{background:#fff;color:var(--green);box-shadow:0 1px 4px rgba(0,0,0,.08)}
-.account-switch .as-btn.active-company{background:#fff;color:var(--purple);box-shadow:0 1px 4px rgba(0,0,0,.08)}
+/* (account-switch removed — dual system uses header tabs only) */
+
+/* Account mode banner — prominent visual indicator */
+.account-mode-banner{display:flex;align-items:center;gap:8px;padding:10px 14px;border-radius:10px;margin-bottom:14px;font-size:13px;font-weight:600;transition:all .3s}
+.account-mode-banner.personal-banner{background:linear-gradient(135deg,#ecfdf5,#d1fae5);color:#059669;border:1.5px solid #a7f3d0}
+.account-mode-banner.company-banner{background:linear-gradient(135deg,#faf5ff,#ede9fe);color:#7c3aed;border:1.5px solid #c4b5fd}
+.account-mode-banner .amb-icon{font-size:22px}
+.account-mode-banner .amb-text{flex:1}
+.account-mode-banner .amb-label{font-size:11px;opacity:.7;font-weight:400;margin-top:1px}
+.account-mode-banner .amb-lock{font-size:14px;opacity:.5;flex-shrink:0;margin-left:auto}
 
 /* Record badge */
 .record-badge{display:inline-block;padding:1px 6px;border-radius:4px;font-size:10px;font-weight:600;margin-left:4px;vertical-align:middle}
@@ -73,7 +79,21 @@ img,a,button{-webkit-touch-callout:none}
 .smart-input-box{display:flex;align-items:center;gap:8px;background:#fff;border-radius:14px;padding:4px 4px 4px 14px;box-shadow:var(--shadow);border:2px solid var(--gray100);transition:border-color .25s,box-shadow .25s}
 .smart-input-box.focused{border-color:var(--green);box-shadow:0 0 0 3px rgba(22,163,74,.12)}
 .smart-input-box.focused.company-mode{border-color:var(--purple);box-shadow:0 0 0 3px rgba(139,92,246,.12)}
-.smart-input-box .smart-icon{font-size:20px;flex-shrink:0;opacity:.5}
+.smart-input-box .smart-icon{font-size:20px;flex-shrink:0;opacity:.5;cursor:pointer;transition:opacity .2s}
+.smart-input-box .smart-icon:active{opacity:.3}
+.smart-wallet-chip{display:flex;align-items:center;gap:3px;padding:5px 10px;border-radius:16px;background:var(--green-light);border:1.5px solid var(--green);color:var(--green);font-size:12px;font-weight:600;flex-shrink:0;cursor:pointer;transition:all .2s;max-width:110px;overflow:hidden;white-space:nowrap;user-select:none;-webkit-user-select:none}
+.smart-wallet-chip:active{transform:scale(.92);opacity:.7}
+.smart-wallet-chip .swc-name{overflow:hidden;text-overflow:ellipsis}
+.smart-wallet-chip.expense-chip{background:var(--red-light);border-color:var(--red);color:var(--red)}
+.smart-wallet-chip.company-chip{background:var(--purple-light);border-color:var(--purple);color:var(--purple)}
+.smart-wallet-dropdown{position:absolute;top:100%;left:16px;right:16px;background:#fff;border-radius:12px;box-shadow:0 8px 30px rgba(0,0,0,.15);z-index:100;padding:6px;display:none;margin-top:4px}
+.smart-wallet-dropdown.show{display:block}
+.smart-wallet-dropdown .swd-item{display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:8px;font-size:14px;cursor:pointer;transition:background .15s}
+.smart-wallet-dropdown .swd-item:active{background:var(--gray100)}
+.smart-wallet-dropdown .swd-item.active{background:var(--green-light);color:var(--green);font-weight:600}
+.smart-wallet-dropdown .swd-item.active.expense-mode{background:var(--red-light);color:var(--red)}
+.smart-wallet-dropdown .swd-item.active.company-mode{background:var(--purple-light);color:var(--purple)}
+.smart-wallet-dropdown .swd-item .swd-bal{margin-left:auto;font-size:12px;color:var(--gray400)}
 .smart-input-box input{flex:1;border:none;outline:none;background:transparent;font-size:15px;padding:10px 0;min-width:0}
 .smart-input-box input::placeholder{color:var(--gray300)}
 .smart-input-box .smart-send{width:40px;height:40px;border-radius:12px;border:none;background:linear-gradient(135deg,var(--green),var(--green-d));color:#fff;font-size:18px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:transform .15s,opacity .2s}
@@ -195,6 +215,12 @@ img,a,button{-webkit-touch-callout:none}
 /* Stats page */
 .stats-page{padding:16px}
 .stats-page h2{font-size:17px;font-weight:600;margin-bottom:16px}
+.stats-acc-switch{display:inline-flex;align-items:center;gap:4px;cursor:pointer;padding:2px 10px 2px 8px;border-radius:20px;font-size:13px;font-weight:600;transition:all .2s;user-select:none;-webkit-tap-highlight-color:transparent}
+.stats-acc-switch:hover{opacity:.85}
+.stats-acc-switch:active{transform:scale(.93)}
+.stats-acc-switch.switch-personal{background:linear-gradient(135deg,#ecfdf5,#d1fae5);color:#059669;border:1.5px solid #a7f3d0}
+.stats-acc-switch.switch-company{background:linear-gradient(135deg,#faf5ff,#ede9fe);color:#7c3aed;border:1.5px solid #c4b5fd}
+.stats-acc-switch .sas-arrow{font-size:11px;opacity:.6}
 .stats-card{background:#fff;border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);border:1px solid var(--gray100);margin-bottom:12px}
 .stats-card h3{font-size:14px;font-weight:600;margin-bottom:12px;color:var(--gray800)}
 .chart-container{position:relative;width:100%;height:200px}
@@ -350,6 +376,7 @@ img,a,button{-webkit-touch-callout:none}
 @media(prefers-color-scheme:dark){
   html,body{background:#111}
   #app{background:#1a1a2e}
+  #app.company-mode{background:#1e1a2e}
   .header{background:linear-gradient(135deg,#138a3e,#0f6e32)}
   .header.company-header{background:linear-gradient(135deg,#6d28d9,#5b21b6)}
   .header::after{background:#1a1a2e}
@@ -366,9 +393,6 @@ img,a,button{-webkit-touch-callout:none}
   .type-tabs button,.cat-manage-tabs button{background:#1e1e32;border-color:#333;color:#e5e7eb}
   .account-tabs{background:rgba(255,255,255,.1)}
   .account-tabs .acc-tab.active{background:#2a2a3e;color:var(--green-mid)}
-  .account-switch{background:#2a2a3e}
-  .account-switch .as-btn.active-personal{background:#1e1e32;color:var(--green-mid)}
-  .account-switch .as-btn.active-company{background:#1e1e32;color:var(--purple)}
   .export-modal .export-option{background:#1e1e32;border-color:#333;color:#e5e7eb}
   .export-modal .format-btn,.export-modal .range-btn{background:#1e1e32;border-color:#333;color:#e5e7eb}
   .month-nav button{background:#2a2a3e}
@@ -380,6 +404,16 @@ img,a,button{-webkit-touch-callout:none}
   .smart-input-box{background:#1e1e32;border-color:#333}
   .smart-input-box input{color:#e5e7eb}
   .smart-input-box.focused{border-color:var(--green-mid)}
+  .smart-wallet-chip{background:#1a2e1a;border-color:var(--green-mid);color:var(--green-mid)}
+  .smart-wallet-chip.expense-chip{background:#2e1a1a;border-color:var(--red);color:var(--red)}
+  .smart-wallet-chip.company-chip{background:#1e0a3e;border-color:var(--purple);color:var(--purple)}
+  .smart-wallet-dropdown{background:#1e1e32;border:1px solid #333}
+  .smart-wallet-dropdown .swd-item{color:#e5e7eb}
+  .smart-wallet-dropdown .swd-item:active{background:#2a2a3e}
+  .smart-wallet-dropdown .swd-item.active{background:#1a2e1a;color:var(--green-mid)}
+  .smart-wallet-dropdown .swd-item.active.expense-mode{background:#2e1a1a;color:var(--red)}
+  .smart-wallet-dropdown .swd-item.active.company-mode{background:#1e0a3e;color:var(--purple)}
+  .smart-wallet-dropdown .swd-item .swd-bal{color:#6b7280}
   .quick-template{background:#2a2a3e;border-color:#444}
   .quick-template .qt-name{color:#9ca3af}
   .shortcuts-info{background:#2a2a3e;color:#9ca3af}
@@ -413,6 +447,9 @@ img,a,button{-webkit-touch-callout:none}
   .data-warning-bar .dw-icon{color:var(--amber)}
   .data-warning-bar .dw-text{color:var(--amber)}
   .data-warning-bar .dw-btn{background:#92400e;color:#fef3c7}
+  /* Account mode banner dark mode */
+  .account-mode-banner.personal-banner{background:linear-gradient(135deg,#0a2e1a,#0f3d22);color:#34d399;border-color:#065f46}
+  .account-mode-banner.company-banner{background:linear-gradient(135deg,#1e0a3e,#2d1065);color:#a78bfa;border-color:#4c1d95}
 }
 
 /* ===== iOS INSTALL PROMPT ===== */
@@ -441,6 +478,78 @@ img,a,button{-webkit-touch-callout:none}
 .data-warning-bar .dw-btn{padding:4px 10px;border-radius:6px;border:none;background:#f59e0b;color:#fff;font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap}
 .data-warning-bar .dw-btn:active{transform:scale(.95)}
 .data-warning-bar .dw-close{font-size:16px;color:var(--gray400);cursor:pointer;padding:0 4px}
+
+/* ===== ACCOUNTS (WALLETS) STYLES ===== */
+.accounts-page{padding:16px}
+.accounts-page h2{font-size:17px;font-weight:600;margin-bottom:16px}
+.accounts-total{background:linear-gradient(135deg,var(--blue),#2563eb);border-radius:var(--radius);padding:20px;color:#fff;margin-bottom:16px;position:relative;overflow:hidden}
+.accounts-total::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0L60 30L30 60L0 30Z' fill='rgba(255,255,255,0.06)'/%3E%3C/svg%3E") repeat;background-size:30px 30px;pointer-events:none}
+.accounts-total .at-label{font-size:13px;opacity:.8;margin-bottom:4px}
+.accounts-total .at-amount{font-size:28px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:-.5px}
+.accounts-total .at-sub{font-size:12px;opacity:.7;margin-top:6px;cursor:pointer;display:inline-flex;align-items:center;gap:4px;padding:2px 10px;border-radius:12px;background:rgba(255,255,255,.15);transition:all .2s;user-select:none;-webkit-tap-highlight-color:transparent}
+.accounts-total .at-sub:hover{background:rgba(255,255,255,.25)}
+.accounts-total .at-sub:active{transform:scale(.93)}
+.accounts-total .at-sub .ats-arrow{font-size:10px;opacity:.7}
+.account-card{display:flex;align-items:center;padding:14px 16px;background:#fff;border-radius:var(--radius);margin-bottom:10px;box-shadow:var(--shadow);border:1px solid var(--gray100);cursor:pointer;transition:transform .15s;position:relative;overflow:hidden}
+.account-card:active{transform:scale(.98)}
+.account-card .ac-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;margin-right:12px}
+.account-card .ac-info{flex:1;min-width:0}
+.account-card .ac-name{font-size:14px;font-weight:600}
+.account-card .ac-type{font-size:11px;color:var(--gray400);margin-top:2px}
+.account-card .ac-balance{font-size:17px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--gray800)}
+.account-card .ac-balance.negative{color:var(--red)}
+.account-card .ac-actions{display:flex;gap:6px;margin-left:8px;flex-shrink:0}
+.account-card .ac-actions button{width:30px;height:30px;border-radius:8px;border:none;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.account-card .ac-actions .ac-edit{background:var(--blue-light);color:var(--blue)}
+.account-card .ac-actions .ac-del{background:var(--red-light);color:var(--red)}
+.account-card .ac-actions button:active{transform:scale(.9)}
+.account-card .ac-default-badge{position:absolute;top:8px;right:8px;font-size:9px;padding:2px 6px;border-radius:4px;background:var(--green-light);color:var(--green);font-weight:600}
+
+/* Account selector in add form */
+.account-selector{margin-bottom:14px}
+.account-selector .as-label{font-size:13px;color:var(--gray600);margin-bottom:8px;font-weight:500}
+.account-selector .as-grid{display:flex;gap:8px;flex-wrap:wrap}
+.account-selector .as-chip{display:flex;align-items:center;gap:4px;padding:8px 12px;border-radius:20px;border:2px solid var(--gray200);background:var(--gray50);font-size:13px;font-weight:500;cursor:pointer;transition:all .2s;white-space:nowrap}
+.account-selector .as-chip:active{transform:scale(.95)}
+.account-selector .as-chip.selected{border-color:var(--green);background:var(--green-light);color:var(--green)}
+.account-selector .as-chip.selected.expense-mode{border-color:var(--red);background:var(--red-light);color:var(--red)}
+
+/* Transfer section */
+.transfer-section{margin-bottom:14px;padding:14px;background:var(--blue-light);border-radius:12px;border:1.5px solid var(--blue)}
+.transfer-section .ts-title{font-size:14px;font-weight:600;color:var(--blue);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.transfer-section .ts-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.transfer-section .ts-row:last-child{margin-bottom:0}
+.transfer-section .ts-label{font-size:13px;color:var(--gray600);min-width:40px}
+.transfer-section select{flex:1;padding:8px 10px;border-radius:8px;border:1.5px solid var(--gray200);background:#fff;font-size:13px}
+
+/* Add account modal */
+.add-account-modal .aa-icons{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.add-account-modal .aa-icon-btn{width:44px;height:44px;border-radius:12px;border:2px solid var(--gray200);background:var(--gray50);font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.add-account-modal .aa-icon-btn:active{transform:scale(.9)}
+.add-account-modal .aa-icon-btn.selected{border-color:var(--green);background:var(--green-light)}
+
+/* Account badge in record item */
+.record-acct-badge{display:inline-block;padding:1px 5px;border-radius:3px;font-size:9px;font-weight:600;margin-left:4px;vertical-align:middle}
+
+/* Dark mode for accounts */
+@media(prefers-color-scheme:dark){
+  .stats-acc-switch.switch-personal{background:#1a2e1a;border-color:#05966955;color:var(--green-mid)}
+  .stats-acc-switch.switch-company{background:#2a1a3e;border-color:#7c3aed55;color:#a78bfa}
+  .stats-card{background:#1e1e32;border-color:#333}
+  .stats-card h3{color:#e5e7eb}
+  .accounts-total{background:linear-gradient(135deg,#1e3a5f,#1e2a4e)}
+  .account-card{background:#1e1e32;border-color:#333;box-shadow:0 2px 12px rgba(0,0,0,.2)}
+  .account-card .ac-balance{color:#e5e7eb}
+  .account-card .ac-type{color:#9ca3af}
+  .account-card .ac-default-badge{background:#1a2e1a;color:var(--green-mid)}
+  .account-selector .as-chip{background:#2a2a3e;border-color:#444;color:#9ca3af}
+  .account-selector .as-chip.selected{background:#1a2e1a;border-color:var(--green-mid);color:var(--green-mid)}
+  .account-selector .as-chip.selected.expense-mode{background:#2e1a1a;border-color:var(--red);color:var(--red)}
+  .transfer-section{background:#1a2a3e;border-color:#2563eb44}
+  .transfer-section select{background:#1e1e32;border-color:#333;color:#e5e7eb}
+  .add-account-modal .aa-icon-btn{background:#2a2a3e;border-color:#444}
+  .add-account-modal .aa-icon-btn.selected{border-color:var(--green-mid);background:#1a2e1a}
+}
 
 /* ===== OCR SCREENSHOT STYLES ===== */
 .screenshot-btn{width:44px;height:44px;border-radius:12px;border:none;background:linear-gradient(135deg,#3b82f6,#2563eb);color:#fff;font-size:20px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:transform .15s;position:relative}
@@ -624,12 +733,17 @@ img,a,button{-webkit-touch-callout:none}
       <div style="display:flex;gap:8px;align-items:stretch">
         <div class="smart-input-box" id="smartInputBox" style="flex:1">
           <span class="smart-icon" id="smartIcon">💬</span>
+          <div class="smart-wallet-chip" id="smartWalletChip" title="点击切换账户">
+            <span class="swc-icon" id="swcIcon">💚</span>
+            <span class="swc-name" id="swcName">微信</span>
+          </div>
           <input type="text" id="smartInput" placeholder="输入金额或描述，如：午饭25、打车15" autocomplete="off" enterkeyhint="send">
           <button class="smart-send" id="smartSend">➜</button>
         </div>
         <button class="screenshot-btn" id="screenshotBtn" title="截图识别">📸</button>
       </div>
       <div class="smart-hint" id="smartHint"></div>
+      <div class="smart-wallet-dropdown" id="smartWalletDropdown"></div>
     </div>
 
     <!-- Quick Templates -->
@@ -685,14 +799,37 @@ img,a,button{-webkit-touch-callout:none}
   <div class="page" id="pageAdd" style="display:none">
     <div class="add-page">
       <h2 id="addPageTitle">记一笔</h2>
-      <div class="account-switch" id="addAccountSwitch">
-        <button class="as-btn active-personal" data-account="personal">👤 个人</button>
-        <button class="as-btn" data-account="company">🏢 公司</button>
+      <div class="account-mode-banner personal-banner" id="addModeBanner">
+        <span class="amb-icon">👤</span>
+        <div class="amb-text">
+          <div id="ambTitle">个人账户</div>
+          <div class="amb-label" id="ambLabel">记入个人收支 · 首页切换到公司</div>
+        </div>
+        <span class="amb-lock">🔒</span>
       </div>
       <div class="type-tabs" id="typeTabs">
         <button class="active-expense" data-type="expense">支出</button>
         <button data-type="income">收入</button>
         <button data-type="debt" id="debtTypeBtn">欠款</button>
+        <button data-type="transfer" id="transferTypeBtn" style="border-color:var(--blue);color:var(--blue)">转账</button>
+      </div>
+      <!-- Account selector (payment source/destination) -->
+      <div class="account-selector" id="addAccountSelector">
+        <div class="as-label">付款账户</div>
+        <div class="as-grid" id="addAccountSelectorGrid"></div>
+      </div>
+      <!-- Transfer section (only shown for transfer type) -->
+      <div class="transfer-section" id="addTransferSection" style="display:none">
+        <div class="ts-title">🔄 转账信息</div>
+        <div class="ts-row">
+          <span class="ts-label">从</span>
+          <select id="addTransferFrom" style="flex:1;padding:8px 10px;border-radius:8px;border:1.5px solid var(--gray200);background:#fff;font-size:13px"></select>
+        </div>
+        <div style="text-align:center;font-size:20px;color:var(--blue);padding:4px 0">⇣</div>
+        <div class="ts-row">
+          <span class="ts-label">到</span>
+          <select id="addTransferTo" style="flex:1;padding:8px 10px;border-radius:8px;border:1.5px solid var(--gray200);background:#fff;font-size:13px"></select>
+        </div>
       </div>
       <div class="cat-grid" id="catGrid"></div>
       <div class="form-group">
@@ -734,7 +871,7 @@ img,a,button{-webkit-touch-callout:none}
   <!-- Page: Stats -->
   <div class="page" id="pageStats" style="display:none">
     <div class="stats-page">
-      <h2>统计 <span id="statsAccLabel" style="font-size:13px;color:var(--gray400)"></span></h2>
+      <h2>统计 <span class="stats-acc-switch switch-personal" id="statsAccSwitch" title="点击切换个人/公司"><span id="statsAccIcon">👤</span> <span id="statsAccText">个人</span> <span class="sas-arrow">⇄</span></span></h2>
       <div class="month-nav">
         <button id="statPrevMonth">&lsaquo;</button>
         <span class="month-text" id="statMonthText">2026年5月</span>
@@ -874,7 +1011,7 @@ img,a,button{-webkit-touch-callout:none}
             <div class="si-icon" style="background:var(--purple-light)">💡</div>
             <div class="si-content">
               <div class="si-title">版本</div>
-              <div class="si-desc">小杨专属记账 v12.0</div>
+              <div class="si-desc">小杨专属记账 v14.1</div>
             </div>
           </div>
           <div class="settings-item">
@@ -921,12 +1058,16 @@ img,a,button{-webkit-touch-callout:none}
   <!-- Page: Reimbursement -->
   <div class="page" id="pageReimburse" style="display:none">
     <div class="reimburse-page">
-      <h2>📋 报销管理 <span style="font-size:13px;color:var(--gray400);font-weight:400" id="reimburseAccLabel">个人账户</span></h2>
+      <h2>📋 报销管理 <span style="font-size:13px;font-weight:600" id="reimburseAccLabel">👤 个人账户</span></h2>
 
-      <!-- Account Switch -->
-      <div class="account-switch" id="reimburseAccountSwitch" style="margin-bottom:16px">
-        <button class="as-btn active-personal" data-account="personal">👤 个人</button>
-        <button class="as-btn" data-account="company">🏢 公司</button>
+      <!-- Account mode indicator (follows dual system) -->
+      <div class="account-mode-banner personal-banner" id="reimburseModeBanner" style="margin-bottom:16px">
+        <span class="amb-icon">👤</span>
+        <div class="amb-text">
+          <div id="rmbTitle">个人账户</div>
+          <div class="amb-label" id="rmbLabel">仅显示个人报销 · 首页切换到公司</div>
+        </div>
+        <span class="amb-lock">🔒</span>
       </div>
 
       <!-- Reminder Settings -->
@@ -972,6 +1113,20 @@ img,a,button{-webkit-touch-callout:none}
     </div>
   </div>
 
+  <!-- Page: Accounts (Wallets) -->
+  <div class="page" id="pageAccounts" style="display:none">
+    <div class="accounts-page">
+      <h2>💰 我的账户</h2>
+      <div class="accounts-total" id="accountsTotalCard">
+        <div class="at-label">总资产</div>
+        <div class="at-amount" id="totalAssets">¥0.00</div>
+        <div class="at-sub" id="totalAssetsSub" title="点击切换个人/公司">0 个账户 · 个人 <span class="ats-arrow">⇄</span></div>
+      </div>
+      <div id="accountCardsList"></div>
+      <button class="btn-submit" style="margin-top:12px;background:linear-gradient(135deg,var(--blue),#2563eb)" id="btnAddAccount">＋ 添加账户</button>
+    </div>
+  </div>
+
   <!-- FAB -->
   <button class="fab" id="fabBtn">+</button>
 
@@ -980,6 +1135,10 @@ img,a,button{-webkit-touch-callout:none}
     <div class="nav-item active" data-page="home">
       <span class="nav-icon">🏠</span>
       <span class="nav-label">首页</span>
+    </div>
+    <div class="nav-item" data-page="accounts">
+      <span class="nav-icon">💰</span>
+      <span class="nav-label">账户</span>
     </div>
     <div class="nav-item" data-page="stats">
       <span class="nav-icon">📊</span>
@@ -1037,10 +1196,8 @@ img,a,button{-webkit-touch-callout:none}
       <h3>编辑记录</h3>
       <div class="form-group">
         <label>账户</label>
-        <select id="editAccount" style="width:100%;padding:10px;border-radius:12px;border:1.5px solid var(--gray200);font-size:14px;background:var(--gray50)">
-          <option value="personal">👤 个人账户</option>
-          <option value="company">🏢 公司账户</option>
-        </select>
+        <div id="editAccountLabel" style="width:100%;padding:10px;border-radius:12px;border:1.5px solid var(--gray200);font-size:14px;background:var(--gray50)">👤 个人账户</div>
+        <input type="hidden" id="editAccount" value="personal">
       </div>
       <div class="form-group">
         <label>金额</label>
@@ -1272,6 +1429,73 @@ img,a,button{-webkit-touch-callout:none}
       </div>
     </div>
   </div>
+
+  <!-- Add/Edit Account Modal -->
+  <div class="modal-overlay" id="accountModal">
+    <div class="modal-sheet add-account-modal" style="max-height:85vh">
+      <div class="modal-handle"></div>
+      <h3 id="accountModalTitle">添加账户</h3>
+      <div class="form-group">
+        <label>账户名称</label>
+        <input type="text" id="accountNameInput" placeholder="如：微信零钱、招商银行" maxlength="10">
+      </div>
+      <div class="form-group">
+        <label>账户图标</label>
+        <div class="aa-icons" id="accountIconPicker"></div>
+      </div>
+      <div class="form-group">
+        <label>账户类型</label>
+        <select id="accountTypeInput" style="width:100%;padding:10px;border-radius:12px;border:1.5px solid var(--gray200);font-size:14px;background:var(--gray50)">
+          <option value="ewallet">电子钱包</option>
+          <option value="bank">银行卡</option>
+          <option value="cash">现金</option>
+          <option value="credit">信用卡</option>
+          <option value="invest">理财/投资</option>
+          <option value="other">其他</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>当前余额</label>
+        <input type="number" id="accountBalanceInput" class="amount-input" placeholder="0.00" step="0.01" inputmode="decimal">
+      </div>
+      <div style="display:flex;gap:10px;margin-top:8px">
+        <button class="btn-submit" style="background:var(--gray100);color:var(--gray600)" id="accountModalCancel">取消</button>
+        <button class="btn-submit" id="accountModalSave">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Transfer Modal -->
+  <div class="modal-overlay" id="transferModal">
+    <div class="modal-sheet" style="max-height:85vh">
+      <div class="modal-handle"></div>
+      <h3>🔄 账户转账</h3>
+      <div class="transfer-section">
+        <div class="ts-title">🔄 转账信息</div>
+        <div class="ts-row">
+          <span class="ts-label">从</span>
+          <select id="transferFrom"></select>
+        </div>
+        <div style="text-align:center;font-size:20px;color:var(--blue);padding:4px 0">⇣</div>
+        <div class="ts-row">
+          <span class="ts-label">到</span>
+          <select id="transferTo"></select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>转账金额</label>
+        <input type="number" class="amount-input" id="transferAmount" placeholder="0.00" step="0.01" min="0" inputmode="decimal">
+      </div>
+      <div class="form-group">
+        <label>备注</label>
+        <input type="text" id="transferNote" placeholder="转账备注（可选）" style="width:100%;padding:12px 14px;border-radius:12px;border:1.5px solid var(--gray200);background:var(--gray50);font-size:14px;outline:none">
+      </div>
+      <div style="display:flex;gap:10px;margin-top:8px">
+        <button class="btn-submit" style="background:var(--gray100);color:var(--gray600)" id="transferCancel">取消</button>
+        <button class="btn-submit" style="background:linear-gradient(135deg,var(--blue),#2563eb)" id="transferSave">确认转账</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -1286,6 +1510,7 @@ img,a,button{-webkit-touch-callout:none}
   const TEMPLATE_KEY = 'xy_money_templates';
   const REIMBURSE_SETTINGS_KEY = 'xy_money_reimburse_settings';
   const INVOICE_STORAGE_KEY = 'xy_money_invoices';
+  const ACCOUNTS_KEY = 'xy_money_accounts';
 
   // ========== DATA ==========
   let records = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
@@ -1293,7 +1518,6 @@ img,a,button{-webkit-touch-callout:none}
 
   let currentPage = 'home';
   let currentType = 'expense';
-  let currentAccount = 'personal';
   let viewAccount = 'personal';
   let selectedCat = '';
   let editingId = null;
@@ -1310,9 +1534,24 @@ img,a,button{-webkit-touch-callout:none}
   let reimburseTab = 'pending'; // pending | done | all
   let addReimbursable = false; // toggle state for add form
   let addInvoiceData = null; // temp invoice for current add/edit
-  let reimburseAccount = 'personal'; // account for reimburse page
   let detailReportRange = 'all';
   let detailReportFormat = 'csv';
+
+  // ========== ACCOUNTS (WALLETS) DATA ==========
+  const ACCOUNT_ICONS = ['💚','🟢','🔵','🟣','🟡','🟠','🔴','💳','🏦','📱','💰','💲','👜','🏧','📊','🎁'];
+  const ACCOUNT_TYPE_LABELS = {ewallet:'电子钱包',bank:'银行卡',cash:'现金',credit:'信用卡',invest:'理财/投资',other:'其他'};
+  const ACCOUNT_TYPE_BG = {ewallet:'var(--green-light)',bank:'var(--blue-light)',cash:'var(--amber-light)',credit:'var(--red-light)',invest:'var(--purple-light)',other:'var(--gray100)'};
+
+  // Default accounts (auto-created on first launch)
+  const DEFAULT_ACCOUNTS = [
+    {id:'wechat',name:'微信',icon:'💚',type:'ewallet',balance:0,isDefault:true,account:'personal'},
+    {id:'alipay',name:'支付宝',icon:'🔵',type:'ewallet',balance:0,isDefault:false,account:'personal'},
+    {id:'cash',name:'现金',icon:'💰',type:'cash',balance:0,isDefault:false,account:'personal'},
+  ];
+
+  let wallets = JSON.parse(localStorage.getItem(ACCOUNTS_KEY) || 'null') || [...DEFAULT_ACCOUNTS];
+  let selectedWalletId = wallets.find(w => w.isDefault)?.id || wallets[0]?.id || '';
+  let editingWalletId = null;
 
   // ========== iOS & PWA DETECTION ==========
   const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
@@ -1348,6 +1587,279 @@ img,a,button{-webkit-touch-callout:none}
       case 'success': navigator.vibrate([10,30,10]); break;
       case 'error': navigator.vibrate([50,20,50,20,50]); break;
     }
+  }
+
+  // ========== ACCOUNTS (WALLETS) FUNCTIONS ==========
+  function saveWallets() {
+    localStorage.setItem(ACCOUNTS_KEY, JSON.stringify(wallets));
+  }
+
+  function getWallet(id) {
+    return wallets.find(w => w.id === id);
+  }
+
+  function getWalletsForAccount(acc) {
+    return wallets.filter(w => (w.account || 'personal') === acc);
+  }
+
+  // Calculate real balance from records + initial balance
+  function calcWalletBalance(walletId) {
+    const w = getWallet(walletId);
+    if (!w) return 0;
+    // Start with the stored balance (which we update on every record save)
+    return w.balance || 0;
+  }
+
+  // Update wallet balance when a record is saved
+  function updateWalletBalance(walletId, delta) {
+    const w = getWallet(walletId);
+    if (!w) return;
+    w.balance = (w.balance || 0) + delta;
+    saveWallets();
+  }
+
+  // Recalculate all wallet balances from scratch (for integrity)
+  function recalcAllWalletBalances() {
+    // Reset all balances to 0
+    wallets.forEach(w => w.balance = 0);
+    // Replay all records
+    records.forEach(r => {
+      if (r.type === 'transfer') {
+        if (r.fromWallet) { const w = getWallet(r.fromWallet); if (w) w.balance -= r.amount; }
+        if (r.toWallet) { const w = getWallet(r.toWallet); if (w) w.balance += r.amount; }
+      } else {
+        if (r.walletId) {
+          const w = getWallet(r.walletId);
+          if (!w) return;
+          if (r.type === 'income') w.balance += r.amount;
+          else if (r.type === 'expense') w.balance -= r.amount;
+          // debt doesn't affect wallet balance
+        }
+      }
+    });
+    saveWallets();
+  }
+
+  function getTotalAssets(acc) {
+    const ws = getWalletsForAccount(acc || viewAccount);
+    return ws.reduce((s, w) => s + (w.balance || 0), 0);
+  }
+
+  function renderAccountsPage() {
+    const ws = getWalletsForAccount(viewAccount);
+    const total = ws.reduce((s, w) => s + (w.balance || 0), 0);
+    document.getElementById('totalAssets').textContent = '¥' + total.toFixed(2);
+    document.getElementById('totalAssetsSub').innerHTML = ws.length + ' 个账户 · ' + (viewAccount === 'company' ? '🏢 公司' : '👤 个人') + ' <span class="ats-arrow">⇄</span>';
+
+    const list = document.getElementById('accountCardsList');
+    if (ws.length === 0) {
+      list.innerHTML = '<div class="empty-state"><div class="emoji">💰</div><div class="text">还没有账户，点击下方添加</div></div>';
+      return;
+    }
+    list.innerHTML = ws.map(w => {
+      const bal = w.balance || 0;
+      const typeLabel = ACCOUNT_TYPE_LABELS[w.type] || '其他';
+      const bg = ACCOUNT_TYPE_BG[w.type] || 'var(--gray100)';
+      return `<div class="account-card" data-wid="${w.id}">
+        <div class="ac-icon" style="background:${bg}">${w.icon}</div>
+        <div class="ac-info">
+          <div class="ac-name">${w.name}${w.isDefault ? '<span class="ac-default-badge">默认</span>' : ''}</div>
+          <div class="ac-type">${typeLabel}</div>
+        </div>
+        <div class="ac-balance ${bal < 0 ? 'negative' : ''}">¥${bal.toFixed(2)}</div>
+        <div class="ac-actions">
+          <button class="ac-edit" data-wid="${w.id}" title="编辑">✏️</button>
+          <button class="ac-del" data-wid="${w.id}" title="删除" ${w.isDefault ? 'disabled' : ''}>🗑️</button>
+        </div>
+      </div>`;
+    }).join('');
+
+    // Transfer button
+    if (ws.length >= 2) {
+      list.innerHTML += `<button class="btn-submit" style="margin-top:12px;background:linear-gradient(135deg,var(--blue),#2563eb)" id="btnTransfer">🔄 账户间转账</button>`;
+    }
+  }
+
+  function openAccountModal(walletId) {
+    editingWalletId = walletId;
+    const modal = document.getElementById('accountModal');
+    const title = document.getElementById('accountModalTitle');
+    const nameInput = document.getElementById('accountNameInput');
+    const typeInput = document.getElementById('accountTypeInput');
+    const balanceInput = document.getElementById('accountBalanceInput');
+
+    // Render icon picker
+    const iconPicker = document.getElementById('accountIconPicker');
+    let selectedIcon = '💚';
+    if (walletId) {
+      const w = getWallet(walletId);
+      if (w) {
+        title.textContent = '编辑账户';
+        nameInput.value = w.name;
+        typeInput.value = w.type;
+        balanceInput.value = w.balance || 0;
+        selectedIcon = w.icon;
+      }
+    } else {
+      title.textContent = '添加账户';
+      nameInput.value = '';
+      typeInput.value = 'ewallet';
+      balanceInput.value = '';
+    }
+    iconPicker.innerHTML = ACCOUNT_ICONS.map(ic =>
+      `<button class="aa-icon-btn ${ic === selectedIcon ? 'selected' : ''}" data-icon="${ic}">${ic}</button>`
+    ).join('');
+
+    modal.classList.add('show');
+  }
+
+  function closeAccountModal() {
+    document.getElementById('accountModal').classList.remove('show');
+    editingWalletId = null;
+  }
+
+  function saveAccountModal() {
+    const name = document.getElementById('accountNameInput').value.trim();
+    const type = document.getElementById('accountTypeInput').value;
+    const balance = parseFloat(document.getElementById('accountBalanceInput').value) || 0;
+    const selectedIcon = document.querySelector('.aa-icon-btn.selected');
+    const icon = selectedIcon ? selectedIcon.dataset.icon : '💰';
+
+    if (!name) { toast('请输入账户名称'); return; }
+
+    if (editingWalletId) {
+      const w = getWallet(editingWalletId);
+      if (w) {
+        // If balance changed, update it
+        const oldBalance = w.balance || 0;
+        w.name = name;
+        w.icon = icon;
+        w.type = type;
+        w.balance = balance;
+      }
+    } else {
+      const newId = 'w_' + Date.now();
+      wallets.push({
+        id: newId, name, icon, type, balance,
+        isDefault: false, account: viewAccount
+      });
+      // If first wallet for this account, set as default
+      const accWallets = getWalletsForAccount(viewAccount);
+      if (accWallets.length === 1) {
+        accWallets[0].isDefault = true;
+      }
+    }
+    saveWallets();
+    closeAccountModal();
+    renderAccountsPage();
+    toast(editingWalletId ? '账户已更新' : '账户已添加');
+    haptic('success');
+  }
+
+  function deleteWallet(walletId) {
+    const w = getWallet(walletId);
+    if (!w) return;
+    if (w.isDefault) { toast('默认账户不能删除'); return; }
+    // Check if any records use this wallet
+    const usedCount = records.filter(r => r.walletId === walletId || r.fromWallet === walletId || r.toWallet === walletId).length;
+    if (usedCount > 0) {
+      // Reassign records to default wallet
+      const defaultW = wallets.find(dw => dw.isDefault && (dw.account || 'personal') === (w.account || 'personal'));
+      if (defaultW) {
+        records.forEach(r => {
+          if (r.walletId === walletId) r.walletId = defaultW.id;
+          if (r.fromWallet === walletId) r.fromWallet = defaultW.id;
+          if (r.toWallet === walletId) r.toWallet = defaultW.id;
+        });
+        save();
+      }
+    }
+    wallets = wallets.filter(ww => ww.id !== walletId);
+    saveWallets();
+    renderAccountsPage();
+    toast('账户已删除');
+  }
+
+  // Populate account selector in add form
+  function renderAddAccountSelector() {
+    const grid = document.getElementById('addAccountSelectorGrid');
+    const ws = getWalletsForAccount(viewAccount);
+    if (ws.length === 0) {
+      grid.innerHTML = '<span style="font-size:12px;color:var(--gray400)">暂无账户，请在账户页添加</span>';
+      return;
+    }
+    // Make sure selectedWalletId is valid for current account
+    const validWallet = ws.find(w => w.id === selectedWalletId);
+    if (!validWallet) selectedWalletId = ws[0]?.id || '';
+
+    grid.innerHTML = ws.map(w =>
+      `<div class="as-chip ${w.id === selectedWalletId ? 'selected' + (currentType === 'expense' ? ' expense-mode' : '') : ''}" data-wid="${w.id}">${w.icon} ${w.name}</div>`
+    ).join('');
+  }
+
+  // Populate transfer selects
+  function populateTransferSelects() {
+    const ws = getWalletsForAccount(viewAccount);
+    const fromSel = document.getElementById('addTransferFrom');
+    const toSel = document.getElementById('addTransferTo');
+    const opts = ws.map(w => `<option value="${w.id}">${w.icon} ${w.name}</option>`).join('');
+    fromSel.innerHTML = opts;
+    toSel.innerHTML = opts;
+    if (ws.length >= 2) toSel.selectedIndex = 1;
+  }
+
+  // Update account selector label
+  function updateAccountSelectorLabel() {
+    const label = document.querySelector('#addAccountSelector .as-label');
+    if (currentType === 'income') label.textContent = '收款账户';
+    else if (currentType === 'expense') label.textContent = '付款账户';
+    else label.textContent = '选择账户';
+  }
+
+  // ========== SMART WALLET CHIP (quick input account selector) ==========
+  function renderSmartWalletChip() {
+    const ws = getWalletsForAccount(viewAccount);
+    const chip = document.getElementById('smartWalletChip');
+    if (!chip) return;
+    if (ws.length === 0) {
+      chip.style.display = 'none';
+      return;
+    }
+    chip.style.display = '';
+    const valid = ws.find(w => w.id === selectedWalletId);
+    if (!valid) selectedWalletId = ws[0]?.id || '';
+    const w = getWallet(selectedWalletId);
+    if (!w) return;
+    document.getElementById('swcIcon').textContent = w.icon;
+    document.getElementById('swcName').textContent = w.name;
+    // Color based on account mode + type
+    const isCompany = viewAccount === 'company';
+    const input = document.getElementById('smartInput');
+    const text = (input?.value || '').trim();
+    const parsed = text ? parseSmartInput(text) : null;
+    const isExpense = !parsed || parsed.type === 'expense';
+    chip.classList.toggle('expense-chip', !isCompany && isExpense);
+    chip.classList.toggle('company-chip', isCompany);
+  }
+
+  function toggleSmartWalletDropdown(show) {
+    const dd = document.getElementById('smartWalletDropdown');
+    if (show === undefined) show = !dd.classList.contains('show');
+    if (!show) { dd.classList.remove('show'); return; }
+    const ws = getWalletsForAccount(viewAccount);
+    const isCompany = viewAccount === 'company';
+    const input = document.getElementById('smartInput');
+    const text = (input?.value || '').trim();
+    const parsed = text ? parseSmartInput(text) : null;
+    const isExpense = !parsed || parsed.type === 'expense';
+    dd.innerHTML = ws.map(w => `
+      <div class="swd-item ${w.id === selectedWalletId ? 'active' + (isCompany ? ' company-mode' : (isExpense ? ' expense-mode' : '')) : ''}" data-wid="${w.id}">
+        <span>${w.icon}</span>
+        <span>${w.name}</span>
+        <span class="swd-bal">${(w.balance || 0).toFixed(2)}</span>
+      </div>
+    `).join('');
+    dd.classList.add('show');
   }
 
   // ========== AUTO-CATEGORIZE KEYWORDS ==========
@@ -2066,7 +2578,7 @@ img,a,button{-webkit-touch-callout:none}
     save();
     haptic('success');
     hideModal('ocrResultModal');
-    toast(`截图记账成功 ¥${amount.toFixed(2)}`);
+    toast(`截图记账成功 ¥${amount.toFixed(2)} → ${account === 'company' ? '🏢 公司' : '👤 个人'}`);
     renderHome();
   }
 
@@ -2174,6 +2686,7 @@ img,a,button{-webkit-touch-callout:none}
     updateTemplatesFromRecords();
 
     renderHome();
+    renderSmartWalletChip();
     bindEvents();
     autoBackup();
     startFabTimer();
@@ -2271,15 +2784,36 @@ img,a,button{-webkit-touch-callout:none}
     const header = document.getElementById('mainHeader');
     const icon = document.getElementById('headerAccIcon');
     const sub = document.getElementById('headerSub');
+    const app = document.getElementById('app');
     if (viewAccount === 'company') {
       header.classList.add('company-header');
+      app.classList.add('company-mode');
       icon.textContent = '🏢';
       sub.textContent = '公司账户 · 公司资金独立管理';
     } else {
       header.classList.remove('company-header');
+      app.classList.remove('company-mode');
       icon.textContent = '👤';
       sub.textContent = '个人账户 · 轻松管理每一笔收支';
     }
+  }
+
+  // Unified account switch — used by header tabs, stats switch, accounts switch
+  function switchViewAccount(account) {
+    if (account === viewAccount) return;
+    viewAccount = account;
+    // Sync header tabs
+    document.querySelectorAll('#accountTabs .acc-tab').forEach(b => b.classList.toggle('active', b.dataset.account === viewAccount));
+    updateHeaderStyle();
+    document.getElementById('app').classList.toggle('company-mode', viewAccount === 'company');
+    // Refresh all views
+    renderHome();
+    renderQuickTemplates();
+    renderSmartWalletChip();
+    updateSmartInputStyle();
+    renderAccountsPage();
+    renderStats();
+    haptic('medium');
   }
 
   // ========== NAV ==========
@@ -2303,6 +2837,11 @@ img,a,button{-webkit-touch-callout:none}
       fab.style.display = 'none';
       document.querySelector('[data-page="stats"]').classList.add('active');
       renderStats();
+    } else if (page === 'accounts') {
+      document.getElementById('pageAccounts').style.display = '';
+      fab.style.display = '';
+      document.querySelector('[data-page="accounts"]').classList.add('active');
+      renderAccountsPage();
     } else if (page === 'settings') {
       document.getElementById('pageSettings').style.display = '';
       fab.style.display = 'none';
@@ -2394,19 +2933,25 @@ img,a,button{-webkit-touch-callout:none}
       const sign = r.type === 'income' ? '+' : '-';
       const isCompany = (r.account || 'personal') === 'company';
       const reimbBadge = r.reimbursable ? (r.reimbursed ? '<span class="reimb-badge done">已报销</span>' : '<span class="reimb-badge pending">可报销</span>') : '';
+      const walletBadge = r.walletId ? (() => { const w = getWallet(r.walletId); return w ? `<span class="record-acct-badge" style="background:${ACCOUNT_TYPE_BG[w.type]||'var(--gray100)'};color:var(--gray600)">${w.icon}</span>` : ''; })() : '';
+      const transferInfo = r.type === 'transfer' ? (() => {
+        const fw = r.fromWallet ? getWallet(r.fromWallet) : null;
+        const tw = r.toWallet ? getWallet(r.toWallet) : null;
+        return fw && tw ? `<span style="font-size:11px;color:var(--blue)">${fw.icon}${fw.name} → ${tw.icon}${tw.name}</span>` : '';
+      })() : '';
       html += `<div class="record-swipe-wrap" data-id="${r.id}">
         <div class="record-swipe-actions">
           <div class="swipe-btn swipe-edit" data-action="edit">编辑</div>
           <div class="swipe-btn swipe-delete" data-action="delete">删除</div>
         </div>
         <div class="record-item ${r.type} ${isCompany ? 'company-record' : ''}" data-id="${r.id}">
-          <div class="icon">${cat.icon}</div>
+          <div class="icon">${r.type === 'transfer' ? '🔄' : cat.icon}</div>
           <div class="info">
-            <div class="cat">${cat.name}${reimbBadge}</div>
-            <div class="note">${r.note || ''}</div>
+            <div class="cat">${r.type === 'transfer' ? '转账' : cat.name}${reimbBadge}${walletBadge}</div>
+            <div class="note">${transferInfo || r.note || ''}</div>
           </div>
           <div class="right">
-            <div class="money">${sign}${r.amount.toFixed(2)}</div>
+            <div class="money" style="${r.type === 'transfer' ? 'color:var(--blue)' : ''}">${sign}${r.amount.toFixed(2)}</div>
             <div class="date">${r.date}</div>
           </div>
         </div>
@@ -2510,10 +3055,12 @@ img,a,button{-webkit-touch-callout:none}
   // ========== ADD PAGE ==========
   function resetAddForm() {
     currentType = 'expense';
-    currentAccount = viewAccount;
     selectedCat = '';
     addReimbursable = false;
     addInvoiceData = null;
+    // Reset wallet selection to default
+    const defW = wallets.find(w => w.isDefault && (w.account || 'personal') === viewAccount) || wallets.find(w => (w.account || 'personal') === viewAccount);
+    selectedWalletId = defW ? defW.id : '';
     document.getElementById('addPageTitle').textContent = '记一笔';
     document.getElementById('inputAmount').value = '';
     document.getElementById('inputDate').value = new Date().toISOString().split('T')[0];
@@ -2526,6 +3073,9 @@ img,a,button{-webkit-touch-callout:none}
     updateDebtBtnVisibility();
     updateSaveBtnStyle();
     updateReimburseSection();
+    renderAddAccountSelector();
+    updateAccountSelectorLabel();
+    updateAddFormVisibility();
   }
 
   function renderTypeTabs() {
@@ -2556,10 +3106,12 @@ img,a,button{-webkit-touch-callout:none}
 
   function updateSaveBtnStyle() {
     const btn = document.getElementById('btnSave');
-    if (currentAccount === 'company') {
+    if (viewAccount === 'company') {
       btn.className = 'btn-submit company-btn';
+      btn.textContent = '🏢 保存到公司';
     } else {
       btn.className = 'btn-submit';
+      btn.textContent = '👤 保存到个人';
     }
   }
 
@@ -2570,6 +3122,32 @@ img,a,button{-webkit-touch-callout:none}
 
     if (!amount || amount <= 0) { toast('请输入有效金额'); haptic('error'); return; }
     if (!date) { toast('请选择日期'); haptic('error'); return; }
+
+    // Transfer type
+    if (currentType === 'transfer') {
+      const fromId = document.getElementById('addTransferFrom').value;
+      const toId = document.getElementById('addTransferTo').value;
+      if (!fromId || !toId) { toast('请选择转账账户'); haptic('error'); return; }
+      if (fromId === toId) { toast('转出和转入账户不能相同'); haptic('error'); return; }
+      const fromW = getWallet(fromId);
+      if (fromW && fromW.balance < amount) { toast('余额不足'); haptic('error'); return; }
+
+      const newId = Date.now();
+      records.push({
+        id: newId, type: 'transfer', category: 'transfer',
+        amount, date, note, account: viewAccount,
+        fromWallet: fromId, toWallet: toId
+      });
+      // Update wallet balances
+      updateWalletBalance(fromId, -amount);
+      updateWalletBalance(toId, amount);
+      save();
+      haptic('success');
+      toast(`转账成功 → ${viewAccount === 'company' ? '🏢 公司' : '👤 个人'}`);
+      switchPage('home');
+      return;
+    }
+
     if (!selectedCat) { toast('请选择分类'); haptic('error'); return; }
 
     // Build reimburse data
@@ -2591,13 +3169,36 @@ img,a,button{-webkit-touch-callout:none}
       if (idx >= 0) {
         const existing = records[idx];
         const isReimbActive = addReimbursable && currentType === 'expense';
+
+        // Reverse old wallet balance change
+        if (existing.walletId && existing.type !== 'debt') {
+          const oldW = getWallet(existing.walletId);
+          if (oldW) {
+            if (existing.type === 'income') oldW.balance = (oldW.balance || 0) - existing.amount;
+            else if (existing.type === 'expense') oldW.balance = (oldW.balance || 0) + existing.amount;
+          }
+        }
+
         records[idx] = {
           ...existing,
-          type: currentType, category: selectedCat, amount, date, note, account: currentAccount,
+          type: currentType, category: selectedCat, amount, date, note, account: viewAccount,
+          walletId: selectedWalletId || existing.walletId,
           reimbursable: isReimbActive ? true : (existing.reimbursable || false),
           reimbursed: isReimbActive ? false : (existing.reimbursed || false),
           reimburseDeadline: isReimbActive ? (document.getElementById('addReimbDeadline').value || existing.reimburseDeadline || '') : (existing.reimburseDeadline || '')
         };
+
+        // Apply new wallet balance change
+        const newWalletId = records[idx].walletId;
+        if (newWalletId && currentType !== 'debt') {
+          const newW = getWallet(newWalletId);
+          if (newW) {
+            if (currentType === 'income') newW.balance = (newW.balance || 0) + amount;
+            else if (currentType === 'expense') newW.balance = (newW.balance || 0) - amount;
+          }
+        }
+        saveWallets();
+
         // Save invoice if uploaded
         if (addInvoiceData) {
           invoices[editingId] = addInvoiceData;
@@ -2608,10 +3209,18 @@ img,a,button{-webkit-touch-callout:none}
     } else {
       const newId = Date.now();
       const newRecord = {
-        id: newId, type: currentType, category: selectedCat, amount, date, note, account: currentAccount,
+        id: newId, type: currentType, category: selectedCat, amount, date, note, account: viewAccount,
+        walletId: selectedWalletId,
         ...reimbData
       };
       records.push(newRecord);
+
+      // Update wallet balance for new records
+      if (selectedWalletId && currentType !== 'debt') {
+        if (currentType === 'income') updateWalletBalance(selectedWalletId, amount);
+        else if (currentType === 'expense') updateWalletBalance(selectedWalletId, -amount);
+      }
+
       // Save invoice if uploaded
       if (addInvoiceData) {
         invoices[newId] = addInvoiceData;
@@ -2621,7 +3230,7 @@ img,a,button{-webkit-touch-callout:none}
     addInvoiceData = null;
     save();
     haptic('success');
-    toast('保存成功');
+    toast(`保存成功 → ${viewAccount === 'company' ? '🏢 公司' : '👤 个人'}`);
     switchPage('home');
   }
 
@@ -2641,7 +3250,11 @@ img,a,button{-webkit-touch-callout:none}
     const catId = parsed.category || 'other_exp';
     const type = parsed.type || 'expense';
 
-    // Create record directly
+    // Create record directly — use selectedWalletId so user's choice is respected
+    const ws = getWalletsForAccount(viewAccount);
+    const validWallet = ws.find(w => w.id === selectedWalletId);
+    if (!validWallet && ws.length > 0) selectedWalletId = ws[0].id;
+    const walletId = selectedWalletId || '';
     records.push({
       id: Date.now(),
       type: type,
@@ -2649,8 +3262,14 @@ img,a,button{-webkit-touch-callout:none}
       amount: parsed.amount,
       date: new Date().toISOString().split('T')[0],
       note: parsed.note || '',
-      account: viewAccount
+      account: viewAccount,
+      walletId: walletId
     });
+    // Update wallet balance
+    if (walletId && type !== 'debt') {
+      if (type === 'income') updateWalletBalance(walletId, parsed.amount);
+      else if (type === 'expense') updateWalletBalance(walletId, -parsed.amount);
+    }
     save();
     haptic('success');
 
@@ -2661,8 +3280,9 @@ img,a,button{-webkit-touch-callout:none}
 
     input.value = '';
     document.getElementById('smartHint').innerHTML = '';
-    toast(`已记录 ${parsed.amount.toFixed(2)} 元`);
+    toast(`已记录 ${parsed.amount.toFixed(2)} 元 → ${viewAccount === 'company' ? '🏢 公司' : '👤 个人'}`);
     renderHome();
+    renderSmartWalletChip();
   }
 
   function updateSmartHint() {
@@ -2729,9 +3349,13 @@ img,a,button{-webkit-touch-callout:none}
     const r = records.find(rec => rec.id === id);
     if (!r) return;
     editingId = id;
+    // If record belongs to a different account mode, switch global mode
+    const recordAccount = r.account || 'personal';
+    if (recordAccount !== viewAccount) {
+      switchViewAccount(recordAccount);
+    }
     switchPage('add');
     currentType = r.type;
-    currentAccount = r.account || 'personal';
     selectedCat = r.category;
     addReimbursable = r.reimbursable || false;
     addInvoiceData = invoices[id] || null;
@@ -2750,6 +3374,17 @@ img,a,button{-webkit-touch-callout:none}
   }
 
   function deleteRecord(id) {
+    const r = records.find(rec => rec.id === id);
+    if (r) {
+      // Reverse wallet balance change
+      if (r.type === 'transfer') {
+        if (r.fromWallet) updateWalletBalance(r.fromWallet, r.amount);
+        if (r.toWallet) updateWalletBalance(r.toWallet, -r.amount);
+      } else if (r.walletId && r.type !== 'debt') {
+        if (r.type === 'income') updateWalletBalance(r.walletId, -r.amount);
+        else if (r.type === 'expense') updateWalletBalance(r.walletId, r.amount);
+      }
+    }
     records = records.filter(r => r.id !== id);
     // Clean up invoice data
     if (invoices[id]) {
@@ -2764,8 +3399,18 @@ img,a,button{-webkit-touch-callout:none}
   // ========== STATS ==========
   function renderStats() {
     document.getElementById('statMonthText').textContent = `${statYear}年${statMonth}月`;
-    const accName = viewAccount === 'company' ? '· 公司' : '· 个人';
-    document.getElementById('statsAccLabel').textContent = accName;
+    const switchEl = document.getElementById('statsAccSwitch');
+    const iconEl = document.getElementById('statsAccIcon');
+    const textEl = document.getElementById('statsAccText');
+    if (viewAccount === 'company') {
+      iconEl.textContent = '🏢';
+      textEl.textContent = '公司';
+      switchEl.className = 'stats-acc-switch switch-company';
+    } else {
+      iconEl.textContent = '👤';
+      textEl.textContent = '个人';
+      switchEl.className = 'stats-acc-switch switch-personal';
+    }
     renderBarChart();
     renderPieChart();
   }
@@ -3191,17 +3836,26 @@ img,a,button{-webkit-touch-callout:none}
 
   // ========== ACCOUNT HELPERS ==========
   function updateAddAccountSwitch() {
-    document.querySelectorAll('#addAccountSwitch .as-btn').forEach(b => {
-      b.className = 'as-btn';
-      if (b.dataset.account === currentAccount) {
-        b.className = 'as-btn active-' + currentAccount;
-      }
-    });
+    // Update account mode banner (no more toggle buttons — dual system)
+    const banner = document.getElementById('addModeBanner');
+    const ambTitle = document.getElementById('ambTitle');
+    const ambLabel = document.getElementById('ambLabel');
+    if (viewAccount === 'company') {
+      banner.className = 'account-mode-banner company-banner';
+      banner.querySelector('.amb-icon').textContent = '🏢';
+      ambTitle.textContent = '公司账户';
+      ambLabel.textContent = '记入公司收支 · 首页切换回个人';
+    } else {
+      banner.className = 'account-mode-banner personal-banner';
+      banner.querySelector('.amb-icon').textContent = '👤';
+      ambTitle.textContent = '个人账户';
+      ambLabel.textContent = '记入个人收支 · 首页切换到公司';
+    }
   }
 
   function updateDebtBtnVisibility() {
     const debtBtn = document.getElementById('debtTypeBtn');
-    if (currentAccount === 'company') {
+    if (viewAccount === 'company') {
       debtBtn.style.display = 'none';
       if (currentType === 'debt') {
         currentType = 'expense';
@@ -3211,6 +3865,21 @@ img,a,button{-webkit-touch-callout:none}
       }
     } else {
       debtBtn.style.display = '';
+    }
+  }
+
+  // Show/hide sections based on type (transfer vs normal)
+  function updateAddFormVisibility() {
+    const isTransfer = currentType === 'transfer';
+    document.getElementById('addTransferSection').style.display = isTransfer ? '' : 'none';
+    document.getElementById('addAccountSelector').style.display = isTransfer ? 'none' : '';
+    document.getElementById('catGrid').style.display = isTransfer ? 'none' : '';
+    // Hide reimburse section for transfer
+    if (isTransfer) {
+      document.getElementById('addReimburseSection').style.display = 'none';
+    }
+    if (isTransfer) {
+      populateTransferSelects();
     }
   }
 
@@ -3237,7 +3906,7 @@ img,a,button{-webkit-touch-callout:none}
     // Show for any expense (personal + company)
     if (currentType === 'expense') {
       section.style.display = '';
-      rsTitle.textContent = currentAccount === 'company' ? '📋 标记为公司报销' : '📋 标记为可报销';
+      rsTitle.textContent = viewAccount === 'company' ? '📋 标记为公司报销' : '📋 标记为可报销';
     } else {
       section.style.display = 'none';
       addReimbursable = false;
@@ -3411,19 +4080,28 @@ img,a,button{-webkit-touch-callout:none}
   }
 
   function renderReimbursePage() {
-    // Update account label
+    // Update account mode banner (follows dual system)
     const accLabel = document.getElementById('reimburseAccLabel');
-    accLabel.textContent = reimburseAccount === 'company' ? '公司账户' : '个人账户';
+    const banner = document.getElementById('reimburseModeBanner');
+    const rmbTitle = document.getElementById('rmbTitle');
+    const rmbLabel = document.getElementById('rmbLabel');
+    if (viewAccount === 'company') {
+      accLabel.textContent = '🏢 公司账户';
+      accLabel.style.color = 'var(--purple)';
+      banner.className = 'account-mode-banner company-banner';
+      banner.querySelector('.amb-icon').textContent = '🏢';
+      rmbTitle.textContent = '公司账户';
+      rmbLabel.textContent = '仅显示公司报销 · 首页切换到个人';
+    } else {
+      accLabel.textContent = '👤 个人账户';
+      accLabel.style.color = 'var(--green)';
+      banner.className = 'account-mode-banner personal-banner';
+      banner.querySelector('.amb-icon').textContent = '👤';
+      rmbTitle.textContent = '个人账户';
+      rmbLabel.textContent = '仅显示个人报销 · 首页切换到公司';
+    }
 
-    // Update account switch
-    document.querySelectorAll('#reimburseAccountSwitch .as-btn').forEach(b => {
-      b.className = 'as-btn';
-      if (b.dataset.account === reimburseAccount) {
-        b.className = 'as-btn active-' + reimburseAccount;
-      }
-    });
-
-    const reimbRecords = getReimbursableRecords(reimburseAccount);
+    const reimbRecords = getReimbursableRecords(viewAccount);
     const pending = reimbRecords.filter(r => !r.reimbursed);
     const done = reimbRecords.filter(r => r.reimbursed);
     const overdue = pending.filter(r => isOverdue(r));
@@ -3583,7 +4261,7 @@ img,a,button{-webkit-touch-callout:none}
 
   // ========== DETAIL REPORT GENERATION ==========
   function generateDetailReport() {
-    let filtered = getReimbursableRecords(reimburseAccount);
+    let filtered = getReimbursableRecords(viewAccount);
 
     if (detailReportRange === 'pending') {
       filtered = filtered.filter(r => !r.reimbursed);
@@ -3599,7 +4277,7 @@ img,a,button{-webkit-touch-callout:none}
     // Sort by date
     filtered.sort((a, b) => a.date.localeCompare(b.date));
 
-    const accName = reimburseAccount === 'company' ? '公司' : '个人';
+    const accName = viewAccount === 'company' ? '公司' : '个人';
     const now = new Date();
     const dateStr = now.toLocaleDateString('zh-CN');
 
@@ -3766,6 +4444,7 @@ img,a,button{-webkit-touch-callout:none}
     smartInput.addEventListener('input', () => {
       updateSmartHint();
       updateSmartInputStyle();
+      renderSmartWalletChip();
     });
     smartInput.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') {
@@ -3777,6 +4456,33 @@ img,a,button{-webkit-touch-callout:none}
     // Smart send button
     document.getElementById('smartSend').addEventListener('click', () => {
       smartSubmit();
+    });
+
+    // Smart wallet chip — tap to toggle dropdown
+    document.getElementById('smartWalletChip').addEventListener('click', (e) => {
+      e.stopPropagation();
+      toggleSmartWalletDropdown();
+      haptic('light');
+    });
+
+    // Smart wallet dropdown — select account
+    document.getElementById('smartWalletDropdown').addEventListener('click', (e) => {
+      const item = e.target.closest('.swd-item');
+      if (!item) return;
+      selectedWalletId = item.dataset.wid;
+      toggleSmartWalletDropdown(false);
+      renderSmartWalletChip();
+      renderAddAccountSelector();
+      haptic('light');
+    });
+
+    // Close dropdown on outside click
+    document.addEventListener('click', (e) => {
+      const dd = document.getElementById('smartWalletDropdown');
+      const chip = document.getElementById('smartWalletChip');
+      if (dd?.classList.contains('show') && !dd.contains(e.target) && !chip?.contains(e.target)) {
+        dd.classList.remove('show');
+      }
     });
 
     // ===== QUICK TEMPLATE EVENTS =====
@@ -3838,7 +4544,7 @@ img,a,button{-webkit-touch-callout:none}
         document.getElementById('smartHint').innerHTML = '';
         document.getElementById('smartIcon').textContent = '💬';
         document.getElementById('smartIcon').style.opacity = '0.5';
-        toast(`已记录 ${amount.toFixed(2)} 元 · ${catInfo.name}`);
+        toast(`已记录 ${amount.toFixed(2)} 元 · ${catInfo.name} → ${viewAccount === 'company' ? '🏢 公司' : '👤 个人'}`);
         renderHome();
 
         // Remove one-time Enter handler
@@ -3953,19 +4659,23 @@ img,a,button{-webkit-touch-callout:none}
       renderStats();
     });
 
+    // Stats page — account switch chip
+    document.getElementById('statsAccSwitch').addEventListener('click', () => {
+      switchViewAccount(viewAccount === 'personal' ? 'company' : 'personal');
+    });
+
     // Type tabs → moved to reimbursement events section (includes updateReimburseSection)
 
-    // Account tabs in header
+    // Account tabs in header — the ONLY way to switch between dual systems
     document.querySelectorAll('#accountTabs .acc-tab').forEach(btn => {
       btn.addEventListener('click', () => {
-        viewAccount = btn.dataset.account;
-        document.querySelectorAll('#accountTabs .acc-tab').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        renderHome();
-        renderQuickTemplates();
-        updateSmartInputStyle();
-        haptic('light');
+        switchViewAccount(btn.dataset.account);
       });
+    });
+
+    // Accounts page — account mode switch in total card
+    document.getElementById('totalAssetsSub').addEventListener('click', () => {
+      switchViewAccount(viewAccount === 'personal' ? 'company' : 'personal');
     });
 
     // Account switch in add sheet → moved to reimbursement events section
@@ -4107,8 +4817,7 @@ img,a,button{-webkit-touch-callout:none}
       switchPage('home');
     });
     document.getElementById('editSave').addEventListener('click', () => {
-      const editAccEl = document.getElementById('editAccount');
-      if (editAccEl) currentAccount = editAccEl.value;
+      // Account is locked to the record's own account (dual system)
       saveRecord();
     });
     document.getElementById('editDelete').addEventListener('click', () => {
@@ -4146,22 +4855,12 @@ img,a,button{-webkit-touch-callout:none}
 
     // Reimburse quick card click → go to reimburse page
     document.getElementById('reimburseCard').addEventListener('click', () => {
-      reimburseAccount = viewAccount;
       switchPage('reimburse');
       haptic('light');
     });
 
     // Reimburse back button
     document.getElementById('reimburseBack').addEventListener('click', () => switchPage('home'));
-
-    // Reimburse account switch
-    document.querySelectorAll('#reimburseAccountSwitch .as-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        reimburseAccount = btn.dataset.account;
-        renderReimbursePage();
-        haptic('light');
-      });
-    });
 
     // Reimburse tabs
     document.querySelectorAll('#reimburseTabs button').forEach(btn => {
@@ -4199,7 +4898,7 @@ img,a,button{-webkit-touch-callout:none}
       }
     });
 
-    // Type tabs → update reimburse section visibility
+    // Type tabs → update reimburse section visibility + account selector
     document.querySelectorAll('#typeTabs button').forEach(btn => {
       btn.addEventListener('click', () => {
         currentType = btn.dataset.type;
@@ -4207,22 +4906,14 @@ img,a,button{-webkit-touch-callout:none}
         renderTypeTabs();
         renderCatGrid();
         updateReimburseSection();
+        updateAddFormVisibility();
+        renderAddAccountSelector();
+        updateAccountSelectorLabel();
         haptic('light');
       });
     });
 
-    // Account switch in add sheet → update reimburse section
-    document.querySelectorAll('#addAccountSwitch .as-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        currentAccount = btn.dataset.account;
-        updateAddAccountSwitch();
-        updateDebtBtnVisibility();
-        updateSaveBtnStyle();
-        updateReimburseSection();
-        haptic('light');
-      });
-    });
-
+    // Account switch in add sheet → update reimburse section + wallet selector
     // Invoice preview modal close
     document.getElementById('invoicePreviewClose').addEventListener('click', () => {
       document.getElementById('invoicePreviewModal').classList.remove('show');
@@ -4279,6 +4970,102 @@ img,a,button{-webkit-touch-callout:none}
     document.getElementById('detailReportModal').addEventListener('click', (e) => {
       if (e.target === document.getElementById('detailReportModal')) {
         document.getElementById('detailReportModal').classList.remove('show');
+      }
+    });
+
+    // ===== ACCOUNTS (WALLETS) EVENTS =====
+
+    // Add account button
+    document.getElementById('btnAddAccount').addEventListener('click', () => {
+      openAccountModal(null);
+    });
+
+    // Account cards list - delegate events for edit/delete/transfer
+    document.getElementById('accountCardsList').addEventListener('click', (e) => {
+      const editBtn = e.target.closest('.ac-edit');
+      if (editBtn) {
+        e.stopPropagation();
+        openAccountModal(editBtn.dataset.wid);
+        return;
+      }
+      const delBtn = e.target.closest('.ac-del');
+      if (delBtn) {
+        e.stopPropagation();
+        deleteWallet(delBtn.dataset.wid);
+        return;
+      }
+      const transferBtn = e.target.closest('#btnTransfer');
+      if (transferBtn) {
+        // Open standalone transfer modal
+        const modal = document.getElementById('transferModal');
+        const ws = getWalletsForAccount(viewAccount);
+        const opts = ws.map(w => `<option value="${w.id}">${w.icon} ${w.name} (¥${(w.balance||0).toFixed(2)})</option>`).join('');
+        document.getElementById('transferFrom').innerHTML = opts;
+        document.getElementById('transferTo').innerHTML = opts;
+        if (ws.length >= 2) document.getElementById('transferTo').selectedIndex = 1;
+        document.getElementById('transferAmount').value = '';
+        document.getElementById('transferNote').value = '';
+        modal.classList.add('show');
+        return;
+      }
+    });
+
+    // Account modal - icon picker
+    document.getElementById('accountIconPicker').addEventListener('click', (e) => {
+      const btn = e.target.closest('.aa-icon-btn');
+      if (!btn) return;
+      document.querySelectorAll('.aa-icon-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+    });
+
+    // Account modal - save
+    document.getElementById('accountModalSave').addEventListener('click', saveAccountModal);
+    document.getElementById('accountModalCancel').addEventListener('click', closeAccountModal);
+    document.getElementById('accountModal').addEventListener('click', (e) => {
+      if (e.target === document.getElementById('accountModal')) closeAccountModal();
+    });
+
+    // Account selector in add form - delegate clicks
+    document.getElementById('addAccountSelectorGrid').addEventListener('click', (e) => {
+      const chip = e.target.closest('.as-chip');
+      if (!chip) return;
+      selectedWalletId = chip.dataset.wid;
+      renderAddAccountSelector();
+      haptic('light');
+    });
+
+    // Standalone transfer modal events
+    document.getElementById('transferCancel').addEventListener('click', () => {
+      document.getElementById('transferModal').classList.remove('show');
+    });
+    document.getElementById('transferSave').addEventListener('click', () => {
+      const fromId = document.getElementById('transferFrom').value;
+      const toId = document.getElementById('transferTo').value;
+      const amount = parseFloat(document.getElementById('transferAmount').value);
+      const note = document.getElementById('transferNote').value.trim();
+      if (!fromId || !toId) { toast('请选择账户'); return; }
+      if (fromId === toId) { toast('转出和转入账户不能相同'); return; }
+      if (!amount || amount <= 0) { toast('请输入有效金额'); return; }
+      const fromW = getWallet(fromId);
+      if (fromW && fromW.balance < amount) { toast('余额不足'); return; }
+      // Create transfer record
+      records.push({
+        id: Date.now(), type: 'transfer', category: 'transfer',
+        amount, date: new Date().toISOString().split('T')[0],
+        note: note || '账户转账', account: viewAccount,
+        fromWallet: fromId, toWallet: toId
+      });
+      updateWalletBalance(fromId, -amount);
+      updateWalletBalance(toId, amount);
+      save();
+      document.getElementById('transferModal').classList.remove('show');
+      renderAccountsPage();
+      haptic('success');
+      toast(`转账成功 → ${viewAccount === 'company' ? '🏢 公司' : '👤 个人'}`);
+    });
+    document.getElementById('transferModal').addEventListener('click', (e) => {
+      if (e.target === document.getElementById('transferModal')) {
+        document.getElementById('transferModal').classList.remove('show');
       }
     });
 
