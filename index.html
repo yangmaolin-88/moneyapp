@@ -49,7 +49,12 @@ img,a,button{-webkit-touch-callout:none}
 .header h1{font-size:18px;font-weight:700;position:relative;z-index:1;display:flex;align-items:center;gap:6px}
 .header .sub{font-size:12px;opacity:.85;margin-top:2px;position:relative;z-index:1}
 
-/* (account-switch removed — dual system uses header tabs only) */
+/* Account switch tabs — dual system entry */
+.account-tabs{display:flex;gap:6px;margin:10px 16px 0;background:rgba(255,255,255,.12);border-radius:12px;padding:4px;position:relative;z-index:1}
+.account-tabs .acc-tab{flex:1;padding:9px 0;border-radius:10px;border:none;background:transparent;color:rgba(255,255,255,.6);font-size:14px;font-weight:700;cursor:pointer;transition:all .3s;text-align:center;letter-spacing:.5px}
+.account-tabs .acc-tab.active{background:#fff;color:var(--green);box-shadow:0 2px 8px rgba(0,0,0,.15);transform:scale(1.02)}
+.account-tabs .acc-tab.active[data-account="company"]{background:#fff;color:var(--purple);box-shadow:0 2px 8px rgba(0,0,0,.15);transform:scale(1.02)}
+.account-tabs .acc-tab:active{transform:scale(.95)}
 
 /* Account mode banner — prominent visual indicator */
 .account-mode-banner{display:flex;align-items:center;gap:8px;padding:10px 14px;border-radius:10px;margin-bottom:14px;font-size:13px;font-weight:600;transition:all .3s}
@@ -443,6 +448,8 @@ img,a,button{-webkit-touch-callout:none}
   /* Account mode banner dark mode */
   .account-mode-banner.personal-banner{background:linear-gradient(135deg,#0a2e1a,#0f3d22);color:#34d399;border-color:#065f46}
   .account-mode-banner.company-banner{background:linear-gradient(135deg,#1e0a3e,#2d1065);color:#a78bfa;border-color:#4c1d95}
+  .account-tabs{background:rgba(255,255,255,.1)}
+  .account-tabs .acc-tab.active{background:#2a2a3e;color:var(--green-mid)}
 }
 
 /* ===== DARK MODE MANUAL TOGGLE (v16.0) ===== */
@@ -531,6 +538,8 @@ img,a,button{-webkit-touch-callout:none}
 .dark-mode .add-account-modal .aa-icon-btn{background:#2a2a3e;border-color:#444}
 .dark-mode .add-account-modal .aa-icon-btn.selected{border-color:var(--green-mid);background:#1a2e1a}
 .dark-mode .budget-ring-card{background:#1e1e32;border-color:#333}
+.dark-mode .account-tabs{background:rgba(255,255,255,.1)}
+.dark-mode .account-tabs .acc-tab.active{background:#2a2a3e;color:var(--green-mid)}
 
 /* Light mode force override */
 .light-mode html,.light-mode body{background:#f9fafb}
@@ -830,6 +839,10 @@ img,a,button{-webkit-touch-callout:none}
   <div class="header" id="mainHeader">
     <h1>小杨专属记账 <span id="headerAccIcon">👤</span></h1>
     <div class="sub" id="headerSub">个人账户 · 轻松管理每一笔收支</div>
+    <div class="account-tabs" id="accountTabs">
+      <button class="acc-tab active" data-account="personal">👤 个人</button>
+      <button class="acc-tab" data-account="company">🏢 公司</button>
+    </div>
   </div>
 
   <!-- Page: Home -->
@@ -3023,6 +3036,8 @@ img,a,button{-webkit-touch-callout:none}
   function switchViewAccount(account) {
     if (account === viewAccount) return;
     viewAccount = account;
+    // Sync header tabs
+    document.querySelectorAll('#accountTabs .acc-tab').forEach(b => b.classList.toggle('active', b.dataset.account === viewAccount));
     updateHeaderStyle();
     document.getElementById('app').classList.toggle('company-mode', viewAccount === 'company');
     // Refresh all views
@@ -3046,38 +3061,46 @@ img,a,button{-webkit-touch-callout:none}
       document.getElementById('pageHome').style.display = '';
       document.querySelector('[data-page="home"]').classList.add('active');
       fab.style.display = '';
+      document.getElementById('accountTabs').style.display = 'flex';
       renderHome();
     } else if (page === 'add') {
       document.getElementById('pageAdd').style.display = '';
       fab.style.display = 'none';
+      document.getElementById('accountTabs').style.display = 'flex';
       resetAddForm();
     } else if (page === 'stats') {
       document.getElementById('pageStats').style.display = '';
       fab.style.display = 'none';
       document.querySelector('[data-page="stats"]').classList.add('active');
+      document.getElementById('accountTabs').style.display = 'flex';
       renderStats();
     } else if (page === 'accounts') {
       document.getElementById('pageAccounts').style.display = '';
       fab.style.display = '';
       document.querySelector('[data-page="accounts"]').classList.add('active');
+      document.getElementById('accountTabs').style.display = 'flex';
       renderAccountsPage();
     } else if (page === 'settings') {
       document.getElementById('pageSettings').style.display = '';
       fab.style.display = 'none';
       document.querySelector('[data-page="settings"]').classList.add('active');
+      document.getElementById('accountTabs').style.display = 'none';
       updateBackupStatus();
       updateRecordCount();
     } else if (page === 'catmanage') {
       document.getElementById('pageCatManage').style.display = '';
       fab.style.display = 'none';
+      document.getElementById('accountTabs').style.display = 'flex';
       renderCatManage();
     } else if (page === 'templmanage') {
       document.getElementById('pageTemplateManage').style.display = '';
       fab.style.display = 'none';
+      document.getElementById('accountTabs').style.display = 'flex';
       renderTemplateManage();
     } else if (page === 'reimburse') {
       document.getElementById('pageReimburse').style.display = '';
       fab.style.display = 'none';
+      document.getElementById('accountTabs').style.display = 'flex';
       renderReimbursePage();
     }
   }
@@ -4881,6 +4904,13 @@ img,a,button{-webkit-touch-callout:none}
     // Stats page — account switch chip
     document.getElementById('statsAccSwitch').addEventListener('click', () => {
       switchViewAccount(viewAccount === 'personal' ? 'company' : 'personal');
+    });
+
+    // Account tabs in header — the ONLY way to switch between dual systems
+    document.querySelectorAll('#accountTabs .acc-tab').forEach(btn => {
+      btn.addEventListener('click', () => {
+        switchViewAccount(btn.dataset.account);
+      });
     });
 
     // Type tabs → moved to reimbursement events section (includes updateReimburseSection)
