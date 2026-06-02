@@ -49,13 +49,6 @@ img,a,button{-webkit-touch-callout:none}
 .header h1{font-size:18px;font-weight:700;position:relative;z-index:1;display:flex;align-items:center;gap:6px}
 .header .sub{font-size:12px;opacity:.85;margin-top:2px;position:relative;z-index:1}
 
-/* Account switch tabs — dual system entry */
-.account-tabs{display:flex;gap:6px;margin:10px 16px 0;background:rgba(255,255,255,.12);border-radius:12px;padding:4px;position:relative;z-index:1}
-.account-tabs .acc-tab{flex:1;padding:9px 0;border-radius:10px;border:none;background:transparent;color:rgba(255,255,255,.6);font-size:14px;font-weight:700;cursor:pointer;transition:all .3s;text-align:center;letter-spacing:.5px}
-.account-tabs .acc-tab.active{background:#fff;color:var(--green);box-shadow:0 2px 8px rgba(0,0,0,.15);transform:scale(1.02)}
-.account-tabs .acc-tab.active[data-account="company"]{background:#fff;color:var(--purple);box-shadow:0 2px 8px rgba(0,0,0,.15);transform:scale(1.02)}
-.account-tabs .acc-tab:active{transform:scale(.95)}
-
 /* (account-switch removed — dual system uses header tabs only) */
 
 /* Account mode banner — prominent visual indicator */
@@ -393,8 +386,6 @@ img,a,button{-webkit-touch-callout:none}
   .bottom-nav .nav-item.active{color:var(--green-mid)}
   .settings-item:active{background:#2a2a3e}
   .type-tabs button,.cat-manage-tabs button{background:#1e1e32;border-color:#333;color:#e5e7eb}
-  .account-tabs{background:rgba(255,255,255,.1)}
-  .account-tabs .acc-tab.active{background:#2a2a3e;color:var(--green-mid)}
   .export-modal .export-option{background:#1e1e32;border-color:#333;color:#e5e7eb}
   .export-modal .format-btn,.export-modal .range-btn{background:#1e1e32;border-color:#333;color:#e5e7eb}
   .month-nav button{background:#2a2a3e}
@@ -472,8 +463,6 @@ img,a,button{-webkit-touch-callout:none}
 .dark-mode .bottom-nav .nav-item.active{color:var(--green-mid)}
 .dark-mode .settings-item:active{background:#2a2a3e}
 .dark-mode .type-tabs button,.dark-mode .cat-manage-tabs button{background:#1e1e32;border-color:#333;color:#e5e7eb}
-.dark-mode .account-tabs{background:rgba(255,255,255,.1)}
-.dark-mode .account-tabs .acc-tab.active{background:#2a2a3e;color:var(--green-mid)}
 .dark-mode .export-modal .export-option{background:#1e1e32;border-color:#333;color:#e5e7eb}
 .dark-mode .export-modal .format-btn,.dark-mode .export-modal .range-btn{background:#1e1e32;border-color:#333;color:#e5e7eb}
 .dark-mode .month-nav button{background:#2a2a3e}
@@ -841,10 +830,6 @@ img,a,button{-webkit-touch-callout:none}
   <div class="header" id="mainHeader">
     <h1>小杨专属记账 <span id="headerAccIcon">👤</span></h1>
     <div class="sub" id="headerSub">个人账户 · 轻松管理每一笔收支</div>
-    <div class="account-tabs" id="accountTabs">
-      <button class="acc-tab active" data-account="personal">👤 个人</button>
-      <button class="acc-tab" data-account="company">🏢 公司</button>
-    </div>
   </div>
 
   <!-- Page: Home -->
@@ -1675,6 +1660,10 @@ img,a,button{-webkit-touch-callout:none}
 (function(){
   'use strict';
 
+  // ========== EARLY URL PARAM CAPTURE (before any routing clears location.search) ==========
+  var _earlyUrlSearch = window.location.search;
+  var _earlyUrlHref = window.location.href;
+
   // ========== STORAGE KEYS ==========
   const STORAGE_KEY = 'xy_money_records';
   const BACKUP_KEY = 'xy_money_backup';
@@ -2449,7 +2438,21 @@ img,a,button{-webkit-touch-callout:none}
 
   // ========== URL PARAMS (iOS Shortcuts) ==========
   function handleUrlParams() {
-    const params = new URLSearchParams(window.location.search);
+    // v17.0 fix: use full URL parsing instead of window.location.search
+    // which may be empty in SPA/GitHub Pages environments
+    var searchStr = _earlyUrlSearch || window.location.search;
+    var params;
+    if (searchStr) {
+      params = new URLSearchParams(searchStr);
+    } else {
+      // Fallback: parse from full href (catches cases where search is stripped)
+      try {
+        var url = new URL(window.location.href);
+        params = new URLSearchParams(url.search);
+      } catch(e) {
+        params = new URLSearchParams('');
+      }
+    }
     const amount = params.get('amount');
     const type = params.get('type');
     const category = params.get('category');
@@ -3020,8 +3023,6 @@ img,a,button{-webkit-touch-callout:none}
   function switchViewAccount(account) {
     if (account === viewAccount) return;
     viewAccount = account;
-    // Sync header tabs
-    document.querySelectorAll('#accountTabs .acc-tab').forEach(b => b.classList.toggle('active', b.dataset.account === viewAccount));
     updateHeaderStyle();
     document.getElementById('app').classList.toggle('company-mode', viewAccount === 'company');
     // Refresh all views
@@ -4883,13 +4884,6 @@ img,a,button{-webkit-touch-callout:none}
     });
 
     // Type tabs → moved to reimbursement events section (includes updateReimburseSection)
-
-    // Account tabs in header — the ONLY way to switch between dual systems
-    document.querySelectorAll('#accountTabs .acc-tab').forEach(btn => {
-      btn.addEventListener('click', () => {
-        switchViewAccount(btn.dataset.account);
-      });
-    });
 
     // Accounts page — account mode switch in total card
     document.getElementById('totalAssetsSub').addEventListener('click', () => {
