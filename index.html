@@ -11,7 +11,7 @@
 <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
 <meta name="format-detection" content="telephone=no">
 <meta name="mobile-web-app-capable" content="yes">
-<title>小杨专属记账 v17.0</title>
+<title>小杨专属记账 v18.0</title>
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" sizes="192x192" href="icon-192.svg">
 <link rel="apple-touch-icon" sizes="512x512" href="icon-512.svg">
@@ -831,6 +831,124 @@ img,a,button{-webkit-touch-callout:none}
 .dr-actions{display:flex;gap:10px;margin-top:16px}
 .dr-actions button{flex:1;padding:13px;border-radius:14px;border:none;font-size:15px;font-weight:600;cursor:pointer}
 
+
+/* ========== V18.0 NEW STYLES ========== */
+
+/* Quick Entry Modal */
+.quick-entry-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);z-index:2000;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s}
+.quick-entry-overlay.show{opacity:1;pointer-events:auto}
+.quick-entry-sheet{width:100%;max-width:480px;background:var(--bg);border-radius:20px 20px 0 0;padding:24px 20px 40px;transform:translateY(100%);transition:transform .3s cubic-bezier(.4,0,.2,1)}
+.quick-entry-overlay.show .quick-entry-sheet{transform:translateY(0)}
+.qe-handle{width:40px;height:4px;background:var(--gray300);border-radius:2px;margin:0 auto 16px}
+.qe-title{font-size:18px;font-weight:700;margin-bottom:20px;text-align:center}
+.qe-amount-wrap{display:flex;align-items:center;gap:8px;margin-bottom:16px}
+.qe-amount-wrap .qe-currency{font-size:28px;font-weight:700;color:var(--gray400)}
+.qe-amount-wrap input{flex:1;font-size:36px;font-weight:800;border:none;outline:none;background:transparent;text-align:center;min-width:0}
+.qe-amount-wrap input::placeholder{color:var(--gray300)}
+.qe-type-tabs{display:flex;gap:0;margin-bottom:12px;background:var(--gray100);border-radius:12px;padding:4px}
+.qe-type-tabs button{flex:1;padding:10px;border:none;background:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;transition:.2s}
+.qe-type-tabs button.active-expense{background:#fff;color:var(--red);box-shadow:0 1px 3px rgba(0,0,0,.1)}
+.qe-type-tabs button.active-income{background:#fff;color:var(--green);box-shadow:0 1px 3px rgba(0,0,0,.1)}
+.qe-cat-row{display:flex;gap:8px;overflow-x:auto;padding:8px 0;margin-bottom:12px;-webkit-overflow-scrolling:touch}
+.qe-cat-row::-webkit-scrollbar{display:none}
+.qe-cat-chip{flex-shrink:0;padding:8px 14px;border-radius:20px;font-size:13px;background:var(--gray100);cursor:pointer;white-space:nowrap;transition:.2s;border:2px solid transparent}
+.qe-cat-chip.selected{border-color:var(--blue);background:rgba(59,130,246,.08);font-weight:600}
+.qe-note-row{display:flex;gap:8px;margin-bottom:16px}
+.qe-note-row input{flex:1;padding:12px;border:1px solid var(--gray200);border-radius:12px;font-size:14px;outline:none;background:var(--bg)}
+.qe-note-row input:focus{border-color:var(--blue)}
+.qe-submit-btn{width:100%;padding:16px;border:none;border-radius:14px;font-size:17px;font-weight:700;color:#fff;background:var(--blue);cursor:pointer;transition:.2s}
+.qe-submit-btn:active{transform:scale(.98)}
+.qe-submit-btn.company-btn{background:var(--purple)}
+
+/* Big Record Button */
+.big-record-btn{display:flex;align-items:center;justify-content:center;gap:8px;margin:12px 16px;padding:16px;background:linear-gradient(135deg,var(--blue),#6366f1);color:#fff;border:none;border-radius:16px;font-size:17px;font-weight:700;cursor:pointer;box-shadow:0 4px 15px rgba(59,130,246,.35);transition:.2s}
+.big-record-btn:active{transform:scale(.97);box-shadow:0 2px 8px rgba(59,130,246,.25)}
+.big-record-btn.company-btn{background:linear-gradient(135deg,var(--purple),#a855f7);box-shadow:0 4px 15px rgba(139,92,246,.35)}
+.big-record-btn .br-icon{font-size:22px}
+
+/* Smart Category Tags */
+.smart-cat-tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;padding:0 4px}
+.smart-cat-tag{padding:5px 12px;border-radius:16px;font-size:12px;background:var(--gray100);cursor:pointer;transition:.2s;border:1px solid transparent;display:flex;align-items:center;gap:4px}
+.smart-cat-tag:hover,.smart-cat-tag:active{border-color:var(--blue);background:rgba(59,130,246,.06)}
+.smart-cat-tag .stag-pct{font-size:10px;color:var(--gray400)}
+
+/* Contacts Page */
+.contacts-header{padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
+.contacts-header h3{font-size:18px;font-weight:700}
+.contact-tabs{display:flex;gap:0;margin:0 16px 12px;background:var(--gray100);border-radius:10px;padding:3px}
+.contact-tabs button{flex:1;padding:8px;border:none;background:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;transition:.2s}
+.contact-tabs button.active{background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.contact-summary{display:flex;gap:10px;margin:0 16px 12px}
+.contact-summary .cs-item{flex:1;padding:12px;border-radius:12px;text-align:center;font-size:12px}
+.contact-summary .cs-item.ar{background:rgba(59,130,246,.08);color:var(--blue)}
+.contact-summary .cs-item.ap{background:rgba(239,68,68,.08);color:var(--red)}
+.contact-summary .cs-item .cs-amount{font-size:18px;font-weight:700;margin-top:4px}
+.contact-list-item{display:flex;align-items:center;padding:14px 16px;border-bottom:1px solid var(--gray100);gap:12px;cursor:pointer}
+.contact-list-item .cl-icon{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.contact-list-item .cl-icon.customer{background:rgba(59,130,246,.1)}
+.contact-list-item .cl-icon.supplier{background:rgba(239,68,68,.1)}
+.contact-list-item .cl-info{flex:1;min-width:0}
+.contact-list-item .cl-name{font-weight:600;font-size:15px}
+.contact-list-item .cl-detail{font-size:12px;color:var(--gray400);margin-top:2px}
+.contact-list-item .cl-right{text-align:right}
+.contact-list-item .cl-amount{font-weight:700;font-size:16px}
+.contact-list-item .cl-amount.ar{color:var(--blue)}
+.contact-list-item .cl-amount.ap{color:var(--red)}
+.contact-list-item .cl-status{font-size:11px;margin-top:2px;padding:2px 8px;border-radius:10px;display:inline-block}
+.contact-list-item .cl-status.unsettled{background:rgba(245,158,11,.12);color:var(--amber)}
+.contact-list-item .cl-status.settled{background:rgba(22,163,74,.12);color:var(--green)}
+.contact-list-item .cl-status.overdue{background:rgba(220,38,38,.12);color:var(--red)}
+.contact-list-item .cl-actions{display:flex;gap:4px}
+.contact-list-item .cl-btn{padding:6px 12px;border-radius:8px;border:none;font-size:12px;font-weight:600;cursor:pointer}
+.contact-list-item .cl-btn.settle{background:var(--green);color:#fff}
+.contact-list-item .cl-btn.delete{background:var(--gray100);color:var(--gray500)}
+
+/* Contact Edit Modal */
+.ce-form{padding:0 4px}
+.ce-row{margin-bottom:14px}
+.ce-row label{display:block;font-size:13px;font-weight:600;color:var(--gray500);margin-bottom:6px}
+.ce-row input,.ce-row select{width:100%;padding:12px;border:1px solid var(--gray200);border-radius:10px;font-size:15px;outline:none;background:var(--bg);box-sizing:border-box}
+.ce-row input:focus,.ce-row select:focus{border-color:var(--blue)}
+.ce-type-row{display:flex;gap:8px}
+.ce-type-btn{flex:1;padding:10px;border:2px solid var(--gray200);border-radius:10px;text-align:center;cursor:pointer;font-weight:600;font-size:14px;transition:.2s;background:var(--bg)}
+.ce-type-btn.selected.customer{border-color:var(--blue);color:var(--blue);background:rgba(59,130,246,.06)}
+.ce-type-btn.selected.supplier{border-color:var(--red);color:var(--red);background:rgba(239,68,68,.06)}
+
+/* Reminder Mgmt */
+.reminder-list{margin-top:8px}
+.reminder-item{display:flex;align-items:center;padding:12px 0;border-bottom:1px solid var(--gray100);gap:10px}
+.reminder-item .rm-icon{font-size:20px;flex-shrink:0}
+.reminder-item .rm-info{flex:1;min-width:0}
+.reminder-item .rm-title{font-weight:600;font-size:14px}
+.reminder-item .rm-date{font-size:12px;color:var(--gray400)}
+.reminder-item .rm-badge{padding:3px 10px;border-radius:10px;font-size:11px;font-weight:600}
+.reminder-item .rm-badge.active{background:rgba(22,163,74,.12);color:var(--green)}
+.reminder-item .rm-badge.done{background:var(--gray100);color:var(--gray400)}
+
+/* Reminder Banner */
+.reminder-banner{display:flex;align-items:center;gap:10px;margin:8px 16px;padding:12px 16px;background:linear-gradient(135deg,rgba(245,158,11,.12),rgba(239,68,68,.08));border:1px solid rgba(245,158,11,.2);border-radius:12px;cursor:pointer;font-size:13px}
+.reminder-banner .rb-icon{font-size:20px;flex-shrink:0}
+.reminder-banner .rb-text{flex:1;min-width:0}
+.reminder-banner .rb-title{font-weight:700;color:var(--amber)}
+.reminder-banner .rb-detail{font-size:12px;color:var(--gray500);margin-top:2px}
+
+/* Linked Account */
+.linked-acct-row{display:flex;align-items:center;gap:10px;padding:10px 0}
+.linked-acct-row select{padding:8px 12px;border:1px solid var(--gray200);border-radius:8px;font-size:13px;background:var(--bg);outline:none;flex:1}
+.linked-acct-row .link-arrow{color:var(--gray400);font-size:16px}
+.link-list-item{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--gray100);font-size:13px;gap:8px}
+.link-list-item .link-del{color:var(--red);cursor:pointer;font-size:13px;padding:4px 8px}
+
+/* Transfer Tag Modal */
+.transfer-tag-modal .tt-options{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0}
+.tt-option{padding:12px 20px;border-radius:12px;border:2px solid var(--gray200);cursor:pointer;font-size:14px;font-weight:600;text-align:center;transition:.2s;flex:1 1 calc(33% - 8px);min-width:90px}
+.tt-option:active,.tt-option.selected{border-color:var(--blue);background:rgba(59,130,246,.06)}
+
+/* Export Enhanced */
+.export-format-row{display:flex;gap:8px;margin-bottom:12px}
+.export-format-btn{flex:1;padding:10px;border:2px solid var(--gray200);border-radius:10px;text-align:center;cursor:pointer;font-weight:600;font-size:14px;transition:.2s;background:var(--bg)}
+.export-format-btn.active{border-color:var(--blue);color:var(--blue);background:rgba(59,130,246,.06)}
+
 </style>
 </head>
 <body>
@@ -875,7 +993,11 @@ img,a,button{-webkit-touch-callout:none}
     <!-- Quick Templates -->
     <div class="quick-templates" id="quickTemplates"></div>
 
-    <div class="summary" id="summaryCards">
+    <!-- V18.0 Big Record Button -->
+      <button class="big-record-btn" id="bigRecordBtn"><span class="br-icon">💰</span> 记一笔</button>
+      <!-- Reminder Banner -->
+      <div class="reminder-banner" id="reminderBanner" style="display:none"><span class="rb-icon">🔔</span><div class="rb-text"><div class="rb-title" id="rbTitle"></div><div class="rb-detail" id="rbDetail"></div></div><span style="font-size:18px">›</span></div>
+      <div class="summary" id="summaryCards">
       <div class="card income">
         <div class="label">本月收入</div>
         <div class="amount" id="sumIncome">0.00</div>
@@ -968,7 +1090,9 @@ img,a,button{-webkit-touch-callout:none}
           <select id="addTransferTo" style="flex:1;padding:8px 10px;border-radius:8px;border:1.5px solid var(--gray200);background:#fff;font-size:13px"></select>
         </div>
       </div>
-      <div class="cat-grid" id="catGrid"></div>
+      <!-- V18.0 Smart Category Recommendation -->
+        <div class="smart-cat-tags" id="smartCatTags" style="display:none"></div>
+        <div class="cat-grid" id="catGrid"></div>
       <div class="form-group">
         <label>金额</label>
         <input type="number" class="amount-input" id="inputAmount" placeholder="0.00" step="0.01" min="0" inputmode="decimal">
@@ -1005,6 +1129,45 @@ img,a,button{-webkit-touch-callout:none}
     </div>
   </div>
 
+
+  <!-- V18.0 Quick Entry Modal -->
+  <div class="quick-entry-overlay" id="quickEntryOverlay">
+    <div class="quick-entry-sheet">
+      <div class="qe-handle"></div>
+      <div class="qe-title">快速记账</div>
+      <div class="qe-amount-wrap">
+        <span class="qe-currency">¥</span>
+        <input type="number" id="qeAmount" step="0.01" placeholder="0.00" inputmode="decimal" autofocus>
+      </div>
+      <div class="qe-type-tabs" id="qeTypeTabs">
+        <button class="active-expense" data-type="expense">支出</button>
+        <button data-type="income">收入</button>
+      </div>
+      <div class="qe-cat-row" id="qeCatRow"></div>
+      <div class="qe-note-row">
+        <input type="text" id="qeNote" placeholder="添加备注（可选）" maxlength="30">
+      </div>
+      <button class="qe-submit-btn" id="qeSave">确认记账</button>
+    </div>
+  </div>
+
+  <!-- V18.0 Reminder Edit Modal -->
+  <div class="modal-overlay" id="reminderEditModal">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <h3 id="reTitle">新增提醒</h3>
+      <div class="ce-form">
+        <div class="ce-row"><label>提醒名称</label><input id="reName" placeholder="如：信用卡还款、房租到期" maxlength="30"></div>
+        <div class="ce-row"><label>日期</label><input id="reDate" type="date"></div>
+        <div class="ce-row"><label>金额（可选）</label><input id="reAmount" type="number" step="0.01" placeholder="0.00"></div>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:16px">
+        <button class="btn-submit" style="background:var(--gray100);color:var(--gray600);flex:1" id="reCancel">取消</button>
+        <button class="btn-submit" style="flex:1" id="reSave">保存</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Page: Stats -->
   <div class="page" id="pageStats" style="display:none">
     <div class="stats-page">
@@ -1021,6 +1184,69 @@ img,a,button{-webkit-touch-callout:none}
       <div class="stats-card">
         <h3>支出分类</h3>
         <div class="pie-list" id="pieList"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- V18.0 Page: Contacts (往来) -->
+  <div class="page" id="pageContacts" style="display:none">
+    <div class="contacts-header">
+      <h3>🤝 往来管理</h3>
+      <button class="btn-small" id="btnAddContact" style="padding:8px 16px;border:none;border-radius:20px;background:var(--blue);color:#fff;font-size:13px;font-weight:600;cursor:pointer">+ 新增</button>
+    </div>
+    <div class="contact-tabs" id="contactTabs">
+      <button class="active" data-tab="all">全部</button>
+      <button data-tab="ar">应收</button>
+      <button data-tab="ap">应付</button>
+    </div>
+    <div class="contact-summary" id="contactSummary">
+      <div class="cs-item ar"><div style="font-size:11px">应收总额</div><div class="cs-amount" id="csArTotal">¥0.00</div></div>
+      <div class="cs-item ap"><div style="font-size:11px">应付总额</div><div class="cs-amount" id="csApTotal">¥0.00</div></div>
+    </div>
+    <div id="contactList" style="overflow-y:auto;flex:1"></div>
+  </div>
+
+  <!-- V18.0 Contact Edit Modal -->
+  <div class="modal-overlay" id="contactEditModal">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <h3 id="ceTitle">新增往来</h3>
+      <div class="ce-form">
+        <div class="ce-row"><label>名称</label><input id="ceName" placeholder="客户/供应商名称" maxlength="20"></div>
+        <div class="ce-row"><label>类型</label>
+          <div class="ce-type-row">
+            <div class="ce-type-btn selected customer" id="ceTypeCustomer" data-type="customer">📥 客户（应收）</div>
+            <div class="ce-type-btn" id="ceTypeSupplier" data-type="supplier">📤 供应商（应付）</div>
+          </div>
+        </div>
+        <div class="ce-row"><label>金额</label><input id="ceAmount" type="number" step="0.01" placeholder="0.00"></div>
+        <div class="ce-row"><label>到期日（可选）</label><input id="ceDueDate" type="date"></div>
+        <div class="ce-row"><label>备注</label><input id="ceNote" placeholder="备注信息"></div>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:16px">
+        <button class="btn-submit" style="background:var(--gray100);color:var(--gray600);flex:1" id="ceCancel">取消</button>
+        <button class="btn-submit" style="flex:1" id="ceSave">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- V18.0 Transfer Tag Modal -->
+  <div class="modal-overlay" id="transferTagModal">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <h3>转账类型标记</h3>
+      <p style="font-size:13px;color:var(--gray400);margin:4px 0 12px">检测到跨账户转账，请选择类型</p>
+      <div class="tt-options" id="ttOptions">
+        <div class="tt-option" data-tag="borrow">💸 借款</div>
+        <div class="tt-option" data-tag="repay">💰 还款</div>
+        <div class="tt-option" data-tag="dividend">📈 分红</div>
+        <div class="tt-option" data-tag="salary">💼 工资</div>
+        <div class="tt-option" data-tag="reserve">🏦 备用金</div>
+        <div class="tt-option" data-tag="reimburse">📋 报销</div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="btn-submit" style="background:var(--gray100);color:var(--gray600);flex:1" id="ttCancel">跳过</button>
+        <button class="btn-submit" style="flex:1" id="ttConfirm" disabled>确认标记</button>
       </div>
     </div>
   </div>
@@ -1296,9 +1522,9 @@ img,a,button{-webkit-touch-callout:none}
       <span class="nav-icon">🏠</span>
       <span class="nav-label">首页</span>
     </div>
-    <div class="nav-item" data-page="accounts">
-      <span class="nav-icon">💰</span>
-      <span class="nav-label">账户</span>
+    <div class="nav-item" data-page="contacts">
+      <span class="nav-icon">🤝</span>
+      <span class="nav-label">往来</span>
     </div>
     <div class="nav-item" data-page="stats">
       <span class="nav-icon">📊</span>
@@ -1684,6 +1910,9 @@ img,a,button{-webkit-touch-callout:none}
   const CAT_STORAGE_KEY = 'xy_money_categories';
   const TEMPLATE_KEY = 'xy_money_templates';
   const REIMBURSE_SETTINGS_KEY = 'xy_money_reimburse_settings';
+  const CONTACTS_KEY = 'xy_money_contacts_v18';
+  const REMINDERS_KEY = 'xy_money_reminders_v18';
+  const LINKED_ACCOUNTS_KEY = 'xy_money_linked_v18';
   const INVOICE_STORAGE_KEY = 'xy_money_invoices';
   const ACCOUNTS_KEY = 'xy_money_accounts';
   const BUDGET_KEY = 'xy_money_budget';
@@ -2924,6 +3153,10 @@ img,a,button{-webkit-touch-callout:none}
     bindEvents();
     autoBackup();
     startFabTimer();
+    updateBigRecordBtn();
+    renderReminders();
+    renderLinkedAccounts();
+    checkTodayReminders();
     updateBackupStatus();
     updateRecordCount();
     updateHeaderStyle();
@@ -3042,6 +3275,7 @@ img,a,button{-webkit-touch-callout:none}
     document.getElementById('app').classList.toggle('company-mode', viewAccount === 'company');
     // Refresh all views
     renderHome();
+    updateBigRecordBtn();
     renderQuickTemplates();
     renderSmartWalletChip();
     updateSmartInputStyle();
@@ -3473,6 +3707,13 @@ img,a,button{-webkit-touch-callout:none}
     save();
     haptic('success');
     toast(`保存成功 → ${viewAccount === 'company' ? '🏢 公司' : '👤 个人'}`);
+
+    // V18.0: Cross-account transfer tagging
+    const _lastRec = records[records.length - 1];
+    if (checkTransferTag(_lastRec)) {
+      setTimeout(() => showTransferTagModal(_lastRec), 400);
+    }
+
     switchPage('home');
   }
 
@@ -3514,6 +3755,12 @@ img,a,button{-webkit-touch-callout:none}
     }
     save();
     haptic('success');
+
+    // V18.0: Cross-account transfer tagging
+    const _lastRec2 = records[records.length - 1];
+    if (checkTransferTag(_lastRec2)) {
+      setTimeout(() => showTransferTagModal(_lastRec2), 400);
+    }
 
     // Animate the send button
     const sendBtn = document.getElementById('smartSend');
@@ -4656,6 +4903,12 @@ img,a,button{-webkit-touch-callout:none}
     }, 3000);
   }
 
+  function updateBigRecordBtn() {
+    const btn = document.getElementById('bigRecordBtn');
+    if (!btn) return;
+    btn.className = 'big-record-btn' + (viewAccount === 'company' ? ' company-btn' : '');
+  }
+
   function resetFabTimer() {
     startFabTimer();
   }
@@ -5484,6 +5737,609 @@ img,a,button{-webkit-touch-callout:none}
   document.getElementById('openBudgetSettingsBtn').addEventListener('click', () => {
     openBudgetModal();
   });
+
+
+
+  // ========== V18.0 QUICK ENTRY MODAL ==========
+  function openQuickEntry() {
+    document.getElementById('qeAmount').value = '';
+    document.getElementById('qeNote').value = '';
+    quickEntryType = 'expense';
+    quickEntryCat = '';
+    updateQETypeTabs();
+    renderQECatRow();
+    document.getElementById('quickEntryOverlay').classList.add('show');
+    setTimeout(function() { document.getElementById('qeAmount').focus(); }, 300);
+    haptic('medium');
+  }
+
+  function closeQuickEntry() {
+    document.getElementById('quickEntryOverlay').classList.remove('show');
+  }
+
+  function updateQETypeTabs() {
+    document.querySelectorAll('#qeTypeTabs button').forEach(function(b) {
+      b.className = b.dataset.type === quickEntryType ? 'active-' + quickEntryType : '';
+    });
+  }
+
+  function renderQECatRow() {
+    var row = document.getElementById('qeCatRow');
+    var cats = categories[quickEntryType] || [];
+    row.innerHTML = cats.map(function(c) {
+      var sel = c.id === quickEntryCat ? ' selected' : '';
+      return '<div class="qe-cat-chip' + sel + '" data-cat="' + c.id + '">' + c.icon + ' ' + c.name + '</div>';
+    }).join('');
+  }
+
+  function submitQuickEntry() {
+    var amount = parseFloat(document.getElementById('qeAmount').value);
+    var note = document.getElementById('qeNote').value.trim();
+    if (!amount || amount <= 0) { toast('请输入有效金额'); haptic('error'); return; }
+    if (!quickEntryCat) { toast('请选择分类'); haptic('error'); return; }
+
+    var ws = getWalletsForAccount(viewAccount);
+    var wid = (ws.length > 0 ? ws[0].id : '');
+    records.push({
+      id: Date.now(), type: quickEntryType, category: quickEntryCat, amount: amount,
+      date: new Date().toISOString().split('T')[0], note: note, account: viewAccount, walletId: wid
+    });
+    if (wid && quickEntryType !== 'debt') {
+      if (quickEntryType === 'income') updateWalletBalance(wid, amount);
+      else if (quickEntryType === 'expense') updateWalletBalance(wid, -amount);
+    }
+    save();
+    closeQuickEntry();
+    haptic('success');
+    toast('快速记账成功 ¥' + amount.toFixed(2));
+    renderHome();
+  }
+
+  // ========== V18.0 SMART CATEGORY RECOMMENDATION ==========
+  function getSmartRecommendations(note, amount) {
+    if (!note && !amount) return [];
+    var text = (note || '').toLowerCase();
+    var numAmount = parseFloat(amount) || 0;
+    var recs = [];
+
+    var kwMap = {
+      'food': {kws:['饭','餐','外卖','奶茶','咖啡','面','粉','火锅','烧烤','小吃','食堂','早点','早餐','午餐','晚餐','夜宵','零食','水果','饮料','水','啤酒','酒'],icon:'🍜'},
+      'transport': {kws:['打车','地铁','公交','火车','高铁','飞机','机票','油','停车','etc','高速','骑行','单车','摩托','滴滴','曹操'],icon:'🚗'},
+      'shopping': {kws:['买','购','淘宝','京东','拼多多','超市','商场','衣服','裤子','鞋','包','化妆品'],icon:'🛒'},
+      'housing': {kws:['房租','房贷','水电','物业','燃气','暖气','维修','装修'],icon:'🏠'},
+      'medical': {kws:['医院','药','挂号','体检','看病','牙','诊所','中药','西药'],icon:'💊'},
+      'entertain': {kws:['电影','ktv','唱歌','游戏','剧本杀','密室','网吧','旅游','景点','门票','酒店','民宿'],icon:'🎮'},
+      'comm': {kws:['话费','流量','宽带','手机费'],icon:'📱'},
+      'salary': {kws:['工资','薪','发钱','到账'],icon:'💰'},
+      'refund': {kws:['退款','退','返','报销'],icon:'💳'},
+      'social': {kws:['请客','红包','聚餐','AA','聚会','份子'],icon:'🍻'},
+      'beauty': {kws:['理发','美发','护肤','面膜','美容','美甲','SPA','按摩'],icon:'💄'},
+      'digit': {kws:['手机','电脑','耳机','充电','配件'],icon:'💻'},
+      'sport': {kws:['健身','跑步','瑜伽','游泳'],icon:'⚽'}
+    };
+
+    for (var catId in kwMap) {
+      var info = kwMap[catId];
+      for (var i = 0; i < info.kws.length; i++) {
+        if (text.indexOf(info.kws[i]) >= 0) {
+          recs.push({catId: catId, icon: info.icon, reason: '关键词', score: 90});
+          break;
+        }
+      }
+    }
+
+    if (numAmount > 0 && recs.length < 3) {
+      if (numAmount <= 30) {
+        recs.push({catId: 'food', icon:'🍜', reason: '小额', score: 50});
+        recs.push({catId: 'transport', icon:'🚗', reason: '小额', score: 40});
+      } else if (numAmount <= 200) {
+        recs.push({catId: 'shopping', icon:'🛒', reason: '中额', score: 55});
+        recs.push({catId: 'food', icon:'🍜', reason: '中额', score: 45});
+      } else if (numAmount <= 1000) {
+        recs.push({catId: 'shopping', icon:'🛒', reason: '较大额', score: 50});
+        recs.push({catId: 'digit', icon:'💻', reason: '较大额', score: 40});
+      } else if (numAmount >= 3000) {
+        recs.push({catId: 'salary', icon:'💰', reason: '大额收入', score: 70});
+        recs.push({catId: 'housing', icon:'🏠', reason: '大额', score: 55});
+      }
+    }
+
+    if (text) {
+      var similarRecs = records.filter(function(r) { return r.note && r.note.indexOf(text) >= 0 && r.category; });
+      if (similarRecs.length > 0) {
+        var catCount = {};
+        similarRecs.forEach(function(r) { catCount[r.category] = (catCount[r.category]||0)+1; });
+        var sorted = Object.entries(catCount).sort(function(a,b){ return b[1]-a[1]; });
+        sorted.slice(0, 2).forEach(function(entry) {
+          var catId = entry[0], cnt = entry[1];
+          if (!recs.find(function(r){ return r.catId === catId; })) {
+            var cat = getCatInfo('expense', catId);
+            recs.push({catId: catId, icon: cat.icon, reason: '用过'+cnt+'次', score: 75});
+          }
+        });
+      }
+    }
+
+    var seen = {};
+    return recs.filter(function(r) {
+      if (seen[r.catId]) return false;
+      seen[r.catId] = true;
+      return true;
+    }).slice(0, 5);
+  }
+
+  function renderSmartCatTags() {
+    var noteEl = document.getElementById('inputNote');
+    var amtEl = document.getElementById('inputAmount');
+    if (!noteEl || !amtEl) return;
+    var note = noteEl.value;
+    var amount = amtEl.value;
+    var container = document.getElementById('smartCatTags');
+    if (!container) return;
+    var recs = getSmartRecommendations(note, amount);
+    if (recs.length === 0) { container.style.display = 'none'; return; }
+    container.style.display = 'flex';
+    container.innerHTML = recs.map(function(r) {
+      var cat = getCatInfo(r.catId.indexOf('custom_') === 0 ? currentType : 'expense', r.catId);
+      return '<div class="smart-cat-tag" data-cat="' + r.catId + '" data-type="expense">' + r.icon + ' ' + (cat.name || r.catId) + ' <span class="stag-pct">' + r.reason + '</span></div>';
+    }).join('');
+  }
+
+  // ========== V18.0 CONTACTS (往来) ==========
+  function renderContactsPage() {
+    document.querySelectorAll('#contactTabs button').forEach(function(b) { b.classList.toggle('active', b.dataset.tab === contactTab); });
+
+    var filtered = contacts;
+    if (contactTab === 'ar') filtered = contacts.filter(function(c) { return c.type === 'customer'; });
+    else if (contactTab === 'ap') filtered = contacts.filter(function(c) { return c.type === 'supplier'; });
+
+    var totalAR = contacts.filter(function(c) { return c.type === 'customer'; }).reduce(function(s,c) { return s + (c.settled ? 0 : c.amount); }, 0);
+    var totalAP = contacts.filter(function(c) { return c.type === 'supplier'; }).reduce(function(s,c) { return s + (c.settled ? 0 : c.amount); }, 0);
+    document.getElementById('csArTotal').textContent = '¥' + totalAR.toFixed(2);
+    document.getElementById('csApTotal').textContent = '¥' + totalAP.toFixed(2);
+
+    var list = document.getElementById('contactList');
+    if (filtered.length === 0) {
+      list.innerHTML = '<div class="empty-state"><div class="emoji">🤝</div><div class="text">暂无往来记录</div></div>';
+      return;
+    }
+
+    var today = new Date().toISOString().split('T')[0];
+    list.innerHTML = filtered.map(function(c) {
+      var isCustomer = c.type === 'customer';
+      var isOverdue = !c.settled && c.dueDate && c.dueDate < today;
+      var statusHtml = '';
+      if (c.settled) statusHtml = '<span class="cl-status settled">已结</span>';
+      else if (isOverdue) statusHtml = '<span class="cl-status overdue">逾期</span>';
+      else statusHtml = '<span class="cl-status unsettled">未结</span>';
+
+      return '<div class="contact-list-item" data-id="' + c.id + '">' +
+        '<div class="cl-icon ' + (isCustomer ? 'customer' : 'supplier') + '">' + (isCustomer ? '📥' : '📤') + '</div>' +
+        '<div class="cl-info"><div class="cl-name">' + c.name + '</div><div class="cl-detail">' + (isCustomer ? '应收' : '应付') + ' · ' + (c.dueDate || '无期限') + ' · ' + (c.note || '') + '</div></div>' +
+        '<div class="cl-right"><div class="cl-amount ' + (isCustomer ? 'ar' : 'ap') + '">¥' + c.amount.toFixed(2) + '</div>' + statusHtml + '</div>' +
+        '<div class="cl-actions">' + (!c.settled ? '<button class="cl-btn settle" data-action="settle" data-id="'+c.id+'">结清</button>' : '') +
+        '<button class="cl-btn delete" data-action="delete" data-id="'+c.id+'">删除</button></div></div>';
+    }).join('');
+
+    list.querySelectorAll('.cl-btn').forEach(function(btn) {
+      btn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        var id = parseInt(btn.dataset.id);
+        if (btn.dataset.action === 'settle') settleContact(id);
+        else if (btn.dataset.action === 'delete') deleteContact(id);
+      });
+    });
+  }
+
+  function openContactEdit(id) {
+    contactEditId = id || null;
+    var modal = document.getElementById('contactEditModal');
+    document.getElementById('ceTitle').textContent = id ? '编辑往来' : '新增往来';
+    if (id) {
+      var c = contacts.find(function(x) { return x.id === id; });
+      if (c) {
+        document.getElementById('ceName').value = c.name;
+        document.getElementById('ceAmount').value = c.amount;
+        document.getElementById('ceDueDate').value = c.dueDate || '';
+        document.getElementById('ceNote').value = c.note || '';
+        selectCEType(c.type);
+      }
+    } else {
+      document.getElementById('ceName').value = '';
+      document.getElementById('ceAmount').value = '';
+      document.getElementById('ceDueDate').value = '';
+      document.getElementById('ceNote').value = '';
+      selectCEType('customer');
+    }
+    modal.classList.add('show');
+    haptic('light');
+  }
+
+  function selectCEType(type) {
+    document.querySelectorAll('.ce-type-btn').forEach(function(b) {
+      b.classList.remove('selected', 'customer', 'supplier');
+      if (b.dataset.type === type) b.classList.add('selected', type);
+    });
+  }
+
+  function saveContactEdit() {
+    var name = document.getElementById('ceName').value.trim();
+    var amount = parseFloat(document.getElementById('ceAmount').value) || 0;
+    var dueDate = document.getElementById('ceDueDate').value;
+    var note = document.getElementById('ceNote').value.trim();
+    var customerBtn = document.getElementById('ceTypeCustomer');
+    var type = customerBtn.classList.contains('selected') ? 'customer' : 'supplier';
+
+    if (!name) { toast('请输入名称'); return; }
+    if (!amount || amount <= 0) { toast('请输入有效金额'); return; }
+
+    if (contactEditId) {
+      var idx = contacts.findIndex(function(c) { return c.id === contactEditId; });
+      if (idx >= 0) {
+        contacts[idx] = Object.assign({}, contacts[idx], {name: name, type: type, amount: amount, dueDate: dueDate, note: note});
+      }
+    } else {
+      contacts.push({id: Date.now(), name: name, type: type, amount: amount, dueDate: dueDate, note: note, settled: false});
+    }
+    saveContacts();
+    document.getElementById('contactEditModal').classList.remove('show');
+    renderContactsPage();
+    haptic('success');
+    toast('已保存');
+  }
+
+  function settleContact(id) {
+    var c = contacts.find(function(x) { return x.id === id; });
+    if (!c) return;
+    c.settled = true;
+    saveContacts();
+    renderContactsPage();
+    haptic('success');
+    toast('已标记为结清');
+  }
+
+  function deleteContact(id) {
+    showConfirm('删除往来', '确定删除该往来记录吗？', function() {
+      contacts = contacts.filter(function(c) { return c.id !== id; });
+      saveContacts();
+      renderContactsPage();
+      haptic('medium');
+    });
+  }
+
+  // ========== V18.0 REMINDERS ==========
+  function renderReminders() {
+    var list = document.getElementById('reminderList');
+    if (!list) return;
+    if (reminders.length === 0) {
+      list.innerHTML = '<div style="text-align:center;color:var(--gray400);padding:12px;font-size:13px">暂无提醒</div>';
+    } else {
+      var today = new Date().toISOString().split('T')[0];
+      reminders.sort(function(a,b) { return a.date.localeCompare(b.date); });
+      list.innerHTML = reminders.map(function(r) {
+        var isPast = r.date < today;
+        return '<div class="reminder-item"><div class="rm-icon">' + (r.date === today ? '🔔' : (isPast ? '✅' : '📅')) + '</div>' +
+          '<div class="rm-info"><div class="rm-title">' + r.name + (r.amount ? ' ¥'+r.amount.toFixed(2) : '') + '</div>' +
+          '<div class="rm-date">' + r.date + (isPast ? ' (已过期)' : '') + '</div></div>' +
+          '<span class="rm-badge ' + (isPast ? 'done' : 'active') + '">' + (isPast ? '已过' : '待办') + '</span>' +
+          '<button class="cl-btn delete" data-action="delReminder" data-id="'+r.id+'" style="margin-left:4px">✕</button></div>';
+      }).join('');
+    }
+    if ('Notification' in window && Notification.permission !== 'granted' && Notification.permission !== 'denied') {
+      var np = document.getElementById('notifPermission');
+      if (np) np.style.display = 'flex';
+    } else {
+      var np2 = document.getElementById('notifPermission');
+      if (np2) np2.style.display = 'none';
+    }
+  }
+
+  function openReminderEdit(id) {
+    reminderEditId = id || null;
+    document.getElementById('reTitle').textContent = id ? '编辑提醒' : '新增提醒';
+    if (id) {
+      var r = reminders.find(function(x) { return x.id === id; });
+      if (r) {
+        document.getElementById('reName').value = r.name;
+        document.getElementById('reDate').value = r.date;
+        document.getElementById('reAmount').value = r.amount || '';
+      }
+    } else {
+      document.getElementById('reName').value = '';
+      document.getElementById('reDate').value = new Date().toISOString().split('T')[0];
+      document.getElementById('reAmount').value = '';
+    }
+    document.getElementById('reminderEditModal').classList.add('show');
+  }
+
+  function saveReminderEdit() {
+    var name = document.getElementById('reName').value.trim();
+    var date = document.getElementById('reDate').value;
+    var amount = parseFloat(document.getElementById('reAmount').value) || 0;
+    if (!name) { toast('请输入提醒名称'); return; }
+    if (!date) { toast('请选择日期'); return; }
+
+    if (reminderEditId) {
+      var idx = reminders.findIndex(function(r) { return r.id === reminderEditId; });
+      if (idx >= 0) reminders[idx] = Object.assign({}, reminders[idx], {name: name, date: date, amount: amount});
+    } else {
+      reminders.push({id: Date.now(), name: name, date: date, amount: amount});
+    }
+    saveReminders();
+    document.getElementById('reminderEditModal').classList.remove('show');
+    renderReminders();
+    checkTodayReminders();
+    haptic('success');
+    toast('提醒已保存');
+  }
+
+  function checkTodayReminders() {
+    var today = new Date().toISOString().split('T')[0];
+    var todayRems = reminders.filter(function(r) { return r.date === today; });
+    var banner = document.getElementById('reminderBanner');
+    if (!banner) return;
+    if (todayRems.length === 0) { banner.style.display = 'none'; return; }
+    banner.style.display = 'flex';
+    document.getElementById('rbTitle').textContent = '今日有 ' + todayRems.length + ' 项提醒';
+    document.getElementById('rbDetail').textContent = todayRems.map(function(r) { return r.name + (r.amount ? ' ¥'+r.amount.toFixed(2) : ''); }).join(' · ');
+
+    if ('Notification' in window && Notification.permission === 'granted') {
+      try {
+        new Notification('📅 今日提醒', {body: todayRems.map(function(r){ return r.name; }).join('、'), tag: 'daily-reminder'});
+      } catch(e) {}
+    }
+  }
+
+  // ========== V18.0 LINKED ACCOUNTS ==========
+  function renderLinkedAccounts() {
+    var list = document.getElementById('linkedAcctList');
+    if (!list) return;
+    if (linkedAccounts.length === 0) {
+      list.innerHTML = '<div style="text-align:center;color:var(--gray400);padding:8px;font-size:12px">未绑定关联账户</div>';
+    } else {
+      list.innerHTML = linkedAccounts.map(function(la) {
+        var pw = getWallet(la.personalWalletId);
+        var cw = getWallet(la.companyWalletId);
+        return '<div class="link-list-item"><span>' + (pw ? pw.icon+''+pw.name : '?') + ' ↔ ' + (cw ? cw.icon+''+cw.name : '?') + '</span><span class="link-del" data-id="'+la.id+'">解除</span></div>';
+      }).join('');
+    }
+    var fromSel = document.getElementById('linkFrom');
+    var toSel = document.getElementById('linkTo');
+    if (!fromSel || !toSel) return;
+    var pwList = wallets.filter(function(w) { return (w.account||'personal')==='personal'; });
+    var cwList = wallets.filter(function(w) { return (w.account||'personal')==='company'; });
+    fromSel.innerHTML = '<option value="">选择个人钱包</option>' + pwList.map(function(w) { return '<option value="'+w.id+'">'+w.icon+' '+w.name+'</option>'; }).join('');
+    toSel.innerHTML = '<option value="">选择公司钱包</option>' + cwList.map(function(w) { return '<option value="'+w.id+'">'+w.icon+' '+w.name+'</option>'; }).join('');
+  }
+
+  function bindLinkedAccounts() {
+    var pwId = document.getElementById('linkFrom').value;
+    var cwId = document.getElementById('linkTo').value;
+    if (!pwId || !cwId) { toast('请选择两个钱包'); return; }
+    if (linkedAccounts.find(function(la) { return la.personalWalletId === pwId && la.companyWalletId === cwId; })) {
+      toast('该关联已存在'); return;
+    }
+    linkedAccounts.push({id: Date.now(), personalWalletId: pwId, companyWalletId: cwId});
+    saveLinkedAccounts();
+    renderLinkedAccounts();
+    haptic('success');
+    toast('关联已绑定');
+  }
+
+  function unbindLink(id) {
+    linkedAccounts = linkedAccounts.filter(function(la) { return la.id !== id; });
+    saveLinkedAccounts();
+    renderLinkedAccounts();
+    haptic('light');
+  }
+
+  function checkTransferTag(record) {
+    if (!record || record.account !== 'personal') return false;
+    var la = linkedAccounts.find(function(l) { return l.personalWalletId === record.walletId; });
+    if (!la) return false;
+    pendingTransferRecord = record;
+    return true;
+  }
+
+  function showTransferTagModal(record) {
+    pendingTransferRecord = record;
+    document.querySelectorAll('.tt-option').forEach(function(o) { o.classList.remove('selected'); });
+    document.getElementById('ttConfirm').disabled = true;
+    document.getElementById('transferTagModal').classList.add('show');
+  }
+
+  function confirmTransferTag() {
+    var sel = document.querySelector('.tt-option.selected');
+    if (!sel || !pendingTransferRecord) return;
+    var tag = sel.dataset.tag;
+    var tagNames = {borrow:'借款',repay:'还款',dividend:'分红',salary:'工资',reserve:'备用金',reimburse:'报销'};
+    var tagName = tagNames[tag] || tag;
+
+    var pr = records.find(function(r) { return r.id === pendingTransferRecord.id; });
+    if (pr) pr.note = (pr.note ? pr.note + ' ' : '') + '[' + tagName + ']';
+
+    var la = linkedAccounts.find(function(l) { return l.personalWalletId === pr.walletId; });
+    if (la) {
+      var compType, compCat, compNote;
+      if (tag === 'borrow' || tag === 'reserve') {
+        compType = 'income'; compCat = 'other_in'; compNote = tagName + '收入';
+      } else if (tag === 'repay') {
+        compType = 'expense'; compCat = 'other_exp'; compNote = tagName;
+      } else {
+        compType = 'expense'; compCat = 'other_exp'; compNote = tagName + '支出';
+      }
+      records.push({
+        id: Date.now() + 1, type: compType, category: compCat, amount: pendingTransferRecord.amount,
+        date: pendingTransferRecord.date, note: compNote, account: 'company', walletId: la.companyWalletId
+      });
+    }
+
+    save();
+    document.getElementById('transferTagModal').classList.remove('show');
+    pendingTransferRecord = null;
+    haptic('success');
+    toast('已标记为' + tagName + '，公司账本已同步');
+    renderHome();
+  }
+
+  // ========== V18.0 ENHANCED EXPORT ==========
+  function exportToExcel() {
+    enhancedExport();
+  }
+
+  function enhancedExport() {
+    if (records.length === 0) { toast('没有数据可导出'); return; }
+    var BOM = '﻿';
+    var headers = ['日期','类型','分类','金额','账户','备注'];
+    var rows = records.map(function(r) {
+      var typeName = r.type === 'income' ? '收入' : r.type === 'expense' ? '支出' : r.type === 'transfer' ? '转账' : '欠款';
+      var cat = getCatInfo(r.type, r.category);
+      var accName = (r.account || 'personal') === 'company' ? '公司' : '个人';
+      return [r.date, typeName, cat.name, r.amount.toFixed(2), accName, (r.note||'').replace(/,/g,'，')];
+    });
+    var csvContent = BOM + [headers].concat(rows).map(function(row) { return row.join(','); }).join('\n');
+    var blob = new Blob([csvContent], {type: 'application/vnd.ms-excel;charset=utf-8'});
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = '小杨记账_全部数据_' + new Date().toISOString().split('T')[0] + '.csv';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    hideModal('exportModal');
+    toast('导出成功（CSV格式，兼容Excel/WPS）');
+    haptic('success');
+  }
+
+  // ========== V18.0 EVENT BINDINGS ==========
+
+  // Big Record Button
+  document.getElementById('bigRecordBtn').addEventListener('click', () => { openQuickEntry(); });
+
+  // Quick Entry Modal events
+  document.getElementById('qeCancel').addEventListener('click', closeQuickEntry);
+  document.querySelectorAll('#qeTypeTabs button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      quickEntryType = btn.dataset.type;
+      quickEntryCat = '';
+      updateQETypeTabs();
+      renderQECatRow();
+    });
+  });
+  document.getElementById('qeCatRow').addEventListener('click', (e) => {
+    const chip = e.target.closest('.qe-cat-chip');
+    if (!chip) return;
+    quickEntryCat = chip.dataset.cat;
+    renderQECatRow();
+    haptic('light');
+  });
+  document.getElementById('qeSave').addEventListener('click', submitQuickEntry);
+  document.getElementById('qeAmount').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') { e.preventDefault(); submitQuickEntry(); }
+  });
+  document.getElementById('quickEntryOverlay').addEventListener('click', (e) => {
+    if (e.target === document.getElementById('quickEntryOverlay')) closeQuickEntry();
+  });
+
+  // Smart Category Recommendation
+  document.getElementById('inputNote').addEventListener('input', renderSmartCatTags);
+  document.getElementById('inputAmount').addEventListener('input', renderSmartCatTags);
+  document.getElementById('smartCatTags').addEventListener('click', (e) => {
+    const tag = e.target.closest('.smart-cat-tag');
+    if (!tag) return;
+    const catId = tag.dataset.cat;
+    const type = tag.dataset.type;
+    currentType = type;
+    selectedCat = catId;
+    renderTypeTabs();
+    renderCatGrid();
+    renderSmartCatTags();
+  });
+
+  // Contacts page events
+  document.querySelectorAll('#contactTabs button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      contactTab = btn.dataset.tab;
+      renderContactsPage();
+    });
+  });
+  document.getElementById('btnAddContact').addEventListener('click', () => openContactEdit(null));
+  document.getElementById('ceCancel').addEventListener('click', () => document.getElementById('contactEditModal').classList.remove('show'));
+  document.getElementById('ceSave').addEventListener('click', saveContactEdit);
+  document.getElementById('ceTypeCustomer').addEventListener('click', () => selectCEType('customer'));
+  document.getElementById('ceTypeSupplier').addEventListener('click', () => selectCEType('supplier'));
+  document.getElementById('contactEditModal').addEventListener('click', (e) => {
+    if (e.target === document.getElementById('contactEditModal')) document.getElementById('contactEditModal').classList.remove('show');
+  });
+
+  // Reminder events
+  document.getElementById('reminderList').addEventListener('click', (e) => {
+    const delBtn = e.target.closest('[data-action="delReminder"]');
+    if (delBtn) {
+      const id = parseInt(delBtn.dataset.id);
+      reminders = reminders.filter(r => r.id !== id);
+      saveReminders();
+      renderReminders();
+      checkTodayReminders();
+      haptic('light');
+    }
+  });
+  document.getElementById('btnAddReminder').addEventListener('click', () => openReminderEdit(null));
+  document.getElementById('reCancel').addEventListener('click', () => document.getElementById('reminderEditModal').classList.remove('show'));
+  document.getElementById('reSave').addEventListener('click', saveReminderEdit);
+  document.getElementById('btnEnableNotif').addEventListener('click', () => {
+    Notification.requestPermission().then(perm => {
+      if (perm === 'granted') { toast('通知已开启'); renderReminders(); }
+      else toast('通知权限被拒绝');
+    });
+  });
+  document.getElementById('reminderEditModal').addEventListener('click', (e) => {
+    if (e.target === document.getElementById('reminderEditModal')) document.getElementById('reminderEditModal').classList.remove('show');
+  });
+  document.getElementById('reminderBanner').addEventListener('click', () => switchPage('settings'));
+
+  // Linked account events
+  document.getElementById('linkedAcctList').addEventListener('click', (e) => {
+    const delBtn = e.target.closest('.link-del');
+    if (delBtn) unbindLink(parseInt(delBtn.dataset.id));
+  });
+  document.getElementById('btnLinkAccounts').addEventListener('click', bindLinkedAccounts);
+
+  // Transfer tag modal events
+  document.getElementById('ttOptions').addEventListener('click', (e) => {
+    const opt = e.target.closest('.tt-option');
+    if (!opt) return;
+    document.querySelectorAll('.tt-option').forEach(o => o.classList.remove('selected'));
+    opt.classList.add('selected');
+    document.getElementById('ttConfirm').disabled = false;
+  });
+  document.getElementById('ttCancel').addEventListener('click', () => {
+    document.getElementById('transferTagModal').classList.remove('show');
+    pendingTransferRecord = null;
+  });
+  document.getElementById('ttConfirm').addEventListener('click', confirmTransferTag);
+  document.getElementById('transferTagModal').addEventListener('click', (e) => {
+    if (e.target === document.getElementById('transferTagModal')) {
+      document.getElementById('transferTagModal').classList.remove('show');
+      pendingTransferRecord = null;
+    }
+  });
+
+  // Enhanced Export format buttons
+  document.querySelectorAll('.export-format-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.export-format-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    });
+  });
+
+  // Replace default export with enhanced export
+  document.getElementById('exportAllCsv').addEventListener('click', enhancedExport);
+  document.getElementById('btnExport').addEventListener('click', enhancedExport);
+
+  // Settings: open accounts page
+  document.getElementById('manageWallets').addEventListener('click', () => switchPage('accounts'));
 
 document.addEventListener('DOMContentLoaded', init);
 })();
