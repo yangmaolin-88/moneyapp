@@ -2,7 +2,8 @@
   "name": "小杨专属记账",
   "short_name": "记账",
   "description": "简洁高效的移动端记账应用 - PWA版本",
-  "start_url": "/",
+  "start_url": "/moneyapp/",
+  "scope": "/moneyapp/",
   "display": "standalone",
   "background_color": "#F2F2F7",
   "theme_color": "#007AFF",
@@ -12,7 +13,7 @@
     {"src": "icon-512.svg", "sizes": "512x512", "type": "image/svg+xml"}
   ],
   "share_target": {
-    "action": "/",
+    "action": "/moneyapp/",
     "method": "GET",
     "params": {
       "title": "name",

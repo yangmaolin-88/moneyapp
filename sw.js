@@ -1,6 +1,6 @@
 // 小杨专属记账 - Service Worker v15.0
 const CACHE_NAME = 'moneyapp-v15.0';
-const PRE_CACHE = ['/', '/index.html', '/manifest.json', '/icon-192.png', '/icon-512.png'];
+const PRE_CACHE = ['./', './index.html', './manifest.json', './icon-192.svg', './icon-512.svg'];
 
 self.addEventListener('install', event => {
   event.waitUntil(
