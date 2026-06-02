@@ -1355,6 +1355,14 @@ img,a,button{-webkit-touch-callout:none}
             </div>
             <div class="si-arrow">›</div>
           </div>
+          <div class="settings-item" id="manageWallets">
+            <div class="si-icon" style="background:var(--amber-light)">💰</div>
+            <div class="si-content">
+              <div class="si-title">我的账户</div>
+              <div class="si-desc">管理钱包和账户余额</div>
+            </div>
+            <div class="si-arrow">›</div>
+          </div>
           <div class="settings-item" id="clearData">
             <div class="si-icon" style="background:var(--red-light)">🗑️</div>
             <div class="si-content">
@@ -1362,6 +1370,34 @@ img,a,button{-webkit-touch-callout:none}
               <div class="si-desc">此操作不可恢复</div>
             </div>
             <div class="si-arrow">›</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Reminders Group (v18.0) -->
+      <div class="settings-group">
+        <div class="settings-group-title">提醒管理</div>
+        <div class="settings-card">
+          <div id="reminderList" style="padding:8px 0"></div>
+          <div class="settings-item" id="btnAddReminder" style="justify-content:center;color:var(--blue);font-weight:600;cursor:pointer;padding:10px">
+            + 新增提醒
+          </div>
+          <div id="notifPermission" style="display:none;padding:8px 12px;text-align:center">
+            <button class="btn-small" id="btnEnableNotif" style="padding:6px 12px;border:none;border-radius:12px;background:var(--blue);color:#fff;font-size:12px;cursor:pointer">🔔 开启通知</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Linked Accounts Group (v18.0) -->
+      <div class="settings-group">
+        <div class="settings-group-title">关联账户</div>
+        <div class="settings-card">
+          <div id="linkedAcctList" style="padding:8px 0"></div>
+          <div style="display:flex;gap:8px;padding:8px 12px;align-items:center">
+            <select id="linkFrom" style="flex:1;padding:6px;border-radius:8px;border:1px solid var(--gray200);font-size:12px"></select>
+            <span style="font-size:12px;color:var(--gray400)">↔</span>
+            <select id="linkTo" style="flex:1;padding:6px;border-radius:8px;border:1px solid var(--gray200);font-size:12px"></select>
+            <button id="btnLinkAccounts" style="padding:6px 12px;border:none;border-radius:8px;background:var(--blue);color:#fff;font-size:12px;cursor:pointer;white-space:nowrap">绑定</button>
           </div>
         </div>
       </div>
@@ -1397,7 +1433,7 @@ img,a,button{-webkit-touch-callout:none}
             <div class="si-icon" style="background:var(--purple-light)">💡</div>
             <div class="si-content">
               <div class="si-title">版本</div>
-              <div class="si-desc">小杨专属记账 v17.0</div>
+              <div class="si-desc">小杨专属记账 v18.0</div>
             </div>
           </div>
           <div class="settings-item">
@@ -3179,6 +3215,7 @@ img,a,button{-webkit-touch-callout:none}
     updateRecordCount();
     updateHeaderStyle();
     renderQuickTemplates();
+    renderContactsPage();
 
     // Handle URL params (iOS Shortcuts)
     handleUrlParams();
@@ -3329,7 +3366,7 @@ img,a,button{-webkit-touch-callout:none}
     } else if (page === 'accounts') {
       document.getElementById('pageAccounts').style.display = '';
       fab.style.display = '';
-      document.querySelector('[data-page="accounts"]').classList.add('active');
+      const an = document.querySelector('[data-page="accounts"]'); if (an) an.classList.add('active');
       document.getElementById('accountTabs').style.display = 'flex';
       renderAccountsPage();
     } else if (page === 'settings') {
@@ -3354,6 +3391,12 @@ img,a,button{-webkit-touch-callout:none}
       fab.style.display = 'none';
       document.getElementById('accountTabs').style.display = 'flex';
       renderReimbursePage();
+    } else if (page === 'contacts') {
+      document.getElementById('pageContacts').style.display = '';
+      fab.style.display = 'none';
+      document.querySelector('[data-page="contacts"]').classList.add('active');
+      document.getElementById('accountTabs').style.display = 'none';
+      renderContactsPage();
     }
   }
 
@@ -5029,7 +5072,6 @@ img,a,button{-webkit-touch-callout:none}
       document.getElementById('smartHint').innerHTML = `模板: <span class="highlight">${catInfo.icon} ${catInfo.name}</span> · 输入金额后按回车`;
 
       // Override smart submit to use the template category
-      const origSubmit = smartSubmit;
       const oneTimeHandler = () => {
         const text = input.value.trim();
         if (!text) return;
@@ -5296,9 +5338,9 @@ img,a,button{-webkit-touch-callout:none}
     });
 
     document.getElementById('exportAllJson').addEventListener('click', doExportAllJson);
-    document.getElementById('exportAllCsv').addEventListener('click', doExportAllCsv);
+
     document.getElementById('exportMonthReport').addEventListener('click', doExportMonthReport);
-    document.getElementById('btnExport').addEventListener('click', doExport);
+
 
     // Settings - Import
     document.getElementById('importData').addEventListener('click', () => {
@@ -5613,6 +5655,137 @@ img,a,button{-webkit-touch-callout:none}
       localStorage.setItem(DW_DISMISSED_KEY, '1');
     });
   }
+  // ========== V18.0 EVENT BINDINGS ==========
+
+  // Big Record Button
+  document.getElementById('bigRecordBtn').addEventListener('click', () => { openQuickEntry(); });
+
+  // Quick Entry Modal events
+  document.getElementById('qeCancel').addEventListener('click', closeQuickEntry);
+  document.querySelectorAll('#qeTypeTabs button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      quickEntryType = btn.dataset.type;
+      quickEntryCat = '';
+      updateQETypeTabs();
+      renderQECatRow();
+    });
+  });
+  document.getElementById('qeCatRow').addEventListener('click', (e) => {
+    const chip = e.target.closest('.qe-cat-chip');
+    if (!chip) return;
+    quickEntryCat = chip.dataset.cat;
+    renderQECatRow();
+    haptic('light');
+  });
+  document.getElementById('qeSave').addEventListener('click', submitQuickEntry);
+  document.getElementById('qeAmount').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') { e.preventDefault(); submitQuickEntry(); }
+  });
+  document.getElementById('quickEntryOverlay').addEventListener('click', (e) => {
+    if (e.target === document.getElementById('quickEntryOverlay')) closeQuickEntry();
+  });
+
+  // Smart Category Recommendation
+  document.getElementById('inputNote').addEventListener('input', renderSmartCatTags);
+  document.getElementById('inputAmount').addEventListener('input', renderSmartCatTags);
+  document.getElementById('smartCatTags').addEventListener('click', (e) => {
+    const tag = e.target.closest('.smart-cat-tag');
+    if (!tag) return;
+    const catId = tag.dataset.cat;
+    const type = tag.dataset.type;
+    currentType = type;
+    selectedCat = catId;
+    renderTypeTabs();
+    renderCatGrid();
+    renderSmartCatTags();
+  });
+
+  // Contacts page events
+  document.querySelectorAll('#contactTabs button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      contactTab = btn.dataset.tab;
+      renderContactsPage();
+    });
+  });
+  document.getElementById('btnAddContact').addEventListener('click', () => openContactEdit(null));
+  document.getElementById('ceCancel').addEventListener('click', () => document.getElementById('contactEditModal').classList.remove('show'));
+  document.getElementById('ceSave').addEventListener('click', saveContactEdit);
+  document.getElementById('ceTypeCustomer').addEventListener('click', () => selectCEType('customer'));
+  document.getElementById('ceTypeSupplier').addEventListener('click', () => selectCEType('supplier'));
+  document.getElementById('contactEditModal').addEventListener('click', (e) => {
+    if (e.target === document.getElementById('contactEditModal')) document.getElementById('contactEditModal').classList.remove('show');
+  });
+
+  // Reminder events
+  document.getElementById('reminderList').addEventListener('click', (e) => {
+    const delBtn = e.target.closest('[data-action="delReminder"]');
+    if (delBtn) {
+      const id = parseInt(delBtn.dataset.id);
+      reminders = reminders.filter(r => r.id !== id);
+      saveReminders();
+      renderReminders();
+      checkTodayReminders();
+      haptic('light');
+    }
+  });
+  document.getElementById('btnAddReminder').addEventListener('click', () => openReminderEdit(null));
+  document.getElementById('reCancel').addEventListener('click', () => document.getElementById('reminderEditModal').classList.remove('show'));
+  document.getElementById('reSave').addEventListener('click', saveReminderEdit);
+  document.getElementById('btnEnableNotif').addEventListener('click', () => {
+    Notification.requestPermission().then(perm => {
+      if (perm === 'granted') { toast('通知已开启'); renderReminders(); }
+      else toast('通知权限被拒绝');
+    });
+  });
+  document.getElementById('reminderEditModal').addEventListener('click', (e) => {
+    if (e.target === document.getElementById('reminderEditModal')) document.getElementById('reminderEditModal').classList.remove('show');
+  });
+  document.getElementById('reminderBanner').addEventListener('click', () => switchPage('settings'));
+
+  // Linked account events
+  document.getElementById('linkedAcctList').addEventListener('click', (e) => {
+    const delBtn = e.target.closest('.link-del');
+    if (delBtn) unbindLink(parseInt(delBtn.dataset.id));
+  });
+  document.getElementById('btnLinkAccounts').addEventListener('click', bindLinkedAccounts);
+
+  // Transfer tag modal events
+  document.getElementById('ttOptions').addEventListener('click', (e) => {
+    const opt = e.target.closest('.tt-option');
+    if (!opt) return;
+    document.querySelectorAll('.tt-option').forEach(o => o.classList.remove('selected'));
+    opt.classList.add('selected');
+    document.getElementById('ttConfirm').disabled = false;
+  });
+  document.getElementById('ttCancel').addEventListener('click', () => {
+    document.getElementById('transferTagModal').classList.remove('show');
+    pendingTransferRecord = null;
+  });
+  document.getElementById('ttConfirm').addEventListener('click', confirmTransferTag);
+  document.getElementById('transferTagModal').addEventListener('click', (e) => {
+    if (e.target === document.getElementById('transferTagModal')) {
+      document.getElementById('transferTagModal').classList.remove('show');
+      pendingTransferRecord = null;
+    }
+  });
+
+  // Enhanced Export format buttons
+  document.querySelectorAll('.export-format-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.export-format-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    });
+  });
+
+  // Replace default export with enhanced export
+  document.getElementById('exportAllCsv').addEventListener('click', enhancedExport);
+  document.getElementById('btnExport').addEventListener('click', enhancedExport);
+
+  // Settings: open accounts page
+  document.getElementById('manageWallets').addEventListener('click', () => switchPage('accounts'));
+
+document.addEventListener('DOMContentLoaded', init);
+})();
 
   // ========== OVERRIDE SAVE: auto-backup + budget warning (v16.0) ==========
   const _origSave = save;
@@ -6230,137 +6403,7 @@ img,a,button{-webkit-touch-callout:none}
     haptic('success');
   }
 
-  // ========== V18.0 EVENT BINDINGS ==========
 
-  // Big Record Button
-  document.getElementById('bigRecordBtn').addEventListener('click', () => { openQuickEntry(); });
-
-  // Quick Entry Modal events
-  document.getElementById('qeCancel').addEventListener('click', closeQuickEntry);
-  document.querySelectorAll('#qeTypeTabs button').forEach(btn => {
-    btn.addEventListener('click', () => {
-      quickEntryType = btn.dataset.type;
-      quickEntryCat = '';
-      updateQETypeTabs();
-      renderQECatRow();
-    });
-  });
-  document.getElementById('qeCatRow').addEventListener('click', (e) => {
-    const chip = e.target.closest('.qe-cat-chip');
-    if (!chip) return;
-    quickEntryCat = chip.dataset.cat;
-    renderQECatRow();
-    haptic('light');
-  });
-  document.getElementById('qeSave').addEventListener('click', submitQuickEntry);
-  document.getElementById('qeAmount').addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') { e.preventDefault(); submitQuickEntry(); }
-  });
-  document.getElementById('quickEntryOverlay').addEventListener('click', (e) => {
-    if (e.target === document.getElementById('quickEntryOverlay')) closeQuickEntry();
-  });
-
-  // Smart Category Recommendation
-  document.getElementById('inputNote').addEventListener('input', renderSmartCatTags);
-  document.getElementById('inputAmount').addEventListener('input', renderSmartCatTags);
-  document.getElementById('smartCatTags').addEventListener('click', (e) => {
-    const tag = e.target.closest('.smart-cat-tag');
-    if (!tag) return;
-    const catId = tag.dataset.cat;
-    const type = tag.dataset.type;
-    currentType = type;
-    selectedCat = catId;
-    renderTypeTabs();
-    renderCatGrid();
-    renderSmartCatTags();
-  });
-
-  // Contacts page events
-  document.querySelectorAll('#contactTabs button').forEach(btn => {
-    btn.addEventListener('click', () => {
-      contactTab = btn.dataset.tab;
-      renderContactsPage();
-    });
-  });
-  document.getElementById('btnAddContact').addEventListener('click', () => openContactEdit(null));
-  document.getElementById('ceCancel').addEventListener('click', () => document.getElementById('contactEditModal').classList.remove('show'));
-  document.getElementById('ceSave').addEventListener('click', saveContactEdit);
-  document.getElementById('ceTypeCustomer').addEventListener('click', () => selectCEType('customer'));
-  document.getElementById('ceTypeSupplier').addEventListener('click', () => selectCEType('supplier'));
-  document.getElementById('contactEditModal').addEventListener('click', (e) => {
-    if (e.target === document.getElementById('contactEditModal')) document.getElementById('contactEditModal').classList.remove('show');
-  });
-
-  // Reminder events
-  document.getElementById('reminderList').addEventListener('click', (e) => {
-    const delBtn = e.target.closest('[data-action="delReminder"]');
-    if (delBtn) {
-      const id = parseInt(delBtn.dataset.id);
-      reminders = reminders.filter(r => r.id !== id);
-      saveReminders();
-      renderReminders();
-      checkTodayReminders();
-      haptic('light');
-    }
-  });
-  document.getElementById('btnAddReminder').addEventListener('click', () => openReminderEdit(null));
-  document.getElementById('reCancel').addEventListener('click', () => document.getElementById('reminderEditModal').classList.remove('show'));
-  document.getElementById('reSave').addEventListener('click', saveReminderEdit);
-  document.getElementById('btnEnableNotif').addEventListener('click', () => {
-    Notification.requestPermission().then(perm => {
-      if (perm === 'granted') { toast('通知已开启'); renderReminders(); }
-      else toast('通知权限被拒绝');
-    });
-  });
-  document.getElementById('reminderEditModal').addEventListener('click', (e) => {
-    if (e.target === document.getElementById('reminderEditModal')) document.getElementById('reminderEditModal').classList.remove('show');
-  });
-  document.getElementById('reminderBanner').addEventListener('click', () => switchPage('settings'));
-
-  // Linked account events
-  document.getElementById('linkedAcctList').addEventListener('click', (e) => {
-    const delBtn = e.target.closest('.link-del');
-    if (delBtn) unbindLink(parseInt(delBtn.dataset.id));
-  });
-  document.getElementById('btnLinkAccounts').addEventListener('click', bindLinkedAccounts);
-
-  // Transfer tag modal events
-  document.getElementById('ttOptions').addEventListener('click', (e) => {
-    const opt = e.target.closest('.tt-option');
-    if (!opt) return;
-    document.querySelectorAll('.tt-option').forEach(o => o.classList.remove('selected'));
-    opt.classList.add('selected');
-    document.getElementById('ttConfirm').disabled = false;
-  });
-  document.getElementById('ttCancel').addEventListener('click', () => {
-    document.getElementById('transferTagModal').classList.remove('show');
-    pendingTransferRecord = null;
-  });
-  document.getElementById('ttConfirm').addEventListener('click', confirmTransferTag);
-  document.getElementById('transferTagModal').addEventListener('click', (e) => {
-    if (e.target === document.getElementById('transferTagModal')) {
-      document.getElementById('transferTagModal').classList.remove('show');
-      pendingTransferRecord = null;
-    }
-  });
-
-  // Enhanced Export format buttons
-  document.querySelectorAll('.export-format-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.export-format-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-    });
-  });
-
-  // Replace default export with enhanced export
-  document.getElementById('exportAllCsv').addEventListener('click', enhancedExport);
-  document.getElementById('btnExport').addEventListener('click', enhancedExport);
-
-  // Settings: open accounts page
-  document.getElementById('manageWallets').addEventListener('click', () => switchPage('accounts'));
-
-document.addEventListener('DOMContentLoaded', init);
-})();
 </script>
 </body>
 </html>
