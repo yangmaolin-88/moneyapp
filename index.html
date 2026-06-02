@@ -1945,6 +1945,24 @@ img,a,button{-webkit-touch-callout:none}
   let detailReportRange = 'all';
   let detailReportFormat = 'csv';
 
+  // ========== V18.0 DATA: contacts, reminders, linked accounts ==========
+  function loadContacts() { return JSON.parse(localStorage.getItem(CONTACTS_KEY) || '[]'); }
+  function saveContacts() { localStorage.setItem(CONTACTS_KEY, JSON.stringify(contacts)); }
+  function loadReminders() { return JSON.parse(localStorage.getItem(REMINDERS_KEY) || '[]'); }
+  function saveReminders() { localStorage.setItem(REMINDERS_KEY, JSON.stringify(reminders)); }
+  function loadLinkedAccounts() { return JSON.parse(localStorage.getItem(LINKED_ACCOUNTS_KEY) || '[]'); }
+  function saveLinkedAccounts() { localStorage.setItem(LINKED_ACCOUNTS_KEY, JSON.stringify(linkedAccounts)); }
+
+  let contacts = loadContacts();
+  let reminders = loadReminders();
+  let linkedAccounts = loadLinkedAccounts();
+  let contactTab = 'all';
+  let contactEditId = null;
+  let reminderEditId = null;
+  let pendingTransferRecord = null;
+  let quickEntryType = 'expense';
+  let quickEntryCat = '';
+
   // ========== ACCOUNTS (WALLETS) DATA ==========
   const ACCOUNT_ICONS = ['💚','🟢','🔵','🟣','🟡','🟠','🔴','💳','🏦','📱','💰','💲','👜','🏧','📊','🎁'];
   const ACCOUNT_TYPE_LABELS = {ewallet:'电子钱包',bank:'银行卡',cash:'现金',credit:'信用卡',invest:'理财/投资',other:'其他'};
