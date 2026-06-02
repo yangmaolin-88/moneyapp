@@ -958,8 +958,8 @@ img,a,button{-webkit-touch-callout:none}
     <h1>小杨专属记账 <span id="headerAccIcon">👤</span></h1>
     <div class="sub" id="headerSub">个人账户 · 轻松管理每一笔收支</div>
     <div class="account-tabs" id="accountTabs">
-      <button class="acc-tab active" data-account="personal">👤 个人</button>
-      <button class="acc-tab" data-account="company">🏢 公司</button>
+      <button class="acc-tab active" data-account="personal" onclick="switchViewAccount('personal')">👤 个人</button>
+      <button class="acc-tab" data-account="company" onclick="switchViewAccount('company')">🏢 公司</button>
     </div>
   </div>
 
@@ -1554,19 +1554,19 @@ img,a,button{-webkit-touch-callout:none}
 
   <!-- Bottom Nav -->
   <div class="bottom-nav">
-    <div class="nav-item active" data-page="home">
+    <div class="nav-item active" data-page="home" onclick="switchPage('home')">
       <span class="nav-icon">🏠</span>
       <span class="nav-label">首页</span>
     </div>
-    <div class="nav-item" data-page="contacts">
+    <div class="nav-item" data-page="contacts" onclick="switchPage('contacts')">
       <span class="nav-icon">🤝</span>
       <span class="nav-label">往来</span>
     </div>
-    <div class="nav-item" data-page="stats">
+    <div class="nav-item" data-page="stats" onclick="switchPage('stats')">
       <span class="nav-icon">📊</span>
       <span class="nav-label">统计</span>
     </div>
-    <div class="nav-item" data-page="settings">
+    <div class="nav-item" data-page="settings" onclick="switchPage('settings')">
       <span class="nav-icon">⚙️</span>
       <span class="nav-label">设置</span>
     </div>
@@ -3204,7 +3204,9 @@ img,a,button{-webkit-touch-callout:none}
 
     renderHome();
     renderSmartWalletChip();
+    console.log('Before bindEvents');
     bindEvents();
+    console.log('After bindEvents');
     autoBackup();
     startFabTimer();
     updateBigRecordBtn();
@@ -4976,6 +4978,7 @@ img,a,button{-webkit-touch-callout:none}
 
   // ========== EVENTS ==========
   function bindEvents() {
+    console.log('bindEvents called, nav-items:', document.querySelectorAll('.bottom-nav .nav-item').length);
     // Bottom nav
     document.querySelectorAll('.bottom-nav .nav-item').forEach(n => {
       n.addEventListener('click', () => switchPage(n.dataset.page));
