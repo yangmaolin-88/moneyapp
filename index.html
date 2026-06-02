@@ -5784,9 +5784,6 @@ img,a,button{-webkit-touch-callout:none}
   // Settings: open accounts page
   document.getElementById('manageWallets').addEventListener('click', () => switchPage('accounts'));
 
-document.addEventListener('DOMContentLoaded', init);
-})();
-
   // ========== OVERRIDE SAVE: auto-backup + budget warning (v16.0) ==========
   const _origSave = save;
   save = function() {
@@ -6402,6 +6399,24 @@ document.addEventListener('DOMContentLoaded', init);
     toast('导出成功（CSV格式，兼容Excel/WPS）');
     haptic('success');
   }
+
+  // ========== INITIALIZATION ==========
+  bindEvents();
+  var now = new Date();
+  viewYear = now.getFullYear();
+  viewMonth = now.getMonth() + 1;
+  statYear = viewYear;
+  statMonth = viewMonth;
+  applyTheme();
+  setTimeout(function() {
+    renderHome();
+    renderQuickTemplates();
+    renderSmartWalletChip();
+    updateSmartInputStyle();
+    handleUrlParams();
+  }, 0);
+
+})();
 
 
 </script>
