@@ -10,8 +10,9 @@
 <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
 <meta name="format-detection" content="telephone=no">
 <meta name="mobile-web-app-capable" content="yes">
-<title>小杨专属记账 v16.0</title>
+<title>小杨专属记账 v17.0</title>
 <link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" sizes="192x192" href="icon-192.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
 <link rel="apple-touch-icon" sizes="192x192" href="icons/icon-192.png">
 <style>
@@ -1172,7 +1173,7 @@ img,a,button{-webkit-touch-callout:none}
             <div class="si-icon" style="background:var(--purple-light)">💡</div>
             <div class="si-content">
               <div class="si-title">版本</div>
-              <div class="si-desc">小杨专属记账 v16.0</div>
+              <div class="si-desc">小杨专属记账 v17.0</div>
             </div>
           </div>
           <div class="settings-item">
@@ -1449,36 +1450,30 @@ img,a,button{-webkit-touch-callout:none}
       <div class="modal-handle"></div>
       <h3>🔗 iOS 快捷指令设置</h3>
       <div class="shortcuts-info">
-        <p><strong>📸 方式一：截图识别记账（推荐）</strong></p>
-        <p>1. 在 iPhone 上打开「快捷指令」App</p>
-        <p>2. 创建新快捷指令，添加以下操作：</p>
-        <p>　①「获取最新截图」（从相册取最新截图）</p>
+        <p style="margin-top:8px"><strong>⚡ 一键语音记账（推荐）</strong></p>
+        <p>通过快捷指令 + Siri，一句话即可完成记账。</p>
+        <p style="margin-top:8px"><strong>创建步骤：</strong></p>
+        <p>1. 打开 iPhone 上的「快捷指令」App</p>
+        <p>2. 点击右上角 + 新建快捷指令</p>
+        <p>3. 添加操作「请求输入」→ 提示"输入消费内容，如：午饭25"</p>
+        <p>4. 添加操作「URL」→ 填入：</p>
+        <code id="shortcutUrlExample">https://yangmaolin-88.github.io/moneyapp/?quick=输入</code>
+        <p>5. 添加操作「打开 URL」</p>
+        <p>6. 命名快捷指令为「快速记账」</p>
+        <p style="margin-top:8px">💡 <strong>Siri 语音触发：</strong>对着 iPhone 说"嘿 Siri，快速记账"，说出消费内容即可自动记录。</p>
+
+        <p style="margin-top:14px"><strong>📸 方式二：截图识别记账</strong></p>
+        <p>1. 创建新快捷指令，添加操作：</p>
+        <p>　①「获取最新截图」</p>
         <p>　②「分享」→ 选择「小杨专属记账」</p>
-        <p>3. 保存快捷指令，命名为「截图记账」</p>
-        <p>4. 在 iPhone 设置 → Action Button 或轻点背面 → 绑定此快捷指令</p>
-        <p style="margin-top:6px">💡 使用：支付后截图 → 按Action Button/轻点背面 → 自动识别金额！</p>
+        <p>2. 保存为「截图记账」</p>
+        <p>3. 在 iPhone 设置 → Action Button 或 轻点背面 → 绑定此快捷指令</p>
 
-        <p style="margin-top:14px"><strong>⚡ 方式二：快速输入记账</strong></p>
-        <p>1. 创建新快捷指令</p>
-        <p>2. 添加「要求输入」→ 提示"输入金额"</p>
-        <p>3. 添加「打开 URL」操作</p>
-        <p>4. URL 格式：</p>
-        <code id="shortcutUrlExample">https://你的地址/index.html?amount=25&type=expense&note=午饭&quick=1</code>
+        <p style="margin-top:14px"><strong>📱 方式三：Share Sheet 分享</strong></p>
+        <p>在任何 App 中截图或查看支付截图 → 点击分享按钮 → 选择「小杨专属记账」→ 自动 OCR 识别。</p>
 
-        <p style="margin-top:14px"><strong>🎯 方式三：Share Sheet 直接分享</strong></p>
-        <p>1. 在任何 App 中截图或查看支付截图</p>
-        <p>2. 点击分享按钮 → 选择「小杨专属记账」</p>
-        <p>3. 自动跳转到App进行OCR识别</p>
-
-        <p style="margin-top:14px"><strong>参数说明：</strong></p>
-        <p>• <code>amount</code> = 金额</p>
-        <p>• <code>type</code> = expense(支出) / income(收入) / debt(欠款)</p>
-        <p>• <code>category</code> = 分类ID（可选，自动识别）</p>
-        <p>• <code>note</code> = 备注（可选）</p>
-        <p>• <code>account</code> = personal / company（可选）</p>
-        <p>• <code>quick</code> = 1 自动保存（可选）</p>
         <p style="margin-top:8px">
-          <span class="copy-btn" id="copyShortcutUrl">复制当前地址</span>
+          <span class="copy-btn" id="copyShortcutUrl">复制快捷指令 URL</span>
         </p>
       </div>
       <button class="btn-submit" style="margin-top:16px;background:var(--gray100);color:var(--gray600)" id="shortcutsClose">关闭</button>
@@ -2462,6 +2457,48 @@ img,a,button{-webkit-touch-callout:none}
     const account = params.get('account');
     const quick = params.get('quick');
 
+    // v17.0: ?quick=TEXT format (e.g. ?quick=午饭25)
+    // This is the preferred format for iOS Shortcuts integration
+    if (quick && quick.length > 0 && !/^\d+\.?\d*$/.test(quick)) {
+      const parsed = parseSmartInput(quick);
+      if (parsed && parsed.amount > 0) {
+        const recordAccount = account || viewAccount;
+        const catInfo = getCatInfo(parsed.type, parsed.category || '');
+        records.push({
+          id: Date.now(),
+          type: parsed.type || 'expense',
+          category: parsed.category || 'other_exp',
+          amount: parsed.amount,
+          date: new Date().toISOString().split('T')[0],
+          note: parsed.note || '',
+          account: recordAccount
+        });
+        // Update wallet balance
+        const wallet = getWallet(selectedWalletId);
+        if (wallet && (wallet.account || 'personal') === recordAccount) {
+          updateWalletBalance(selectedWalletId, parsed.type === 'income' ? parsed.amount : -parsed.amount);
+        }
+        save();
+        haptic('success');
+        toast('快捷记账成功 ' + (catInfo.icon || '') + ' ¥' + parsed.amount.toFixed(2));
+        renderHome();
+        renderSmartWalletChip();
+        window.history.replaceState({}, '', window.location.pathname);
+        return true;
+      }
+      // If parse failed but quick text is reasonable, prefill input
+      if (quick.length < 50) {
+        const smartInput = document.getElementById('smartInput');
+        smartInput.value = quick;
+        updateSmartHint();
+        smartInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        smartInput.focus();
+        window.history.replaceState({}, '', window.location.pathname);
+        return true;
+      }
+    }
+
+    // Legacy: ?amount=X&type=Y&note=Z&quick=1 format
     if (!amount) return false;
 
     const parsedAmount = parseFloat(amount);
@@ -2487,7 +2524,6 @@ img,a,button{-webkit-touch-callout:none}
       haptic('success');
       toast('快捷记账成功 ¥' + parsedAmount.toFixed(2));
       renderHome();
-      // Clean URL
       window.history.replaceState({}, '', window.location.pathname);
       return true;
     }
@@ -4906,10 +4942,9 @@ img,a,button{-webkit-touch-callout:none}
     });
 
     document.getElementById('copyShortcutUrl').addEventListener('click', () => {
-      const baseUrl = window.location.origin + window.location.pathname;
-      const example = `${baseUrl}?amount=25&type=expense&note=午饭&quick=1`;
-      navigator.clipboard.writeText(example).then(() => {
-        toast('URL已复制');
+      const shortcutUrl = 'https://yangmaolin-88.github.io/moneyapp/?quick=输入';
+      navigator.clipboard.writeText(shortcutUrl).then(() => {
+        toast('快捷指令 URL 已复制');
         haptic('success');
       }).catch(() => {
         toast('复制失败，请手动复制');
