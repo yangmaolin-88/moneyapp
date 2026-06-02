@@ -6,10 +6,11 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="小杨记账">
-<meta name="theme-color" content="#16a34a">
+<meta name="theme-color" content="#16a34a" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
 <meta name="format-detection" content="telephone=no">
 <meta name="mobile-web-app-capable" content="yes">
-<title>小杨专属记账</title>
+<title>小杨专属记账 v16.0</title>
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
 <link rel="apple-touch-icon" sizes="192x192" href="icons/icon-192.png">
@@ -21,15 +22,15 @@
   --blue:#3b82f6;--blue-light:#eff6ff;
   --purple:#8b5cf6;--purple-light:#ede9fe;
   --amber:#d97706;--amber-light:#fef3c7;
-  --gray50:#F2F2F7;--gray100:#f3f4f6;--gray200:#e5e7eb;
+  --gray50:#f9fafb;--gray100:#f3f4f6;--gray200:#e5e7eb;
   --gray300:#d1d5db;--gray400:#9ca3af;--gray600:#4b5563;--gray800:#1f2937;
-  --radius:14px;
-  --shadow:0 1px 3px rgba(0,0,0,.04),0 1px 2px rgba(0,0,0,.06);
+  --radius:16px;
+  --shadow:0 2px 12px rgba(0,0,0,.06);
   --st:env(safe-area-inset-top);--sb:env(safe-area-inset-bottom);
   --sl:env(safe-area-inset-left);--sr:env(safe-area-inset-right);
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
-html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;background:#F2F2F7;color:var(--gray800);overflow:hidden;overscroll-behavior:none;-webkit-text-size-adjust:100%}
+html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;background:var(--gray50);color:var(--gray800);overflow:hidden;overscroll-behavior:none;-webkit-text-size-adjust:100%}
 input,select,textarea,button{font-family:inherit;font-size:inherit}
 /* iOS standalone mode fix: prevent bounce & selection on non-input elements */
 button,.nav-item,.record-item,.cat-item,.quick-template,.settings-item,.fab,.summary .card,.reimb-item,.reimburse-card,.template-item,.cat-manage-item{-webkit-user-select:none;user-select:none}
@@ -296,8 +297,8 @@ img,a,button{-webkit-touch-callout:none}
 .shortcuts-info .copy-btn:active{background:var(--green-light)}
 
 /* Bottom nav */
-.bottom-nav{position:absolute;bottom:0;left:0;right:0;background:rgba(255,255,255,.82);border-top:1px solid rgba(0,0,0,.06);display:flex;padding-bottom:var(--sb);z-index:20;flex-shrink:0;backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px)}
-.bottom-nav .nav-item{flex:1;display:flex;flex-direction:column;align-items:center;padding:8px 0 6px;min-height:44px;justify-content:center;cursor:pointer;color:var(--gray400);transition:color .2s;position:relative}
+.bottom-nav{position:absolute;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--gray100);display:flex;padding-bottom:var(--sb);z-index:20;flex-shrink:0}
+.bottom-nav .nav-item{flex:1;display:flex;flex-direction:column;align-items:center;padding:8px 0 6px;cursor:pointer;color:var(--gray400);transition:color .2s;position:relative}
 .bottom-nav .nav-item.active{color:var(--green)}
 .bottom-nav .nav-item .nav-icon{font-size:22px;margin-bottom:2px}
 .bottom-nav .nav-item .nav-label{font-size:10px;font-weight:500}
@@ -374,94 +375,209 @@ img,a,button{-webkit-touch-callout:none}
 
 /* Dark mode */
 @media(prefers-color-scheme:dark){
-  html,body{background:#000000}
-  #app{background:#1C1C1E}
-  #app.company-mode{background:#1C1C1E}
-  .header{background:linear-gradient(135deg,#15803d,#166534)}
-  .header.company-header{background:linear-gradient(135deg,#7c3aed,#6d28d9)}
-  .header::after{background:#1C1C1E}
-  .summary .card,.record-item,.stats-card,.settings-card,.modal-sheet,.cat-manage-item,.clipboard-prompt{background:#1C1C1E;border-color:#38383A;box-shadow:0 2px 12px rgba(0,0,0,.3)}
-  .page,.add-page,.stats-page,.settings-page,.cat-manage{color:#E5E5EA}
-  .record-item .info .cat,.record-item .right .money,.stats-card h3,.settings-item .si-title,.modal-sheet h3,.cat-manage h2{color:#E5E5EA}
-  .record-item .info .note,.record-item .right .date,.settings-item .si-desc,.settings-item .si-value,.summary .card .label,.month-nav button,.cat-item .cat-name,.form-group label,.pie-item .name,.bar-chart .bar-label,.section-title,.settings-group-title,.export-modal .export-option .eo-desc{color:#8E8E93}
-  .cat-item,.cat-add-item{background:#2C2C2E}
-  .form-group input,.form-group select,.form-group textarea,.export-modal .date-inputs input,.export-modal .month-inputs input,.cat-add-form input[type="text"],.cat-add-form .emoji-pick{background:#2C2C2E;border-color:#38383A;color:#E5E5EA}
-  .bottom-nav{background:rgba(28,28,30,.85);border-color:#38383A;backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px)}
-  .bottom-nav .nav-item{color:#636366}
+  html,body{background:#111}
+  #app{background:#1a1a2e}
+  #app.company-mode{background:#1e1a2e}
+  .header{background:linear-gradient(135deg,#138a3e,#0f6e32)}
+  .header.company-header{background:linear-gradient(135deg,#6d28d9,#5b21b6)}
+  .header::after{background:#1a1a2e}
+  .summary .card,.record-item,.stats-card,.settings-card,.modal-sheet,.cat-manage-item,.clipboard-prompt{background:#1e1e32;border-color:#333;box-shadow:0 2px 12px rgba(0,0,0,.2)}
+  .page,.add-page,.stats-page,.settings-page,.cat-manage{color:#e5e7eb}
+  .record-item .info .cat,.record-item .right .money,.stats-card h3,.settings-item .si-title,.modal-sheet h3,.cat-manage h2{color:#e5e7eb}
+  .record-item .info .note,.record-item .right .date,.settings-item .si-desc,.settings-item .si-value,.summary .card .label,.month-nav button,.cat-item .cat-name,.form-group label,.pie-item .name,.bar-chart .bar-label,.section-title,.settings-group-title,.export-modal .export-option .eo-desc{color:#9ca3af}
+  .cat-item,.cat-add-item{background:#2a2a3e}
+  .form-group input,.form-group select,.form-group textarea,.export-modal .date-inputs input,.export-modal .month-inputs input,.cat-add-form input[type="text"],.cat-add-form .emoji-pick{background:#2a2a3e;border-color:#333;color:#e5e7eb}
+  .bottom-nav{background:#1a1a2e;border-color:#333}
+  .bottom-nav .nav-item{color:#6b7280}
   .bottom-nav .nav-item.active{color:var(--green-mid)}
-  .settings-item:active{background:#2C2C2E}
-  .type-tabs button,.cat-manage-tabs button{background:#1C1C1E;border-color:#38383A;color:#E5E5EA}
-  .account-tabs{background:rgba(255,255,255,.08)}
-  .account-tabs .acc-tab.active{background:#2C2C2E;color:var(--green-mid)}
-  .export-modal .export-option{background:#1C1C1E;border-color:#38383A;color:#E5E5EA}
-  .export-modal .format-btn,.export-modal .range-btn{background:#1C1C1E;border-color:#38383A;color:#E5E5EA}
-  .month-nav button{background:#2C2C2E}
-  .empty-state .text{color:#636366}
+  .settings-item:active{background:#2a2a3e}
+  .type-tabs button,.cat-manage-tabs button{background:#1e1e32;border-color:#333;color:#e5e7eb}
+  .account-tabs{background:rgba(255,255,255,.1)}
+  .account-tabs .acc-tab.active{background:#2a2a3e;color:var(--green-mid)}
+  .export-modal .export-option{background:#1e1e32;border-color:#333;color:#e5e7eb}
+  .export-modal .format-btn,.export-modal .range-btn{background:#1e1e32;border-color:#333;color:#e5e7eb}
+  .month-nav button{background:#2a2a3e}
+  .empty-state .text{color:#6b7280}
   .modal-overlay{background:rgba(0,0,0,.7)}
-  .confirm-modal .btn-cancel{background:#2C2C2E;color:#8E8E93}
-  .cat-add-form{background:#2C2C2E;border-color:#38383A}
-  .cat-manage-item .cm-tag{background:#38383A;color:#8E8E93}
-  .smart-input-box{background:#1C1C1E;border-color:#38383A}
-  .smart-input-box input{color:#E5E5EA}
-  .smart-input-box .focused{border-color:var(--green-mid)}
-  .smart-wallet-chip{background:#1C2E1C;border-color:var(--green-mid);color:var(--green-mid)}
-  .smart-wallet-chip.expense-chip{background:#2E1C1C;border-color:var(--red);color:var(--red)}
-  .smart-wallet-dropdown{background:#1C1C1E;border:1px solid #38383A}
-  .smart-wallet-dropdown .swd-item{color:#E5E5EA}
-  .smart-wallet-dropdown .swd-item:active{background:#2C2C2E}
-  .smart-wallet-dropdown .swd-item.active{background:#1C2E1C;color:var(--green-mid)}
-  .smart-wallet-dropdown .swd-item.active.expense-mode{background:#2E1C1C;color:var(--red)}
-  .smart-wallet-dropdown .swd-item.active.company-mode{background:#1C1C2E;color:var(--purple)}
-  .smart-wallet-dropdown .swd-item .swd-bal{color:#636366}
-  .quick-template{background:#2C2C2E;border-color:#444}
-  .quick-template .qt-name{color:#8E8E93}
-  .shortcuts-info{background:#2C2C2E;color:#8E8E93}
-  .shortcuts-info code{background:#38383A;color:#E5E5EA}
-  .ocr-result-card{background:#1C1C1E;border-color:#38383A}
-  .ocr-result-card .ocr-field input,.ocr-result-card .ocr-field select{background:#2C2C2E;border-color:#38383A;color:#E5E5EA}
+  .confirm-modal .btn-cancel{background:#2a2a3e;color:#9ca3af}
+  .cat-add-form{background:#2a2a3e;border-color:#333}
+  .cat-manage-item .cm-tag{background:#333;color:#9ca3af}
+  .smart-input-box{background:#1e1e32;border-color:#333}
+  .smart-input-box input{color:#e5e7eb}
+  .smart-input-box.focused{border-color:var(--green-mid)}
+  .smart-wallet-chip{background:#1a2e1a;border-color:var(--green-mid);color:var(--green-mid)}
+  .smart-wallet-chip.expense-chip{background:#2e1a1a;border-color:var(--red);color:var(--red)}
+  .smart-wallet-chip.company-chip{background:#1e0a3e;border-color:var(--purple);color:var(--purple)}
+  .smart-wallet-dropdown{background:#1e1e32;border:1px solid #333}
+  .smart-wallet-dropdown .swd-item{color:#e5e7eb}
+  .smart-wallet-dropdown .swd-item:active{background:#2a2a3e}
+  .smart-wallet-dropdown .swd-item.active{background:#1a2e1a;color:var(--green-mid)}
+  .smart-wallet-dropdown .swd-item.active.expense-mode{background:#2e1a1a;color:var(--red)}
+  .smart-wallet-dropdown .swd-item.active.company-mode{background:#1e0a3e;color:var(--purple)}
+  .smart-wallet-dropdown .swd-item .swd-bal{color:#6b7280}
+  .quick-template{background:#2a2a3e;border-color:#444}
+  .quick-template .qt-name{color:#9ca3af}
+  .shortcuts-info{background:#2a2a3e;color:#9ca3af}
+  .shortcuts-info code{background:#333;color:#e5e7eb}
+  .smart-input-box{background:#1e1e32;border-color:#333}
+  .ocr-result-card{background:#1e1e32;border-color:#333}
+  .ocr-result-card .ocr-field input,.ocr-result-card .ocr-field select{background:#2a2a3e;border-color:#333;color:#e5e7eb}
   .ocr-preview-img{border-color:#444}
-  .ocr-progress-bar{background:#38383A}
-  .reimburse-summary .r-card,.reimb-item,.reimburse-card{background:#1C1C1E;border-color:#38383A;box-shadow:0 2px 12px rgba(0,0,0,.3)}
-  .reimburse-tabs{background:#2C2C2E}
-  .reimburse-tabs button.active{background:#1C1C1E}
-  .reimburse-section{background:#1C2A2E;border-color:#2563eb44}
-  .reimburse-section input[type="date"],.reimburse-section input[type="number"]{background:#1C1C1E;border-color:#38383A;color:#E5E5EA}
-  .reminder-settings{background:#1C2A2E;border-color:#2563eb44}
-  .reminder-settings input[type="number"]{background:#1C1C1E;border-color:#38383A;color:#E5E5EA}
+  .ocr-progress-bar{background:#333}
+  .reimburse-summary .r-card,.reimb-item,.reimburse-card{background:#1e1e32;border-color:#333;box-shadow:0 2px 12px rgba(0,0,0,.2)}
+  .reimburse-tabs{background:#2a2a3e}
+  .reimburse-tabs button.active{background:#1e1e32}
+  .reimburse-section{background:#2a2a3e;border-color:var(--orange)}
+  .reimburse-section input[type="date"],.reimburse-section input[type="number"]{background:#1e1e32;border-color:#333;color:#e5e7eb}
+  .reminder-settings{background:#1e2a3e;border-color:#2563eb44}
+  .reminder-settings input[type="number"]{background:#1e1e32;border-color:#333;color:#e5e7eb}
   .invoice-upload .iu-btn{border-color:var(--orange);color:var(--orange)}
   .reimb-item .ri-invoice-thumb{border-color:#444}
-  .detail-report-sheet{background:#1C1C1E;color:#E5E5EA}
-  .detail-report-sheet .dr-btn{background:#1C1C1E;border-color:#38383A;color:#E5E5EA}
-  .detail-report-sheet .dr-btn.active{background:#1C2A2E;border-color:var(--blue);color:var(--blue)}
-  .ios-install-sheet{background:#1C1C1E}
-  .ios-install-sheet h3{color:#E5E5EA}
-  .ios-install-sheet .ios-step{color:#8E8E93}
-  .ios-install-sheet .ios-step-num{background:#2C2C2E;color:var(--green-mid)}
+  .detail-report-sheet{background:#1a1a2e;color:#e5e7eb}
+  .detail-report-sheet .dr-btn{background:#1e1e32;border-color:#333;color:#e5e7eb}
+  .detail-report-sheet .dr-btn.active{background:#1e2a3e;border-color:var(--blue);color:var(--blue)}
+  /* iOS install prompt dark mode */
+  .ios-install-sheet{background:#1a1a2e}
+  .ios-install-sheet h3{color:#e5e7eb}
+  .ios-install-sheet .ios-step{color:#9ca3af}
+  .ios-install-sheet .ios-step-num{background:#2a2a3e;color:var(--green-mid)}
   .ios-install-sheet .ios-action-btn{background:linear-gradient(135deg,var(--green),var(--green-d))}
-  .ios-install-sheet .ios-dismiss{color:#636366}
-  .data-warning-bar{background:#2C2010;border-color:#92400e}
+  .ios-install-sheet .ios-dismiss{color:#6b7280}
+  /* Data safety warning dark mode */
+  .data-warning-bar{background:#2a2010;border-color:#92400e}
   .data-warning-bar .dw-icon{color:var(--amber)}
-  .data-warning-bar .dw-text{color:#fef3c7}
+  .data-warning-bar .dw-text{color:var(--amber)}
   .data-warning-bar .dw-btn{background:#92400e;color:#fef3c7}
+  /* Account mode banner dark mode */
   .account-mode-banner.personal-banner{background:linear-gradient(135deg,#0a2e1a,#0f3d22);color:#34d399;border-color:#065f46}
-  .account-mode-banner.company-banner{background:linear-gradient(135deg,#1c0a2e,#2d1065);color:#a78bfa;border-color:#4c1d95}
-  .stats-acc-switch.switch-personal{background:#1C2E1C;border-color:#05966955;color:var(--green-mid)}
-  .stats-acc-switch.switch-company{background:#1C1C2E;border-color:#7c3aed55;color:#a78bfa}
-  .stats-card{background:#1C1C1E;border-color:#38383A}
-  .stats-card h3{color:#E5E5EA}
-  .accounts-total{background:linear-gradient(135deg,#1e3a5f,#1e2a4e)}
-  .account-card{background:#1C1C1E;border-color:#38383A;box-shadow:0 2px 12px rgba(0,0,0,.3)}
-  .account-card .ac-balance{color:#E5E5EA}
-  .account-card .ac-type{color:#8E8E93}
-  .account-card .ac-default-badge{background:#1C2E1C;color:var(--green-mid)}
-  .account-selector .as-chip{background:#2C2C2E;border-color:#444;color:#8E8E93}
-  .account-selector .as-chip.selected{background:#1C2E1C;border-color:var(--green-mid);color:var(--green-mid)}
-  .account-selector .as-chip.selected.expense-mode{background:#2E1C1C;border-color:var(--red);color:var(--red)}
-  .transfer-section{background:#1C2A2E;border-color:#2563eb44}
-  .transfer-section select{background:#1C1C1E;border-color:#38383A;color:#E5E5EA}
-  .add-account-modal .aa-icon-btn{background:#2C2C2E;border-color:#444}
-  .add-account-modal .aa-icon-btn.selected{border-color:var(--green-mid);background:#1C2E1C}
+  .account-mode-banner.company-banner{background:linear-gradient(135deg,#1e0a3e,#2d1065);color:#a78bfa;border-color:#4c1d95}
 }
+
+/* ===== DARK MODE MANUAL TOGGLE (v16.0) ===== */
+.dark-mode html,.dark-mode body{background:#111}
+.dark-mode #app{background:#1a1a2e}
+.dark-mode #app.company-mode{background:#1e1a2e}
+.dark-mode .header{background:linear-gradient(135deg,#138a3e,#0f6e32)}
+.dark-mode .header.company-header{background:linear-gradient(135deg,#6d28d9,#5b21b6)}
+.dark-mode .header::after{background:#1a1a2e}
+.dark-mode .summary .card,.dark-mode .record-item,.dark-mode .stats-card,.dark-mode .settings-card,.dark-mode .modal-sheet,.dark-mode .cat-manage-item,.dark-mode .clipboard-prompt{background:#1e1e32;border-color:#333;box-shadow:0 2px 12px rgba(0,0,0,.2)}
+.dark-mode .page,.dark-mode .add-page,.dark-mode .stats-page,.dark-mode .settings-page,.dark-mode .cat-manage{color:#e5e7eb}
+.dark-mode .record-item .info .cat,.dark-mode .record-item .right .money,.dark-mode .stats-card h3,.dark-mode .settings-item .si-title,.dark-mode .modal-sheet h3,.dark-mode .cat-manage h2{color:#e5e7eb}
+.dark-mode .record-item .info .note,.dark-mode .record-item .right .date,.dark-mode .settings-item .si-desc,.dark-mode .settings-item .si-value,.dark-mode .summary .card .label,.dark-mode .month-nav button,.dark-mode .cat-item .cat-name,.dark-mode .form-group label,.dark-mode .pie-item .name,.dark-mode .bar-chart .bar-label,.dark-mode .section-title,.dark-mode .settings-group-title,.dark-mode .export-modal .export-option .eo-desc{color:#9ca3af}
+.dark-mode .cat-item,.dark-mode .cat-add-item{background:#2a2a3e}
+.dark-mode .form-group input,.dark-mode .form-group select,.dark-mode .form-group textarea,.dark-mode .export-modal .date-inputs input,.dark-mode .export-modal .month-inputs input,.dark-mode .cat-add-form input[type="text"],.dark-mode .cat-add-form .emoji-pick{background:#2a2a3e;border-color:#333;color:#e5e7eb}
+.dark-mode .bottom-nav{background:rgba(26,26,46,.82);border-color:#333}
+.dark-mode .bottom-nav .nav-item{color:#6b7280}
+.dark-mode .bottom-nav .nav-item.active{color:var(--green-mid)}
+.dark-mode .settings-item:active{background:#2a2a3e}
+.dark-mode .type-tabs button,.dark-mode .cat-manage-tabs button{background:#1e1e32;border-color:#333;color:#e5e7eb}
+.dark-mode .account-tabs{background:rgba(255,255,255,.1)}
+.dark-mode .account-tabs .acc-tab.active{background:#2a2a3e;color:var(--green-mid)}
+.dark-mode .export-modal .export-option{background:#1e1e32;border-color:#333;color:#e5e7eb}
+.dark-mode .export-modal .format-btn,.dark-mode .export-modal .range-btn{background:#1e1e32;border-color:#333;color:#e5e7eb}
+.dark-mode .month-nav button{background:#2a2a3e}
+.dark-mode .empty-state .text{color:#6b7280}
+.dark-mode .modal-overlay{background:rgba(0,0,0,.7)}
+.dark-mode .confirm-modal .btn-cancel{background:#2a2a3e;color:#9ca3af}
+.dark-mode .cat-add-form{background:#2a2a3e;border-color:#333}
+.dark-mode .cat-manage-item .cm-tag{background:#333;color:#9ca3af}
+.dark-mode .smart-input-box{background:#1e1e32;border-color:#333}
+.dark-mode .smart-input-box input{color:#e5e7eb}
+.dark-mode .smart-input-box.focused{border-color:var(--green-mid)}
+.dark-mode .smart-wallet-chip{background:#1a2e1a;border-color:var(--green-mid);color:var(--green-mid)}
+.dark-mode .smart-wallet-chip.expense-chip{background:#2e1a1a;border-color:var(--red);color:var(--red)}
+.dark-mode .smart-wallet-chip.company-chip{background:#1e0a3e;border-color:var(--purple);color:var(--purple)}
+.dark-mode .smart-wallet-dropdown{background:#1e1e32;border:1px solid #333}
+.dark-mode .smart-wallet-dropdown .swd-item{color:#e5e7eb}
+.dark-mode .smart-wallet-dropdown .swd-item:active{background:#2a2a3e}
+.dark-mode .smart-wallet-dropdown .swd-item.active{background:#1a2e1a;color:var(--green-mid)}
+.dark-mode .smart-wallet-dropdown .swd-item.active.expense-mode{background:#2e1a1a;color:var(--red)}
+.dark-mode .smart-wallet-dropdown .swd-item.active.company-mode{background:#1e0a3e;color:var(--purple)}
+.dark-mode .smart-wallet-dropdown .swd-item .swd-bal{color:#6b7280}
+.dark-mode .quick-template{background:#2a2a3e;border-color:#444}
+.dark-mode .quick-template .qt-name{color:#9ca3af}
+.dark-mode .shortcuts-info{background:#2a2a3e;color:#9ca3af}
+.dark-mode .shortcuts-info code{background:#333;color:#e5e7eb}
+.dark-mode .ocr-result-card{background:#1e1e32;border-color:#333}
+.dark-mode .ocr-result-card .ocr-field input,.dark-mode .ocr-result-card .ocr-field select{background:#2a2a3e;border-color:#333;color:#e5e7eb}
+.dark-mode .ocr-preview-img{border-color:#444}
+.dark-mode .ocr-progress-bar{background:#333}
+.dark-mode .reimburse-summary .r-card,.dark-mode .reimb-item,.dark-mode .reimburse-card{background:#1e1e32;border-color:#333;box-shadow:0 2px 12px rgba(0,0,0,.2)}
+.dark-mode .reimburse-tabs{background:#2a2a3e}
+.dark-mode .reimburse-tabs button.active{background:#1e1e32}
+.dark-mode .reimburse-section{background:#2a2a3e;border-color:var(--orange)}
+.dark-mode .reimburse-section input[type="date"],.dark-mode .reimburse-section input[type="number"]{background:#1e1e32;border-color:#333;color:#e5e7eb}
+.dark-mode .reminder-settings{background:#1e2a3e;border-color:#2563eb44}
+.dark-mode .reminder-settings input[type="number"]{background:#1e1e32;border-color:#333;color:#e5e7eb}
+.dark-mode .invoice-upload .iu-btn{border-color:var(--orange);color:var(--orange)}
+.dark-mode .reimb-item .ri-invoice-thumb{border-color:#444}
+.dark-mode .detail-report-sheet{background:#1a1a2e;color:#e5e7eb}
+.dark-mode .detail-report-sheet .dr-btn{background:#1e1e32;border-color:#333;color:#e5e7eb}
+.dark-mode .detail-report-sheet .dr-btn.active{background:#1e2a3e;border-color:var(--blue);color:var(--blue)}
+.dark-mode .ios-install-sheet{background:#1a1a2e}
+.dark-mode .ios-install-sheet h3{color:#e5e7eb}
+.dark-mode .ios-install-sheet .ios-step{color:#9ca3af}
+.dark-mode .ios-install-sheet .ios-step-num{background:#2a2a3e;color:var(--green-mid)}
+.dark-mode .ios-install-sheet .ios-action-btn{background:linear-gradient(135deg,var(--green),var(--green-d))}
+.dark-mode .ios-install-sheet .ios-dismiss{color:#6b7280}
+.dark-mode .data-warning-bar{background:#2a2010;border-color:#92400e}
+.dark-mode .data-warning-bar .dw-icon{color:var(--amber)}
+.dark-mode .data-warning-bar .dw-text{color:var(--amber)}
+.dark-mode .data-warning-bar .dw-btn{background:#92400e;color:#fef3c7}
+.dark-mode .account-mode-banner.personal-banner{background:linear-gradient(135deg,#0a2e1a,#0f3d22);color:#34d399;border-color:#065f46}
+.dark-mode .account-mode-banner.company-banner{background:linear-gradient(135deg,#1e0a3e,#2d1065);color:#a78bfa;border-color:#4c1d95}
+.dark-mode .stats-acc-switch.switch-personal{background:#1a2e1a;border-color:#05966955;color:var(--green-mid)}
+.dark-mode .stats-acc-switch.switch-company{background:#2a1a3e;border-color:#7c3aed55;color:#a78bfa}
+.dark-mode .accounts-total{background:linear-gradient(135deg,#1e3a5f,#1e2a4e)}
+.dark-mode .account-card{background:#1e1e32;border-color:#333;box-shadow:0 2px 12px rgba(0,0,0,.2)}
+.dark-mode .account-card .ac-balance{color:#e5e7eb}
+.dark-mode .account-card .ac-type{color:#9ca3af}
+.dark-mode .account-card .ac-default-badge{background:#1a2e1a;color:var(--green-mid)}
+.dark-mode .account-selector .as-chip{background:#2a2a3e;border-color:#444;color:#9ca3af}
+.dark-mode .account-selector .as-chip.selected{background:#1a2e1a;border-color:var(--green-mid);color:var(--green-mid)}
+.dark-mode .account-selector .as-chip.selected.expense-mode{background:#2e1a1a;border-color:var(--red);color:var(--red)}
+.dark-mode .transfer-section{background:#1a2a3e;border-color:#2563eb44}
+.dark-mode .transfer-section select{background:#1e1e32;border-color:#333;color:#e5e7eb}
+.dark-mode .add-account-modal .aa-icon-btn{background:#2a2a3e;border-color:#444}
+.dark-mode .add-account-modal .aa-icon-btn.selected{border-color:var(--green-mid);background:#1a2e1a}
+.dark-mode .budget-ring-card{background:#1e1e32;border-color:#333}
+
+/* Light mode force override */
+.light-mode html,.light-mode body{background:#f9fafb}
+.light-mode #app{background:#fff}
+.light-mode #app.company-mode{background:#faf8ff}
+
+/* ===== BUDGET MANAGEMENT (v16.0) ===== */
+.budget-ring-card{background:#fff;border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);border:1px solid var(--gray100);margin:0;cursor:pointer;transition:transform .15s}
+.budget-ring-card:active{transform:scale(.97)}
+.budget-ring-card .br-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.budget-ring-card .br-header .br-title{font-size:14px;font-weight:600;display:flex;align-items:center;gap:6px}
+.budget-ring-card .br-header .br-edit{font-size:12px;color:var(--blue);cursor:pointer}
+.budget-ring-inner{display:flex;align-items:center;gap:16px}
+.budget-ring-inner svg{flex-shrink:0}
+.budget-ring-inner .br-info .br-pct{font-size:28px;font-weight:700}
+.budget-ring-inner .br-info .br-detail{font-size:12px;color:var(--gray400);margin-top:2px}
+
+/* ===== iOS SAFE AREA ADAPTATION (v16.0) ===== */
+:root{
+  --safe-top:env(safe-area-inset-top,0px);
+  --safe-bottom:env(safe-area-inset-bottom,0px);
+  --safe-left:env(safe-area-inset-left,0px);
+  --safe-right:env(safe-area-inset-right,0px);
+}
+#app{padding-top:var(--safe-top);padding-bottom:var(--safe-bottom);padding-left:var(--safe-left);padding-right:var(--safe-right)}
+.bottom-nav{padding-bottom:calc(12px + var(--safe-bottom))}
+
+/* ===== GLASSMORPHISM NAVIGATION BAR (v16.0) ===== */
+.bottom-nav{
+  background:rgba(249,249,249,.82)!important;
+  backdrop-filter:saturate(180%) blur(20px)!important;
+  -webkit-backdrop-filter:saturate(180%) blur(20px)!important;
+}
+@media(prefers-color-scheme:dark){
+  .bottom-nav{background:rgba(26,26,46,.82)!important}
+}
+.dark-mode .bottom-nav{background:rgba(26,26,46,.82)!important}
 
 /* ===== iOS INSTALL PROMPT ===== */
 .ios-install-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:300;display:none;align-items:flex-end;justify-content:center;padding:0 0 env(safe-area-inset-bottom)}
@@ -716,14 +832,6 @@ img,a,button{-webkit-touch-callout:none}
 .dr-actions{display:flex;gap:10px;margin-top:16px}
 .dr-actions button{flex:1;padding:13px;border-radius:14px;border:none;font-size:15px;font-weight:600;cursor:pointer}
 
-
-  /* v16.0: Manual dark/light mode override classes */
-  html.dark{color-scheme:dark}
-  html.dark body{background:#000000}
-  html.dark #app{background:#1C1C1E}
-  html.light{color-scheme:light}
-  html.light body{background:#F2F2F7}
-  html.light #app{background:#FFFFFF}
 </style>
 </head>
 <body>
@@ -784,6 +892,17 @@ img,a,button{-webkit-touch-callout:none}
       </div>
     </div>
 
+    <!-- Budget Ring (v16.0) -->
+    <div style="padding:0 16px;margin-top:4px">
+      <div class="budget-ring-card" id="budgetRingCard" onclick="event.stopPropagation();openBudgetModal()">
+        <div class="br-header">
+          <span class="br-title">🎯 月度预算</span>
+          <span class="br-edit">设置 ›</span>
+        </div>
+        <div class="budget-ring-inner" id="budgetRingInner"></div>
+      </div>
+    </div>
+
     <!-- Reimbursement Quick Card (Personal Account Only) -->
     <div id="reimburseQuickCard" style="padding:0 16px;margin-top:10px;display:none">
       <div class="reimburse-card" id="reimburseCard">
@@ -800,23 +919,6 @@ img,a,button{-webkit-touch-callout:none}
       </div>
     </div>
 
-
-    <!-- Budget Progress Card -->
-    <div id="budgetCard" style="padding:0 16px;margin-bottom:12px;display:none">
-      <div class="budget-progress-card" style="background:#fff;border-radius:var(--radius);padding:14px;box-shadow:var(--shadow);border:1px solid var(--gray100)">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-          <div style="font-size:13px;font-weight:600;color:var(--gray600)">📊 月度预算</div>
-          <div style="font-size:12px;color:var(--gray400)" id="budgetPercent">0%</div>
-        </div>
-        <div style="height:8px;border-radius:4px;background:var(--gray100);overflow:hidden;margin-bottom:6px">
-          <div id="budgetBarFill" style="height:100%;border-radius:4px;background:linear-gradient(90deg,var(--green),var(--green-d));transition:width .4s ease,background .3s;width:0%"></div>
-        </div>
-        <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--gray400)">
-          <span>已花费 ¥<span id="budgetSpent">0.00</span></span>
-          <span>预算 ¥<span id="budgetTotal">0.00</span></span>
-        </div>
-      </div>
-    </div>
     <div class="month-nav">
       <button id="prevMonth">&lsaquo;</button>
       <span class="month-text" id="monthText">2026年5月</span>
@@ -908,24 +1010,7 @@ img,a,button{-webkit-touch-callout:none}
   <div class="page" id="pageStats" style="display:none">
     <div class="stats-page">
       <h2>统计 <span class="stats-acc-switch switch-personal" id="statsAccSwitch" title="点击切换个人/公司"><span id="statsAccIcon">👤</span> <span id="statsAccText">个人</span> <span class="sas-arrow">⇄</span></span></h2>
-  
-    <!-- Budget Progress Card -->
-    <div id="budgetCard" style="padding:0 16px;margin-bottom:12px;display:none">
-      <div class="budget-progress-card" style="background:#fff;border-radius:var(--radius);padding:14px;box-shadow:var(--shadow);border:1px solid var(--gray100)">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-          <div style="font-size:13px;font-weight:600;color:var(--gray600)">📊 月度预算</div>
-          <div style="font-size:12px;color:var(--gray400)" id="budgetPercent">0%</div>
-        </div>
-        <div style="height:8px;border-radius:4px;background:var(--gray100);overflow:hidden;margin-bottom:6px">
-          <div id="budgetBarFill" style="height:100%;border-radius:4px;background:linear-gradient(90deg,var(--green),var(--green-d));transition:width .4s ease,background .3s;width:0%"></div>
-        </div>
-        <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--gray400)">
-          <span>已花费 ¥<span id="budgetSpent">0.00</span></span>
-          <span>预算 ¥<span id="budgetTotal">0.00</span></span>
-        </div>
-      </div>
-    </div>
-    <div class="month-nav">
+      <div class="month-nav">
         <button id="statPrevMonth">&lsaquo;</button>
         <span class="month-text" id="statMonthText">2026年5月</span>
         <button id="statNextMonth">&rsaquo;</button>
@@ -1052,6 +1137,29 @@ img,a,button{-webkit-touch-callout:none}
               <div class="si-desc">此操作不可恢复</div>
             </div>
             <div class="si-arrow">›</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Appearance Group (v16.0) -->
+      <div class="settings-group">
+        <div class="settings-group-title">外观与预算</div>
+        <div class="settings-card">
+          <div class="settings-item" id="darkModeToggleBtn">
+            <div class="si-icon" style="background:var(--blue-light)">🌓</div>
+            <div class="si-content">
+              <div class="si-title">深色模式</div>
+              <div class="si-desc" id="darkModeLabel">跟随系统</div>
+            </div>
+            <div class="si-value" style="font-size:12px;color:var(--gray400);display:flex;align-items:center;gap:4px" id="darkModeBadge">自动 ›</div>
+          </div>
+          <div class="settings-item" id="openBudgetSettingsBtn">
+            <div class="si-icon" style="background:var(--orange-light)">🎯</div>
+            <div class="si-content">
+              <div class="si-title">月度预算</div>
+              <div class="si-desc" id="budgetSettingDesc">未设置</div>
+            </div>
+            <div class="si-value" style="font-size:12px;color:var(--gray400);display:flex;align-items:center;gap:4px">›</div>
           </div>
         </div>
       </div>
@@ -1518,6 +1626,23 @@ img,a,button{-webkit-touch-callout:none}
     </div>
   </div>
 
+  <!-- Budget Modal (v16.0) -->
+  <div class="modal-overlay" id="budgetModal">
+    <div class="modal-sheet" style="max-height:85vh">
+      <div class="modal-handle"></div>
+      <h3>🎯 月度预算设置</h3>
+      <div class="form-group">
+        <label>预算金额（元）</label>
+        <input type="number" class="amount-input" id="budgetAmountInput" placeholder="例如：3000" step="100" min="0" inputmode="numeric">
+      </div>
+      <p style="font-size:12px;color:var(--gray400);margin-bottom:16px;text-align:center">设置每月支出预算上限，超出时会收到提醒</p>
+      <div style="display:flex;gap:10px;margin-top:8px">
+        <button class="btn-submit" style="background:var(--gray100);color:var(--gray600)" id="budgetModalCancel">取消</button>
+        <button class="btn-submit" style="background:linear-gradient(135deg,var(--orange),#ea580c)" id="budgetModalSave">保存预算</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Transfer Modal -->
   <div class="modal-overlay" id="transferModal">
     <div class="modal-sheet" style="max-height:85vh">
@@ -1564,6 +1689,8 @@ img,a,button{-webkit-touch-callout:none}
   const REIMBURSE_SETTINGS_KEY = 'xy_money_reimburse_settings';
   const INVOICE_STORAGE_KEY = 'xy_money_invoices';
   const ACCOUNTS_KEY = 'xy_money_accounts';
+  const BUDGET_KEY = 'xy_money_budget';
+  const THEME_KEY = 'xy_money_theme';
 
   // ========== DATA ==========
   let records = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
@@ -1572,6 +1699,8 @@ img,a,button{-webkit-touch-callout:none}
   let currentPage = 'home';
   let currentType = 'expense';
   let viewAccount = 'personal';
+  let monthlyBudget = parseFloat(localStorage.getItem(BUDGET_KEY) || '0');
+  let darkModeSetting = localStorage.getItem(THEME_KEY) || 'auto'; // 'auto' | 'dark' | 'light'
   let selectedCat = '';
   let editingId = null;
   let viewYear, viewMonth;
@@ -4441,31 +4570,6 @@ img,a,button{-webkit-touch-callout:none}
   <span>小杨专属记账 · ${accName}账户报销明细</span>
   <span>共 ${data.length} 条记录</span>
 </div>
-
-  <!-- Budget Management Modal -->
-  <div class="modal-overlay" id="budgetModal">
-    <div class="modal-sheet">
-      <div class="modal-handle"></div>
-      <h3>月度预算管理</h3>
-      <div style="margin-bottom:16px">
-        <label style="display:block;font-size:13px;color:var(--gray600);margin-bottom:6px;font-weight:500">总预算（当月支出上限）</label>
-        <input type="number" id="budgetTotalInput" placeholder="例如：5000" style="width:100%;padding:12px 14px;border-radius:12px;border:1.5px solid var(--gray200);background:var(--gray50);font-size:15px;outline:none;font-weight:600">
-      </div>
-      <div style="margin-bottom:16px">
-        <label style="display:block;font-size:13px;color:var(--gray600);margin-bottom:8px;font-weight:500">分类预算（可选，留空不限制）</label>
-        <div id="budgetCatList" style="display:flex;flex-direction:column;gap:8px;max-height:200px;overflow-y:auto"></div>
-      </div>
-      <div style="margin-bottom:16px">
-        <label style="display:block;font-size:13px;color:var(--gray600);margin-bottom:6px;font-weight:500">预警阈值</label>
-        <div style="display:flex;gap:10px;align-items:center">
-          <span style="font-size:13px;color:var(--gray600)">达到</span>
-          <input type="number" id="budgetWarnThreshold" value="80" min="1" max="100" style="width:60px;padding:8px;border-radius:8px;border:1.5px solid var(--gray200);background:var(--gray50);font-size:14px;text-align:center">
-          <span style="font-size:13px;color:var(--gray600)">% 时预警</span>
-        </div>
-      </div>
-      <button id="budgetSaveBtn" style="width:100%;padding:13px;border-radius:14px;border:none;background:linear-gradient(135deg,var(--green),var(--green-d));color:#fff;font-size:15px;font-weight:600;cursor:pointer;margin-top:8px">💾 保存预算</button>
-    </div>
-  </div>
 </body></html>`;
 
     const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
@@ -5180,113 +5284,150 @@ img,a,button{-webkit-touch-callout:none}
     });
   }
 
-  // Override save to include auto-backup
+  // ========== OVERRIDE SAVE: auto-backup + budget warning (v16.0) ==========
   const _origSave = save;
   save = function() {
     _origSave();
     autoBackup();
+    const warn = checkBudgetWarning();
+    if (warn) {
+      setTimeout(() => {
+        toast(warn.level === 'over'
+          ? '⚠ 本月支出已达预算上限 ¥' + warn.budget.toFixed(0) + '！'
+          : '⚠ 本月支出已达预算的 ' + warn.pct + '%（¥' + warn.spent.toFixed(0) + ' / ¥' + warn.budget.toFixed(0) + '）');
+      }, 300);
+    }
+    renderBudgetRing();
   };
 
-  // ========== START ==========
-  
-  // v16.0: 绑定新功能事件
-  const dt=document.getElementById('darkToggleTrack');if(dt)dt.addEventListener('click',toggleDarkMode);
-  const bb=document.getElementById('budgetSettingsBtn');if(bb)bb.addEventListener('click',openBudgetModal);
-  const bs=document.getElementById('budgetSaveBtn');if(bs)bs.addEventListener('click',saveBudget);
+  // ========== DARK MODE TOGGLE (v16.0) ==========
+  function applyTheme() {
+    const html = document.documentElement;
+    html.classList.remove('dark-mode', 'light-mode');
+    if (darkModeSetting === 'dark') {
+      html.classList.add('dark-mode');
+    } else if (darkModeSetting === 'light') {
+      html.classList.add('light-mode');
+    }
+    // 'auto': no class, relies on @media(prefers-color-scheme:dark)
+    localStorage.setItem(THEME_KEY, darkModeSetting);
+    updateDarkModeUI();
+  }
+
+  function updateDarkModeUI() {
+    const label = document.getElementById('darkModeLabel');
+    const badge = document.getElementById('darkModeBadge');
+    if (!label || !badge) return;
+    if (darkModeSetting === 'dark') { label.textContent = '深色'; badge.textContent = '深色 ›'; }
+    else if (darkModeSetting === 'light') { label.textContent = '浅色'; badge.textContent = '浅色 ›'; }
+    else { label.textContent = '跟随系统'; badge.textContent = '自动 ›'; }
+  }
+
+  function cycleDarkMode() {
+    if (darkModeSetting === 'auto') darkModeSetting = 'dark';
+    else if (darkModeSetting === 'dark') darkModeSetting = 'light';
+    else darkModeSetting = 'auto';
+    applyTheme();
+    haptic('light');
+    toast(darkModeSetting === 'dark' ? '已切换为深色模式' : darkModeSetting === 'light' ? '已切换为浅色模式' : '已恢复跟随系统');
+  }
+
+  // ========== BUDGET MANAGEMENT (v16.0) ==========
+  function getMonthKey(y, m) { return y + '-' + String(m).padStart(2, '0'); }
+
+  function getCurrentMonthSpending() {
+    const now = new Date();
+    const mk = getMonthKey(now.getFullYear(), now.getMonth() + 1);
+    return records
+      .filter(r => r.type === 'expense' && r.date.startsWith(mk))
+      .reduce((s, r) => s + (r.amount || 0), 0);
+  }
+
+  function renderBudgetRing() {
+    const container = document.getElementById('budgetRingInner');
+    const descEl = document.getElementById('budgetSettingDesc');
+    if (!container) return;
+
+    if (!monthlyBudget || monthlyBudget <= 0) {
+      container.innerHTML = '<div class="br-info"><div class="br-pct" style="color:var(--gray400)">未设置</div><div class="br-detail">点击设置月度预算</div></div>';
+      if (descEl) descEl.textContent = '未设置';
+      return;
+    }
+
+    const spent = getCurrentMonthSpending();
+    const pct = Math.min(spent / monthlyBudget, 1);
+    const remaining = monthlyBudget - spent;
+    const color = pct > 0.9 ? 'var(--red)' : pct > 0.7 ? 'var(--amber)' : 'var(--green)';
+    const ringR = 36, ringStroke = 6, ringCx = 44, ringCy = 44;
+    const circ = 2 * Math.PI * ringR;
+    const dash = circ * pct;
+
+    container.innerHTML = '<svg width="88" height="88" viewBox="0 0 88 88">'
+      + '<circle cx="' + ringCx + '" cy="' + ringCy + '" r="' + ringR + '" fill="none" stroke="var(--gray200)" stroke-width="' + ringStroke + '"/>'
+      + '<circle cx="' + ringCx + '" cy="' + ringCy + '" r="' + ringR + '" fill="none" stroke="' + color + '" stroke-width="' + ringStroke + '" stroke-linecap="round"'
+      + ' stroke-dasharray="' + dash + ' ' + (circ - dash) + '" transform="rotate(-90 ' + ringCx + ' ' + ringCy + ')" style="transition:stroke-dasharray .5s ease"/>'
+      + '<text x="' + ringCx + '" y="' + (ringCy - 4) + '" text-anchor="middle" font-size="16" font-weight="700" fill="' + color + '">' + Math.round(pct * 100) + '%</text>'
+      + '<text x="' + ringCx + '" y="' + (ringCy + 14) + '" text-anchor="middle" font-size="10" fill="var(--gray400)">已用</text>'
+      + '</svg>'
+      + '<div class="br-info"><div class="br-pct" style="color:' + color + '">¥' + spent.toFixed(0) + '</div>'
+      + '<div class="br-detail">预算 ¥' + monthlyBudget.toFixed(0) + ' · 剩余 ¥' + remaining.toFixed(0) + '</div></div>';
+
+    if (descEl) descEl.textContent = '¥' + monthlyBudget.toFixed(0);
+  }
+
+  function openBudgetModal() {
+    document.getElementById('budgetAmountInput').value = monthlyBudget > 0 ? monthlyBudget : '';
+    document.getElementById('budgetModal').classList.add('show');
+    haptic('light');
+  }
+
+  function saveBudget() {
+    const val = parseFloat(document.getElementById('budgetAmountInput').value);
+    if (isNaN(val) || val <= 0) {
+      monthlyBudget = 0;
+      localStorage.setItem(BUDGET_KEY, '0');
+    } else {
+      monthlyBudget = val;
+      localStorage.setItem(BUDGET_KEY, String(val));
+    }
+    document.getElementById('budgetModal').classList.remove('show');
+    renderBudgetRing();
+    haptic('success');
+    toast(monthlyBudget > 0 ? '预算已设为 ¥' + monthlyBudget.toFixed(0) : '预算已取消');
+  }
+
+  function checkBudgetWarning() {
+    if (!monthlyBudget || monthlyBudget <= 0) return null;
+    const spent = getCurrentMonthSpending();
+    const pct = spent / monthlyBudget;
+    if (pct >= 1) return { level: 'over', pct: Math.round(pct * 100), spent, budget: monthlyBudget };
+    if (pct >= 0.9) return { level: 'warn', pct: Math.round(pct * 100), spent, budget: monthlyBudget };
+    return null;
+  }
+
+  // ========== V16.0 EVENT BINDINGS ==========
+  document.getElementById('budgetModalCancel').addEventListener('click', () => {
+    document.getElementById('budgetModal').classList.remove('show');
+  });
+  document.getElementById('budgetModalSave').addEventListener('click', () => {
+    saveBudget();
+  });
+  document.getElementById('budgetModal').addEventListener('click', (e) => {
+    if (e.target === document.getElementById('budgetModal')) {
+      document.getElementById('budgetModal').classList.remove('show');
+    }
+  });
+
+  document.getElementById('darkModeToggleBtn').addEventListener('click', () => {
+    cycleDarkMode();
+  });
+
+  document.getElementById('openBudgetSettingsBtn').addEventListener('click', () => {
+    openBudgetModal();
+  });
 
 document.addEventListener('DOMContentLoaded', init);
 })();
-
-// ========== DARK MODE (v16.0) ==========
-let darkMode='auto';
-const DARK_KEY='moneyapp_dark_mode';
-function initDarkMode(){
-  const s=localStorage.getItem(DARK_KEY);
-  darkMode=s||'auto';
-  applyDarkMode();
-  updateDarkToggle();
-}
-function applyDarkMode(){
-  const h=document.documentElement;
-  h.classList.remove('dark','light');
-  if(darkMode==='dark')h.classList.add('dark');
-  else if(darkMode==='light')h.classList.add('light');
-}
-function updateDarkToggle(){
-  const t=document.getElementById('darkToggleTrack'),d=document.getElementById('darkToggleDot');
-  if(!t||!d)return;
-  const isDark=darkMode==='dark'||(darkMode==='auto'&&window.matchMedia('(prefers-color-scheme:dark)').matches);
-  t.style.background=isDark?'var(--green)':'var(--gray300)';
-  d.style.left=isDark?'20px':'2px';
-}
-function toggleDarkMode(){
-  if(darkMode==='auto')darkMode=window.matchMedia('(prefers-color-scheme:dark)').matches?'light':'dark';
-  else if(darkMode==='dark')darkMode='auto';
-  else darkMode='dark';
-  localStorage.setItem(DARK_KEY,darkMode);
-  applyDarkMode();
-  updateDarkToggle();
-  haptic('light');
-}
-window.matchMedia('(prefers-color-scheme:dark)').addEventListener('change',()=>{if(darkMode==='auto')updateDarkToggle();});
-
-// ========== BUDGET MANAGEMENT (v16.0) ==========
-const BUDGET_KEY='moneyapp_budgets';
-let budgets={};
-function loadBudgets(){
-  try{const s=localStorage.getItem(BUDGET_KEY);budgets=s?JSON.parse(s):{};}catch(e){budgets={};}
-}
-function saveBudgets(){localStorage.setItem(BUDGET_KEY,JSON.stringify(budgets));}
-function getBudgetKey(y,m){return y+'-'+String(m).padStart(2,'0');}
-function getCurrentBudget(){return budgets[getBudgetKey(viewYear,viewMonth)]||null;}
-function renderBudgetCard(){
-  const c=document.getElementById('budgetCard'),f=document.getElementById('budgetBarFill');
-  if(!c||!f)return;
-  const b=getCurrentBudget();
-  if(!b||!b.total||b.total<=0){c.style.display='none';return;}
-  c.style.display='';
-  const recs=getAccountMonthRecords(viewYear,viewMonth);
-  const spent=recs.filter(r=>r.type==='expense').reduce((s,r)=>s+r.amount,0);
-  const pct=b.total>0?Math.min(100,(spent/b.total)*100):0;
-  f.style.width=pct+'%';
-  const wp=b.warnThreshold||80;
-  if(pct>=100)f.style.background='linear-gradient(90deg,#ef4444,#dc2626)';
-  else if(pct>=wp)f.style.background='linear-gradient(90deg,#f59e0b,#d97706)';
-  else f.style.background='linear-gradient(90deg,var(--green),var(--green-d))';
-  document.getElementById('budgetPercent').textContent=pct.toFixed(0)+'%';
-  document.getElementById('budgetSpent').textContent=spent.toFixed(2);
-  document.getElementById('budgetTotal').textContent=b.total.toFixed(2);
-  const warnKey='budget_warned_'+getBudgetKey(viewYear,viewMonth);
-  if(pct>=100&&!sessionStorage.getItem(warnKey+'_100')){sessionStorage.setItem(warnKey+'_100','1');toast('⚠️ 本月预算已用尽！');}
-  else if(pct>=wp&&!sessionStorage.getItem(warnKey+'_warn')){sessionStorage.setItem(warnKey+'_warn','1');toast('📊 预算已使用'+pct.toFixed(0)+'%（预警线'+wp+'%）');}
-}
-function openBudgetModal(){
-  const b=getCurrentBudget()||{total:'',categories:{},warnThreshold:80};
-  document.getElementById('budgetTotalInput').value=b.total||'';
-  document.getElementById('budgetWarnThreshold').value=b.warnThreshold||80;
-  renderBudgetCatList(b.categories||{});
-  showModal('budgetModal');
-  haptic('light');
-}
-function renderBudgetCatList(cv){
-  const cn=document.getElementById('budgetCatList');
-  if(!cn)return;
-  const cats=categories['expense']||[];
-  cn.innerHTML=cats.map(c=>'<div style="display:flex;align-items:center;gap:8px"><span style="font-size:18px;width:24px;text-align:center">'+c.icon+'</span><span style="flex:1;font-size:13px">'+c.name+'</span><input type="number" class="budget-cat-input" data-cat="'+c.id+'" placeholder="不限" value="'+(cv[c.id]||'')+'" style="width:80px;padding:6px 8px;border-radius:8px;border:1.5px solid var(--gray200);background:var(--gray50);font-size:13px;text-align:right"></div>').join('');
-}
-function saveBudget(){
-  const t=parseFloat(document.getElementById('budgetTotalInput').value)||0;
-  const wt=parseInt(document.getElementById('budgetWarnThreshold').value)||80;
-  const cats={};
-  document.querySelectorAll('.budget-cat-input').forEach(inp=>{const v=parseFloat(inp.value);if(v>0)cats[inp.dataset.cat]=v;});
-  budgets[getBudgetKey(viewYear,viewMonth)]={total:t,categories:cats,warnThreshold:wt};
-  saveBudgets();
-  hideModal('budgetModal');
-  renderBudgetCard();
-  toast('预算已保存');
-  haptic('success');
-}
-
 </script>
 </body>
 </html>
